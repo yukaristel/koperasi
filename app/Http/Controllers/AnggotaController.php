@@ -6,9 +6,12 @@ use App\Models\Anggota;
 use App\Models\Desa;
 use App\Models\Kecamatan;
 use App\Models\Keluarga;
+use App\Models\RealSimpanan;
+use App\Models\RealAngsuranI;
 use App\Models\PinjamanAnggota;
 use App\Models\PinjamanIndividu;
 use App\Models\StatusPinjaman;
+use App\Models\Simpanan;
 use App\Models\Usaha;
 use App\Utils\Tanggal;
 use Illuminate\Http\Request;
@@ -67,6 +70,53 @@ class AnggotaController extends Controller
     {
         $title = 'Register Penduduk';
         return view('penduduk.register')->with(compact('title'));
+    }
+
+    public function loadForm($nik)
+    {
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        $tgl = $kec->tgl_anggota;
+        $anggota = Anggota::where('nik', $nik)->first();
+
+        $simpanan_anggota = null;
+        $simpanan = null;
+        $pinjaman = null;
+        $status = 'N'; // default
+        $disabled = ''; 
+
+        if ($anggota) {
+            $simpanan_anggota = Simpanan::where('nia', $anggota->id)
+                ->where('jenis_simpanan', '2')
+                ->with(['realSimpananTerbesar'])
+                ->first();
+
+            $simpanan = Simpanan::where('nia', $anggota->id)
+                ->whereNotIn('jenis_simpanan', [1, 2])
+                ->with(['realSimpananTerbesar','js','sts'])
+                ->get();
+
+            $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
+                'anggota',
+                'jpp',
+                'sis_pokok',
+                'saldo',
+                'sts',
+            ])->withCount('real_i')->get();
+
+            if ($anggota->status == 0) {
+                $status = 'B'; // Blacklist
+                $disabled = 'readonly'; 
+            }
+            if ($simpanan_anggota) {
+                $status = 'A'; // Aktif
+            }
+
+        }
+
+        return response()->json([
+            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled'))->render(),
+            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled'))->render(),
+        ]);
     }
 
     public function cariNik()

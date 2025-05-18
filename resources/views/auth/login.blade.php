@@ -123,7 +123,7 @@
                                     @enderror
                                 </div>
                                 <div class="card-body">
-                                    <form role="form" class="text-start" method="POST" action="sign-in">
+                                <form role="form" method="POST" action="/login">
                                         @csrf
                                         <label>Username</label>
                                         <div class="mb-3">

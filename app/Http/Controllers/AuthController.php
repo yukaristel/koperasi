@@ -19,7 +19,7 @@ use Session;
 
 class AuthController extends Controller
 {
-    private const ID_KEC = 351;
+    private const ID_KEC = 1;
 
     public function index()
     {
@@ -106,6 +106,11 @@ class AuthController extends Controller
         }
 
         $user = User::where([['uname', $username], ['lokasi', $lokasi]])->first();
+        $rekap = Rekap::whereRaw("CONCAT(',', REPLACE(lokasi, ' ', ''), ',') LIKE ?", ['%,' . $lokasi . ',%'])->first();
+        
+        if (!$rekap) {
+        return redirect()->back();
+        }
         if ($user) {
             if ($password === $user->pass) {
                 if (Auth::loginUsingId($user->id)) {
@@ -143,6 +148,7 @@ class AuthController extends Controller
                         'foto' => $user->foto,
                         'logo' => $kec->logo,
                         'lokasi' => $user->lokasi,
+                        'rekap' => $rekap->id,
                         'lokasi_user' => $user->lokasi,
                         'menu' => $menu,
                         'icon' => $icon,

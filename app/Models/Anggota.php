@@ -16,7 +16,7 @@ class Anggota extends Model
 
     public function __construct()
     {
-        $this->table = 'anggota_' . Session::get('lokasi');
+        $this->table = 'anggota_' . Session::get('rekap');
     }
 
     public function pinjaman_anggota()

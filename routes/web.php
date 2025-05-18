@@ -168,15 +168,9 @@ Route::get('/pengaturan/{inv}/invoice', [SopController::class, 'detailInvoice'])
 
 Route::post('/pengaturan/sop/simpanttdpelaporan', [SopController::class, 'simpanTtdPelaporan'])->middleware('auth', 'is_aktif');
 
-Route::get('/database/kelompok/register_kelompok', [KelompokController::class, 'register'])->middleware('auth', 'is_aktif');
-Route::get('/database/kelompok/generatekode', [KelompokController::class, 'generateKode'])->middleware('auth', 'is_aktif');
-Route::get('/database/agent/generatekode', [AgentController::class, 'generateKode'])->middleware('auth', 'is_aktif');
-Route::get('/database/supplier/generatekode', [AgentController::class, 'generateKode'])->middleware('auth', 'is_aktif');
+Route::get('/data/anggota', [AnggotaController::class, 'register'])->middleware('auth', 'is_aktif');
 
-Route::get('/database/penduduk/register_penduduk', [AnggotaController::class, 'register'])->middleware('auth', 'is_aktif');
-Route::get('/database/penduduk/cari_nik', [AnggotaController::class, 'cariNik'])->middleware('auth', 'is_aktif');
-
-Route::post('/database/penduduk/{nik}/blokir', [AnggotaController::class, 'blokir'])->middleware('auth', 'is_aktif');
+Route::get('/anggota/load-form/{nik}', [AnggotaController::class, 'loadForm'])->middleware('auth', 'is_aktif');
 
 Route::get('/database/kelompok/detail_kelompok/{id}', [KelompokController::class, 'detailKelompok'])->middleware('auth', 'is_aktif');
 Route::get('/database/anggota/detail_anggota/{id}', [AnggotaController::class, 'detailAnggota'])->middleware('auth', 'is_aktif');
