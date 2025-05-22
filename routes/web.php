@@ -231,35 +231,33 @@ Route::get('/register_proposal_i/jenis_pinjaman/{id}', [PinjamanIndividuControll
 Route::get('/register_proposal_i/jaminan/{id}', [PinjamanIndividuController::class, 'Jaminan'])->middleware('auth', 'is_aktif');
 Route::get('/daftar_individu', [PinjamanIndividuController::class, 'DaftarAnggota'])->middleware('auth', 'is_aktif');
 
-Route::get('/detail_i/{perguliran_i}', [PinjamanIndividuController::class, 'detail'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/proposal', [PinjamanIndividuController::class, 'proposal'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/jaminan/{id}', [PinjamanIndividuController::class, 'EditJaminan'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/waitingjaminan/{id}', [PinjamanIndividuController::class, 'Waiting_Edit_Jaminan'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/verified', [PinjamanIndividuController::class, 'verified'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/waiting', [PinjamanIndividuController::class, 'waiting'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/aktif', [PinjamanIndividuController::class, 'aktif'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/lunas', [PinjamanIndividuController::class, 'lunas'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/generate/{id_pinj}', [PinjamanIndividuController::class, 'generate'])->middleware('auth', 'is_aktif');
-Route::get('/lunas_i/{perguliran_i}', [PinjamanIndividuController::class, 'pelunasan'])->middleware('auth', 'is_aktif');
-Route::get('/cetak_keterangan_lunas_i/{perguliran_i}', [PinjamanIndividuController::class, 'keterangan'])->middleware('auth', 'is_aktif');
+Route::get('/detail_i/{perguliran_i}', [PinjamanIndividuController::class, 'detail'])->middleware('auth');
+Route::get('/perguliran_i/proposal', [PinjamanIndividuController::class, 'proposal'])->middleware('auth');
+Route::get('/perguliran_i/verified', [PinjamanIndividuController::class, 'verified'])->middleware('auth');
+Route::get('/perguliran_i/waiting', [PinjamanIndividuController::class, 'waiting'])->middleware('auth');
+Route::get('/perguliran_i/aktif', [PinjamanIndividuController::class, 'aktif'])->middleware('auth');
+Route::get('/perguliran_i/lunas', [PinjamanIndividuController::class, 'lunas'])->middleware('auth');
+Route::get('/perguliran_i/generate/{id_pinj}', [PinjamanIndividuController::class, 'generate'])->middleware('auth');
+Route::get('/lunas_i/{perguliran_i}', [PinjamanIndividuController::class, 'pelunasan'])->middleware('auth');
+Route::get('/cetak_keterangan_lunas_i/{perguliran_i}', [PinjamanIndividuController::class, 'keterangan'])->middleware('auth');
+Route::get('/pengembalian_jaminan/{perguliran_i}', [PinjamanIndividuController::class, 'pengembalian'])->middleware('auth');
 
-Route::get('/perguliran_i/cari_kelompok', [PinjamanIndividuController::class, 'cariKelompok'])->middleware('auth', 'is_aktif');
-Route::post('/perguliran_i/simpan_data/{id}', [PinjamanIndividuController::class, 'simpan'])->middleware('auth', 'is_aktif');
-Route::post('/perguliran_i/rescedule', [PinjamanIndividuController::class, 'rescedule'])->middleware('auth', 'is_aktif');
-Route::post('/perguliran_i/hapus', [PinjamanIndividuController::class, 'hapus'])->middleware('auth', 'is_aktif');
-Route::resource('/perguliran_i', PinjamanIndividuController::class)->middleware('auth', 'is_aktif');
+Route::get('/perguliran_i/cari_kelompok', [PinjamanIndividuController::class, 'cariKelompok'])->middleware('auth');
+Route::post('/perguliran_i/simpan_data/{id}', [PinjamanIndividuController::class, 'simpan'])->middleware('auth');
+Route::post('/perguliran_i/rescedule', [PinjamanIndividuController::class, 'rescedule'])->middleware('auth');
+Route::post('/perguliran_i/hapus', [PinjamanIndividuController::class, 'hapus'])->middleware('auth');
+Route::resource('/perguliran_i', PinjamanIndividuController::class)->middleware('auth');
 
-Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}', [PinjamanIndividuController::class, 'kartuAngsuran'])->middleware('auth', 'is_aktif');
-Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}/{idtp}', [PinjamanIndividuController::class, 'cetakPadaKartu'])->middleware('auth', 'is_aktif');
+Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}', [PinjamanIndividuController::class, 'kartuAngsuran'])->middleware('auth');
+Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}/{idtp}', [PinjamanIndividuController::class, 'cetakPadaKartu'])->middleware('auth');
 
-Route::get('/perguliran_i/dokumen/kartu_angsuran_anggota/{id}/{nia?}', [PinjamanIndividuController::class, 'kartuAngsuranAnggota'])->middleware('auth', 'is_aktif');
+Route::get('/perguliran_i/dokumen/kartu_angsuran_anggota/{id}/{nia?}', [PinjamanIndividuController::class, 'kartuAngsuranAnggota'])->middleware('auth');
 
-Route::get('/perguliran_i/dokumen/cetak_kartu_angsuran_anggota/{id}/{idtp}/{nia?}', [PinjamanIndividuController::class, 'cetakKartuAngsuranAnggota'])->middleware('auth', 'is_aktif');
+Route::get('/perguliran_i/dokumen/cetak_kartu_angsuran_anggota/{id}/{idtp}/{nia?}', [PinjamanIndividuController::class, 'cetakKartuAngsuranAnggota'])->middleware('auth');
 
-Route::post('/perguliran_i/dokumen', [PinjamanIndividuController::class, 'dokumen'])->middleware('auth', 'is_aktif');
+Route::post('/perguliran_i/dokumen', [PinjamanIndividuController::class, 'dokumen'])->middleware('auth');
 
-Route::post('/perguliran_i/kembali_proposal/{id}', [PinjamanIndividuController::class, 'kembaliProposal'])->middleware('auth', 'is_aktif');
-Route::post('/perguliran_i/kembali_verifikasi/{id}', [PinjamanIndividuController::class, 'kembaliverifikasi'])->middleware('auth', 'is_aktif');
+Route::post('/perguliran_i/kembali_proposal/{id}', [PinjamanIndividuController::class, 'kembaliProposal'])->middleware('auth');
 
 Route::get('/pinjaman_anggota/register/{id_pinkel}', [PinjamanAnggotaController::class, 'create'])->middleware('auth', 'is_aktif');
 Route::get('/pinjaman_anggota/cari_pemanfaat', [PinjamanAnggotaController::class, 'cariPemanfaat'])->middleware('auth', 'is_aktif');

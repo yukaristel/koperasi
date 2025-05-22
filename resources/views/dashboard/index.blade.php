@@ -250,40 +250,8 @@ if ($surplus_bulan_lalu > 0) {
         new Chart(ctx, {
             type: "line",
             data: {
-                labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-                datasets: [{
-                    label: "Pokok",
-                    data: [450, 455, 460, 465, 475, 480, 490, 500, 510, 515, 525, 535],
-                    borderColor: "#2ca8ff",
-                    pointBackgroundColor: "#2ca8ff",
-                    pointBorderColor: "#2ca8ff",
-                    fill: true,
-                    backgroundColor: gradientPokok,
-                    tension: 0.4,
-                    borderWidth: 2,
-                },
-                {
-                    label: "Umum",
-                    data: [350, 380, 340, 200, 220, 400, 360, 420, 380, 410, 370, 390],
-                    borderColor: "#7c3aed",
-                    pointBackgroundColor: "#7c3aed",
-                    pointBorderColor: "#7c3aed",
-                    fill: true,
-                    backgroundColor: gradientUmum,
-                    tension: 0.4,
-                    borderWidth: 2,
-                },
-                {
-                    label: "Sukarela",
-                    data: [250, 255, 260, 265, 270, 275, 280, 285, 290, 295, 300, 305],
-                    borderColor: "#ed3a7c",
-                    pointBackgroundColor: "#ed3a7c",
-                    pointBorderColor: "#ed3a7c",
-                    fill: true,
-                    backgroundColor: gradientSukarela,
-                    tension: 0.4,
-                    borderWidth: 2,
-                }]
+                labels: @json($simp_labels),
+                datasets: @json($simp_set)
             },
             options: {
                 responsive: true,
@@ -354,10 +322,17 @@ if ($surplus_bulan_lalu > 0) {
         new Chart(ctx, {
             type: "doughnut",
             data: {
-                labels: ["SPP", "UEP", "PL"], // label per data
+                labels: @json($pinjaman_labels),
                 datasets: [{
-                    data: [440, 460, 41], // semua data dalam satu array
-                    backgroundColor: ["#2ca8ff", "#7c3aed", "#ed3a7c"],
+                    data: @json($pinjaman_data),
+                    backgroundColor: [
+                        "#2ca8ff", 
+                        "#7c3aed", 
+                        "#ed3a7c", 
+                        "#4adf83", 
+                        "#0f0b06", 
+                        "#a855f7" 
+                    ],
                     borderWidth: 0
                 }]
             },

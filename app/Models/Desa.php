@@ -14,7 +14,7 @@ class Desa extends Model
 
     public function getRouteKeyName()
     {
-        return 'kd_desa';
+        return 'id';
     }
 
     public function sebutan_desa()

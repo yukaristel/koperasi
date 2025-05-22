@@ -17,8 +17,11 @@
 
 <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <title itemprop="name">
@@ -32,12 +35,62 @@
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/349ee9c857.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
-    
     <style>
+            .bg-primary h5 {
+            color: inherit !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination .page-item.active .page-link {
+            background-color: #129990;
+            border-color: #129990;
+            color: #fff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination .page-item .page-link:hover {
+            background-color: #129990;
+            border-color: #129990;
+            color: #fff;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .pagination .page-link {
+            color: #129990;
+            border: 1px solid #129990;
+        }
+
+        .btn-outline-primary {
+          color: #129990;
+          border-color: #129990;
+          background-color: transparent;
+        }
+
+        .btn-outline-primary:hover {
+          color: #fff;
+          background-color: #129990;
+          border-color: #129990;
+        }
+
+
+        .btn-outline-primary:disabled,
+        .btn-outline-primary.disabled {
+          color: #129990;
+          background-color: transparent;
+          border-color: #129990;
+        }
+        
+        .btn-outline-primary.active {
+          color: #fff;
+          background-color: #129990;
+          border-color: #008778;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #129990; /* Bootstrap Primary */
+            color: #fff;
+        }
         .modal-open .select2-dropdown {
             z-index: 10060;
         }
@@ -51,38 +104,43 @@
         .bg-primary {
             background-color: #129990 !important;
         }
+        .btn-success {
+            background-color: #129990 !important;
+        }
         .text-primary {
             color: #129990 !important;
         }
         input:focus, select:focus, textarea:focus {
             border-color: #129990 !important;
             box-shadow: 0 0 8px 2px rgba(18, 153, 144, 0.6) !important;
-
         }
         .text-black {
             color: #333333 !important;
         }
-         
+        .hover tbody tr:hover {
+            background-color: #f0fff8;
+            cursor: pointer;
+        }
+        .modal {
+            z-index: 1060 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1050 !important;
+        }
+
+        .sidenav {
+            z-index: 1040 !important; /* JANGAN lebih tinggi dari modal */
+        }
+
+
     </style>
+    
+        @yield('style')
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
-    @php
-        $topSidenavArray = ['wallet', 'profile'];
-        $topSidenavTransparent = ['signin', 'signup'];
-        $topSidenavRTL = ['RTL'];
-    @endphp
-    @if (in_array(request()->route()->getName(),
-            $topSidenavArray))
-        <x-sidenav-top />
-    @elseif(in_array(request()->route()->getName(),
-            $topSidenavTransparent))
-
-    @elseif(in_array(request()->route()->getName(),
-            $topSidenavRTL))
-    @else
         <x-app.sidebar />
-    @endif
     
     <div class="main-content">
         <x-app.navbar />
@@ -169,7 +227,8 @@
             </div>
         </div>
     </div>
-    @yield('modal')
+    @stack('modal')
+
     <!--   Core JS Files   -->
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
@@ -178,6 +237,9 @@
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/chartjs.min.js"></script>
     <script src="../assets/js/plugins/swiper-bundle.min.js" type="text/javascript"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
         var win = navigator.platform.indexOf('Win') > -1;
         if (win && document.querySelector('#sidenav-scrollbar')) {

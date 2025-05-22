@@ -1,9 +1,8 @@
 <div class="modal-content">
     <div class="modal-header">
-        <h1 class="modal-title fs-4" id="NamaDesa">
-            Edit Desa {{ $desa->nama_desa }} [{{ $desa->kd_desa }}]
-        </h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h2 class="modal-title fs-4" id="NamaDesa">
+            {{ $desa->nama_desa }} [{{ $desa->kd_desa }}]
+        </h2>
     </div>
     <div class="modal-body">
         <form action="/database/desa/{{ $desa->kd_desa }}" method="post" id="FormEditDesa">

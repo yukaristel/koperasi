@@ -6,6 +6,8 @@ use App\Models\AdminInvoice;
 use App\Models\AkunLevel1;
 use App\Models\Anggota;
 use App\Models\Desa;
+use App\Models\JenisProdukPinjaman;
+use App\Models\JenisSimpanan;
 use App\Models\Kecamatan;
 use App\Models\PinjamanAnggota;
 use App\Models\PinjamanIndividu;
@@ -14,6 +16,7 @@ use App\Models\RealAngsuran;
 use App\Models\Rekening;
 use App\Models\RencanaAngsuran;
 use App\Models\Saldo;
+use App\Models\Simpanan;
 use App\Models\Transaksi;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
@@ -63,42 +66,109 @@ class DashboardController extends Controller
             $data['waiting'] = $pinj->w;
         }
 
-        $tb = 'transaksi_' . Session::get('lokasi');
-        $trx = Transaksi::select([
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='1.1.03.01' AND tgl_transaksi='$tgl') as umum_pokok"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='1.1.03.02' AND tgl_transaksi='$tgl') as kendaraan_pokok"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='1.1.03.03' AND tgl_transaksi='$tgl') as elektronik_pokok"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='1.1.03.04' AND tgl_transaksi='$tgl') as prt_pokok"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='1.1.03.05' AND tgl_transaksi='$tgl') as lain_lain_pokok"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='4.1.01.01' AND tgl_transaksi='$tgl') as umum_jasa"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='4.1.01.02' AND tgl_transaksi='$tgl') as kendaraan_jasa"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='4.1.01.03' AND tgl_transaksi='$tgl') as elektronik_jasa"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='4.1.01.04' AND tgl_transaksi='$tgl') as prt_jasa"),
-            DB::raw("(SELECT SUM(jumlah) as j FROM $tb WHERE rekening_debit LIKE '1.1.01.%' AND rekening_kredit='4.1.01.05' AND tgl_transaksi='$tgl') as lain_lain_jasa"),
-        ])->first();
+        // Tambahan: Data pinjaman berdasarkan jenis produk
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
 
-        $data['umum_pokok'] = 0;
-        $data['kendaraan_pokok'] = 0;
-        $data['elektronik_pokok'] = 0;
-        $data['prt_pokok'] = 0;
-        $data['lain_lain_pokok'] = 0;
-        $data['umum_jasa'] = 0;
-        $data['kendaraan_jasa'] = 0;
-        $data['elektronik_jasa'] = 0;
-        $data['prt_jasa'] = 0;
-        $data['lain_lain_jasa'] = 0;
-        if ($trx) {
-            $data['umum_pokok'] = $trx->umum_pokok;
-            $data['kendaraan_pokok'] = $trx->kendaraan_pokok;
-            $data['elektronik_pokok'] = $trx->elektronik_pokok;
-            $data['prt_pokok'] = $trx->prt_pokok;
-            $data['lain_lain_pokok'] = $trx->lain_Lain_pokok;
-            $data['umum_jasa'] = $trx->umum_jasa;
-            $data['kendaraan_jasa'] = $trx->kendaraan_jasa;
-            $data['elektronik_jasa'] = $trx->elektronik_jasa;
-            $data['prt_jasa'] = $trx->prt_jasa;
-            $data['lain_lain_jasa'] = $trx->lain_Lain_jasa;
+        $data['pinjaman_labels'] = [];
+        $data['pinjaman_data'] = [];
+
+        foreach ($jenis_pp as $jenis) {
+            $count = PinjamanAnggota::where('jenis_pp', $jenis->kode)
+                        ->where('status', 'A')
+                        ->count();
+        
+            $data['pinjaman_labels'][] = $jenis->nama_jpp;
+            $data['pinjaman_data'][] = $count;
         }
+
+        // simpanan
+        $tgl_hari_ini = Carbon::now();
+        $tgl_angg = 15;
+        
+        $tgl_hitung = $tgl_hari_ini->day > $tgl_angg
+            ? $tgl_hari_ini->copy()->day($tgl_angg)
+            : $tgl_hari_ini->copy()->subMonth()->day($tgl_angg);
+
+        // Buat urutan bulan mundur 12 bulan ke belakang
+        $bulan_angka = collect(range(1, 12))->map(function ($i) use ($tgl_hitung) {
+            return $tgl_hitung->copy()->addMonths($i)->month;
+        });
+
+        // Ambil semua jenis simpanan yang berlaku untuk kecamatan
+        $js = JenisSimpanan::where(function ($query) use ($kec) {
+            $query->where('lokasi', '0')
+                ->orWhere(function ($query) use ($kec) {
+                    $query->where('kecuali', 'NOT LIKE', "%-{$kec['id']}-%")
+                          ->where('lokasi', 'LIKE', "%-{$kec['id']}-%");
+                });
+        })->get();
+
+        // Warna default untuk jenis simpanan (urutan penting)
+        $colors = ['#2ca8ff', '#7c3aed', '#ed3a7c', '#4adf83', '#0f0b06'];
+
+        $data['simp_set'] = [];
+
+        foreach ($js as $index => $jenis) {
+            $dataa = [];
+
+            foreach ($bulan_angka as $bln) {
+                $thn = $bln <= $tgl_hari_ini->month ? $tgl_hari_ini->year : $tgl_hari_ini->copy()->subYear()->year;
+                $awal = Carbon::createFromDate($thn, $bln, 1)->startOfMonth();
+                $akhir = $awal->copy()->endOfMonth();
+                $tgl_kondisi = $awal->copy()->subMonth()->day($tgl_angg);
+
+                $query = Simpanan::where('jenis_simpanan', $jenis->id)
+                    ->where('status', 'A')
+                    ->where('tgl_buka', '<', $akhir)
+                    ->with('realSimpananTerbesar');
+
+                if ($jenis->id == 2) {
+                    $jumlah = $query->get()->filter(function ($item) use ($tgl_kondisi) {
+                        return optional($item->realSimpananTerbesar)->tgl_transaksi > $tgl_kondisi;
+                    })->count();
+                } else {
+                    $jumlah = $query->count();
+                }
+
+                $dataa[] = $jumlah;
+            }
+
+            $data['simp_set'][] = [
+                'label' => $jenis->nama_js,
+                'data' => $dataa,
+                'borderColor' => $colors[$index % count($colors)],
+                'pointBackgroundColor' => $colors[$index % count($colors)],
+                'pointBorderColor' => $colors[$index % count($colors)],
+                'fill' => true,
+                'backgroundColor' => $colors[$index % count($colors)].'0D',
+                'tension' => 0.4,
+                'borderWidth' => 2,
+            ];
+        }
+        $data['simp_labels'] = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $bulan_ini = now()->subMonths($i);
+            $data['simp_labels'][] = (int) $bulan_ini->format('n'); // 1 - 12
+
+            if ($i === 0) {
+                // Bulan ini → gunakan now()
+                $tanggal_hitung_per_bulan[] = now();
+            } else {
+                // Akhir bulan tersebut
+                $tanggal_hitung_per_bulan[] = $bulan_ini->endOfMonth();
+            }
+        }
+
+
         $unpaidInvoice = AdminInvoice::where([
             ['lokasi', Session::get('lokasi')],
             ['status', 'UNPAID']
@@ -107,10 +177,10 @@ class DashboardController extends Controller
         $data['jumlah_unpaid'] = $unpaidInvoice;
         $data['user'] = auth()->user();
         $data['saldo'] = $this->_saldo($tgl);
-        $data['jumlah_saldo'] = Saldo::where('kode_akun', 'NOT LIKE', $kec->kd_kec . '%')->count();
         $data['jumlah_invoice'] = AdminInvoice::where('lokasi', 'LIKE', Session::get('lokasi') . '%')
             ->where('status', 'UNPAID')
             ->sum('jumlah');
+
 
         $data['api'] = env('APP_API', 'https://api-whatsapp.siupk.net');
         $data['title'] = "Dashboard";
