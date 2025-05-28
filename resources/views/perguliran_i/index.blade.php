@@ -41,7 +41,7 @@
                             <div class="card-body">
                                 <h5 class="card-title"></h5>
                                 <div class="table-responsive">
-                                    <table class="table align-items-center justify-content-center mb-0 table-hover hover" width="100%" id="TbProposal">
+                                    <table class="table align-items-center justify-content-center mb-0 table-hover " width="100%" id="TbProposal">
                                         <thead>
                                             <tr>
                                                 <th>Loan id</th>
@@ -62,6 +62,8 @@
                     </div>
                 </div>
             </div>
+            
+
             <div class="tab-pane tabs-animation fade{{ $status == 'v' ? 'show active' : '' }}" id="Verified" role="tabpanel" >
                 <div class="row">
                     <div class="col-md-12">
@@ -168,6 +170,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="main-card mb-3 card p-2">
+            <div class="text-sm">
+                @foreach($jenis_pp as $jpp)
+                <small class="badge badge-{{$jpp->warna_jpp}}">{{$jpp->nama_jpp}}</small>
+                @endforeach
             </div>
         </div>
     </div>

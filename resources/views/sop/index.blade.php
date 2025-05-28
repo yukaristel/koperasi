@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-{{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"> --}}
 <style>
     .btn-white-custom {
         display: flex;
@@ -29,6 +27,9 @@
     .left-align span {
         font-size: 14px;
         /* Adjust the text size as needed */
+    }
+    .btn:focus {
+      box-shadow: none !important;
     }
 
 </style>
@@ -192,186 +193,57 @@
 @endsection
 
 @section('script')
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script> --}}
-
 <script>
-    const form = $('#FormWhatsapp')
-    // const socket = io("{{ $api }}")
-    const token = "{{ $token }}"
-    const pesan = $('#Pesan')
-    var scan = 0
-    var connect = 0
+    $(document).on('click', '.btn-simpan', function (e) {
+        e.preventDefault();
+    
+        let btn = $(this);
+        let targetForm = $($(this).data('target'));
+        let formData = new FormData(targetForm[0]);
+        let actionUrl = targetForm.attr('action');
+        let method = targetForm.find('input[name="_method"]').val() || 'POST';
 
-    $(document).on('click', '#ScanWA', function (e) {
-        e.preventDefault()
-
-        Swal.fire({
-            title: 'Peringatan',
-            text: 'Kami selaku tim pengembang aplikasi LKM tidak bertanggung jawab jika terjadi sesuatu pada nomor anda ke depannya.',
-            showCancelButton: true,
-            confirmButtonText: 'Lanjutkan',
-            cancelButtonText: 'Batal',
-            icon: 'error'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $('#ModalScanWA').modal('show')
-                if (connect < 1) {
-                    socket.emit('register', {
-                        token
-                    })
+        // Hapus pesan error sebelumnya
+        targetForm.find('small.text-danger').text('');
+        $.ajax({
+            url: actionUrl,
+            method: 'POST', 
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+                btn.prop('disabled', true).text('Menyimpan...');
+            },
+            success: function (res) {
+                btn.prop('disabled', false).text('Simpan Perubahan');
+                if (res.success) {
+                    toastr.success(res.msg);
                 } else {
-                    waActive()
-                }
-            }
-        })
-    })
-
-    // socket.on('qrCode', (res) => {
-    //     if (res.token == token) {
-    //         $('#QrCode').attr('src', res.url)
-
-    //         if (scan < 1) {
-    //             pesan.append('<li>' + res.msg + '</li>')
-    //         }
-    //         scan += 1
-    //     }
-    // })
-
-    // socket.on('aktif', (res) => {
-    //     if (res.token == token) {
-    //         if (connect < 1) {
-    //             $.ajax({
-    //                 type: form.attr('method'),
-    //                 url: form.attr('action'),
-    //                 data: form.serialize(),
-    //                 success: function(result) {
-    //                     pesan.append('<li>' + res.msg + '</li>')
-    //                     waActive()
-    //                 }
-    //             })
-    //         }
-    //         connect += 1
-    //     }
-    // })
-
-    $(document).on('click', '#WaLogout', function (e) {
-        e.preventDefault()
-
-        $.ajax({
-            type: 'post',
-            url: '{{ $api }}/logout',
-            data: {
-                token: token
-            },
-            success: function (result) {
-                if (result.status) {
-                    Swal.fire({
-                        title: 'Selamat',
-                        text: 'Anda telah logout dari SI DBM Whatsapp Gateway.',
-                        showCancelButton: false,
-                        icon: 'success'
-                    }).then(() => {
-                        scan = 0
-                        connect = 0
-                    })
-                }
-            }
-        })
-    })
-
-    function waActive() {
-        Swal.fire({
-            title: 'Selamat',
-            text: 'SI DBM Whatsapp Gateway berhasil diaktifkan.',
-            showCancelButton: false,
-            icon: 'success'
-        })
-    }
-
-</script>
-
-<script>
-    var tahun = "{{ date('Y') }}"
-    var bulan = "{{ date('m') }}"
-
-    $(".money").maskMoney();
-    var quill = new Quill('#editor', {
-        theme: 'snow'
-    });
-
-    $(document).on('click', '.btn-simpan', async function (e) {
-        e.preventDefault()
-
-        if ($(this).attr('id') == 'SimpanSPK') {
-            await $('#spk').val(quill.container.firstChild.innerHTML)
-        }
-
-        var form = $($(this).attr('data-target'))
-        $.ajax({
-            type: form.attr('method'),
-            url: form.attr('action'),
-            data: form.serialize(),
-            success: function (result) {
-                if (result.success) {
-                    Toastr('success', result.msg)
-
-                    if (result.nama_lembaga) {
-                        $('#nama_lembaga_sort').html(result.nama_lembaga)
-                    }
+                    toastr.warning('Data berhasil dikirim, tapi tidak ada respon sukses.');
                 }
             },
-            error: function (result) {
-                const respons = result.responseJSON;
-
-                Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                $.map(respons, function (res, key) {
-                    $('#' + key).parent('.input-group.input-group-static').addClass(
-                        'is-invalid')
-                    $('#msg_' + key).html(res)
-                })
-            }
-        })
-    })
-
-    $(document).on('click', '#EditLogo', function (e) {
-        e.preventDefault()
-
-        $('#logo_kec').trigger('click')
-    })
-
-    $(document).on('change', '#logo_kec', function (e) {
-        e.preventDefault()
-
-        var logo = $(this).get(0).files[0]
-        if (logo) {
-            var form = $('#FormLogo')
-            var formData = new FormData(document.querySelector('#FormLogo'));
-            $.ajax({
-                type: form.attr('method'),
-                url: form.attr('action'),
-                data: formData,
-                contentType: false,
-                cache: false,
-                processData: false,
-                success: function (result) {
-                    if (result.success) {
-                        var reader = new FileReader();
-
-                        reader.onload = function () {
-                            $("#previewLogo").attr("src", reader.result);
-                            $(".colored-shadow").css('background-image',
-                                "url(" + reader.result + ")")
-                        }
-
-                        reader.readAsDataURL(logo);
-                        Toastr('success', result.msg)
+            error: function (xhr) {
+                btn.prop('disabled', false).text('Simpan Perubahan');
+                if (xhr.status === 301 || xhr.status === 422) {
+                    let errors = xhr.responseJSON;
+                    $.each(errors, function (key, messages) {
+                        $('#msg_' + key).text(messages[0]);
+                    });
+                } else {
+                    // Kalau response JSON ada dan berbentuk object error pesan
+                    if (xhr.responseJSON && typeof xhr.responseJSON === 'object') {
+                        $.each(xhr.responseJSON, function(key, messages) {
+                            $.each(messages, function(i, msg) {
+                                toastr.warning(msg);
+                            });
+                        });
                     } else {
-                        Toastr('error', result.msg)
+                        toastr.error('Terjadi kesalahan pada server.');
                     }
                 }
-            })
-        }
-    })
+            }
 
+        });
+    });
 </script>
 @endsection

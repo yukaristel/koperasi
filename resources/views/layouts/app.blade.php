@@ -19,11 +19,13 @@
     <meta charset="utf-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title itemprop="name">
         {{ $title ? $title : 'SiKopii' }}
     </title>
@@ -34,12 +36,45 @@
     <!-- Nucleo Icons -->
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+
     <style>
+        /* Perbesar dropdown show entries */
+        .dataTables_length select {
+            height: 38px !important;  /* Tinggi dropdown */
+            padding: 6px 12px !important;
+            font-size: 14px !important;
+            line-height: 1.42857143 !important;
+            width: 80px !important;  /* Lebar dropdown */
+            margin: 0 5px;
+        }
+
+        /* Perbesar teks label */
+        .dataTables_length label {
+            font-size: 14px !important;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        /* Target seluruh teks di DataTable */
+        .dataTable {
+            font-size: 0.85rem !important; /* Ukuran font lebih kecil */
+        }
+
+        /* Atau target spesifik elemen */
+        .dataTable thead th {
+            font-size: 0.8rem !important;
+        }
+
+        .dataTable tbody td {
+            font-size: 0.8rem !important;
+        }
+
+
             .bg-primary h5 {
             color: inherit !important;
         }
@@ -131,6 +166,10 @@
 
         .sidenav {
             z-index: 1040 !important; /* JANGAN lebih tinggi dari modal */
+        }
+        .badge-github {
+            background-color: #e0e0e0; 
+            color: #000;
         }
 
 
@@ -254,6 +293,12 @@
     <!-- Control Center for Corporate UI Dashboard: parallax effects, scripts for the example pages etc -->
     <script src="../assets/js/corporate-ui-dashboard.min.js?v=1.0.0"></script>
     <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
         tinymce.init({
             selector: '.tiny-mce-editor',
             plugins: 'table visualblocks fullscreen',
@@ -271,51 +316,15 @@
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
 
-        function Toastr(icon, text) {
-            font = "1.2rem Nimrod MT";
-
-            canvas = document.createElement("canvas");
-            context = canvas.getContext("2d");
-            context.font = font;
-            width = context.measureText(text).width;
-            formattedWidth = Math.ceil(width) + 100;
-
-            Toast.fire({
-                icon: icon,
-                title: text,
-                width: formattedWidth
-            })
-        }
-
-        function MultiToast(icon, text) {
-            font = "1.2rem Nimrod MT";
-
-            canvas = document.createElement("canvas");
-            context = canvas.getContext("2d");
-            context.font = font;
-            width = context.measureText(text).width;
-            formattedWidth = Math.ceil(width) + 100;
-
-            let MultiToast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            })
-
-            MultiToast.fire({
-                icon: icon,
-                title: text,
-                width: formattedWidth
-            })
-        }
     </script>
         @yield('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        toastr.options.positionClass = 'toast-bottom-right';
+        toastr.options.closeButton = true;
+        toastr.options.progressBar = true;
+        toastr.options.timeOut = 3000;
+    </script>
 </body>
 
 </html>

@@ -35,9 +35,77 @@ class PinjamanIndividuController extends Controller
         }
 
         $status = strtolower($status);
+        
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
 
+        
         $title = 'Tahapan Perguliran Individu';
-        return view('perguliran_i.index')->with(compact('title', 'status'));
+        return view('perguliran_i.index')->with(compact('title', 'status', 'jenis_pp'));
+    }
+
+    public function peraktif()
+    {
+        $status = 'A';
+        if (request()->get('status')) {
+            $status = request()->get('status');
+        }
+
+        $status = strtolower($status);
+        
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
+
+        
+        $title = 'Tahapan Perguliran Individu';
+        return view('perguliran_i.aktif')->with(compact('title', 'status', 'jenis_pp'));
+    }
+
+    public function perlunas()
+    {
+        $status = 'L';
+        if (request()->get('status')) {
+            $status = request()->get('status');
+        }
+
+        $status = strtolower($status);
+        
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
+
+        
+        $title = 'Tahapan Perguliran Individu';
+        return view('perguliran_i.lunas')->with(compact('title', 'status', 'jenis_pp'));
     }
 
     public function proposal()
@@ -57,7 +125,7 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $jpp->warna_jpp;
 
                     $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
@@ -93,7 +161,7 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $jpp->warna_jpp;
 
                     $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
@@ -129,7 +197,7 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $jpp->warna_jpp;
 
                     $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
@@ -165,7 +233,7 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $jpp->warna_jpp;
 
                     $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
@@ -203,7 +271,7 @@ class PinjamanIndividuController extends Controller
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
                     $jpp = $row->jpp;
-                    $status = $row->sts->warna_status;
+                    $status = $jpp->warna_jpp;
 
                     $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
@@ -253,13 +321,18 @@ class PinjamanIndividuController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
         $sistem_angsuran = SistemAngsuran::all();
-        $jenis_pp = JenisProdukPinjaman::where(function ($query) use ($kec) {
-            $query->where('lokasi', '0')
-                ->orWhere(function ($query) use ($kec) {
-                    $query->where('kecuali', 'NOT LIKE', "%-{$kec['id']}-%")
-                        ->where('lokasi', 'LIKE', "%-{$kec['id']}-%");
-                });
-        })->get();
+        
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
+
 
         $jenis_pp_dipilih = $anggota->jenis_produk_pinjaman;
 
@@ -513,13 +586,18 @@ class PinjamanIndividuController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
         $sistem_angsuran = SistemAngsuran::all();
-        $jenis_pp = JenisProdukPinjaman::where(function ($query) use ($kec) {
-            $query->where('lokasi', '0')
-                ->orWhere(function ($query) use ($kec) {
-                    $query->where('kecuali', 'NOT LIKE', "%-{$kec['id']}-%")
-                        ->where('lokasi', 'LIKE', "%-{$kec['id']}-%");
-                });
-        })->get();
+        
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+                $query->where('lokasi', '0')
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
+
 
         $jenis_jasa_dipilih = $perguliran_i->jenis_jasa;
         $sistem_angsuran_pokok = $perguliran_i->sistem_angsuran;

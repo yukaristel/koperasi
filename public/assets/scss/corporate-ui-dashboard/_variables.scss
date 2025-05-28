@@ -10,7 +10,7 @@ $slate-900: #0f172a;
 $slate-800: #1e293b;
 $slate-700: #334155;
 $slate-600: #474568;
-$slate-500: #64748b;
+$slate-500: #4C4D92;
 $slate-400: #94a3b8;
 $slate-350: #dde0e5;
 $slate-300: #cbd5e1;
@@ -66,12 +66,12 @@ $colors: (
 ) !default;
 // scss-docs-end colors-map
 
-$primary:       #774dd3 !default;
-$secondary:     #64748b !default;
+$primary:       #129990 !default;
+$secondary:     #4C4D92 !default;
 $info:          #55a6f8 !default;
 $success:       #67c23a !default;
 $warning:       #f19937 !default;
-$danger:        #ea4e3d !default;
+$danger:        #ed397b !default;
 $light:         $slate-300 !default;
 $dark:          $slate-800 !default;
 
@@ -91,11 +91,11 @@ $theme-colors: (
 
 
 // Gradient colors
-$primary-gradient:            #774dd3 !default;
+$primary-gradient:            #129990 !default;
 $primary-gradient-state:      #6a38d9 !default;
 
-$secondary-gradient:          #64748b !default;
-$secondary-gradient-state:    #64748b !default;
+$secondary-gradient:          #4C4D92 !default;
+$secondary-gradient-state:    #4C4D92 !default;
 
 $info-gradient:               #55a6f8 !default;
 $info-gradient-state:         #369aff !default;
@@ -103,7 +103,7 @@ $info-gradient-state:         #369aff !default;
 $success-gradient:            #67c23a !default;
 $success-gradient-state:      #4aa91b !default;
 
-$danger-gradient:             #ea4e3d !default;
+$danger-gradient:             #ed397b !default;
 $danger-gradient-state:       #ee321d !default;
 
 $warning-gradient:            #f19937 !default;

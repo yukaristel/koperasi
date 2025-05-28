@@ -190,16 +190,18 @@
         <div class="card-body p-2">
             @if ($perguliran_i->status == 'L' || $perguliran_i->status == 'H')
                 @if ($perguliran_i->status != 'H')
-                    <button class="btn btn-warning btn-sm float-end ms-2"
-                        onclick="window.open('/cetak_keterangan_lunas/{{ $perguliran_i->id }}')" type="button">
+                    <button class="btn btn-warning btn-sm float-end ms-2" onclick="window.open('/cetak_keterangan_lunas/{{ $perguliran_i->id }}')" type="button">
                         <i class="fa fa-print"></i> Cetak Keterangan Pelunasan
                     </button>
                 @endif
-                <a href="/database/anggota/{{ $perguliran_i->anggota->nia }}"
-                    class="btn btn-info float-end btn-sm mb-0">Kembali</a>
+                <a href="/perguliran_l" class="btn btn-info float-end btn-sm mb-0">Kembali</a>
             @else
+                @if ($perguliran_i->status == 'A')
+                    <a href="/perguliran_a" class="btn btn-info float-end btn-sm mb-0">Kembali</a>
+                @else
                 <a href="/perguliran_i?status={{ $perguliran_i->status }}"
                     class="btn btn-info float-end btn-sm mb-0">Kembali</a>
+                @endif
             @endif
         </div>
     </div>

@@ -19,7 +19,7 @@
                     <div class="page-title ms-xl-0 ms-5">
                         @foreach ($segments as $index => $segment)
                             @php
-                                $text = ucwords(str_replace('-', ' ', $segment)); // Judul: pengaturan-user -> Pengaturan User
+                                $text = ucwords(str_replace(['-', '_'], ' ', $segment));
                             @endphp
 
                             @if ($index === 0)

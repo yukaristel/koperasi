@@ -96,8 +96,7 @@
 </form>
 
 <div class="d-flex justify-content-end">
-<button type="button" id="SimpanLembaga" data-target="#FormLembaga"
-        class="btn btn-sm btn-github mb-0 btn-simpan btn btn-sm btn-dark">
+    <button type="button" id="SimpanLembaga" data-target="#FormLembaga" class="btn btn-secondary mb-0 btn-simpan">
         Simpan Perubahan
     </button>
 </div>

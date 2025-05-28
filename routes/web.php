@@ -247,6 +247,8 @@ Route::post('/perguliran_i/simpan_data/{id}', [PinjamanIndividuController::class
 Route::post('/perguliran_i/rescedule', [PinjamanIndividuController::class, 'rescedule'])->middleware('auth');
 Route::post('/perguliran_i/hapus', [PinjamanIndividuController::class, 'hapus'])->middleware('auth');
 Route::resource('/perguliran_i', PinjamanIndividuController::class)->middleware('auth');
+Route::get('/perguliran_a', [PinjamanIndividuController::class, 'peraktif'])->middleware('auth', 'is_aktif');
+Route::get('/perguliran_l', [PinjamanIndividuController::class, 'perlunas'])->middleware('auth', 'is_aktif');
 
 Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}', [PinjamanIndividuController::class, 'kartuAngsuran'])->middleware('auth');
 Route::get('/perguliran_i/dokumen/kartu_angsuran/{id}/{idtp}', [PinjamanIndividuController::class, 'cetakPadaKartu'])->middleware('auth');

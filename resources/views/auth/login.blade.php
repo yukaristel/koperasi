@@ -20,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     @if (config('app.is_demo'))
         <title itemprop="name">
-            Corporate UI Dashboard Laravel by Creative Tim & UPDIVISION
+            Selamat Datang Di Aplikasi Sistem Informasi Koperasi
         </title>
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:card" content="summary_large_image">
