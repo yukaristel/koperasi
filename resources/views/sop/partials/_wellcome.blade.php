@@ -35,8 +35,8 @@
                     Penggunaan Aplikasi Koperasi<br>
                     {{ $kec->nama_lembaga_sort }}<br></b>
                 <span class="h5">Sebagai dasar penggunaan Koperasi ini<br>
-                    Isilah sesuai dengan prosedur yang berlaku di Lembaga Anda,<br> Klik navbar di atas saya untuk mengatur SOP<br>
-                    Gunakanlah secara bijak sesuai dengan wewenang Anda, semoga bermanfaat!<br>Salam, <b>Siap Tunai</b></span>
+                    Isilah sesuai dengan prosedur yang berlaku di Lembaga Anda,<br> Klik navbar di samping untuk mengatur SOP<br>
+                    Gunakanlah secara bijak sesuai dengan wewenang Anda, semoga bermanfaat!<br>Salam, <b>Kopii</b></span>
             </h3>
         </div>
         <span class="ml-lg"><img src="" class="mt-n-xlg" width="95"></span>

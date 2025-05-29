@@ -60,6 +60,10 @@
                                     data-bs-toggle="tab" href="#tab-content-3" role="tab">
                                     <i class="fa-solid fa-chart-simple"></i>&nbsp; Sistem Pinjaman
                                 </a>
+                                <a class="btn btn-outline-primary w-100 text-start text-nowrap" id="perguliran"
+                                    data-bs-toggle="tab" href="#tab-content-9" role="tab">
+                                    <i class="fa-solid fa-vault"></i>&nbsp; Perguliran
+                                </a>
                                 <a class="btn btn-outline-primary w-100 text-start text-nowrap" id="simpanan"
                                     data-bs-toggle="tab" href="#tab-content-8" role="tab">
                                     <i class="fa-solid fa-vault"></i>&nbsp; Sistem Simpanan
@@ -180,6 +184,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane tabs-animation fade" id="tab-content-9" role="tabpanel">
+                            <div class="row">
+                                <div class="main-card mb-3 card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pengaturan Perguliran</h5>
+                                        @include('sop.partials._perguliran')
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -193,7 +207,56 @@
 @endsection
 
 @section('script')
+
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnTambah = document.getElementById('btnTambahTahapan');
+        const daftar = document.getElementById('daftar-tahapan');
+        const placeholder = daftar.querySelector('.tombol-tambah-placeholder');
+        const max = 3;
+        const sisaSlot = document.getElementById('sisaSlot');
+
+        btnTambah.addEventListener('click', () => {
+            const inputs = daftar.querySelectorAll('input[name="tahapan_baru[]"]');
+            if (inputs.length >= max) return;
+
+            const panah = document.createElement('div');
+            panah.className = "text-center mb-1 panah";
+            panah.innerHTML = `<i class="fas fa-arrow-down"></i>`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "mb-3 d-flex gap-2 align-items-center";
+            wrapper.innerHTML = `
+                <input type="text" name="tahapan_baru[]" class="form-control" placeholder="Tahapan Baru">
+                <button type="button" class="btn btn-danger btn-hapus-tahapan">-</button>
+            `;
+
+            daftar.insertBefore(panah, placeholder);
+            daftar.insertBefore(wrapper, placeholder);
+
+            updateSisa();
+        });
+
+        daftar.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-hapus-tahapan')) {
+                const wrapper = e.target.closest('.mb-3');
+                const panah = wrapper.previousElementSibling;
+
+                if (panah && panah.classList.contains('panah')) {
+                    panah.remove();
+                }
+
+                wrapper.remove();
+                updateSisa();
+            }
+        });
+
+        function updateSisa() {
+            const jumlah = daftar.querySelectorAll('input[name="tahapan_baru[]"]').length;
+            sisaSlot.textContent = max - jumlah;
+        }
+    });
+
     $(document).on('click', '.btn-simpan', function (e) {
         e.preventDefault();
     

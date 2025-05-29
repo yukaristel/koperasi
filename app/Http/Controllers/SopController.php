@@ -29,7 +29,7 @@ class SopController extends Controller
         $title = "Personalisasi SOP";
         return view('sop.index')->with(compact('title', 'kec', 'api', 'token'));
     }
-
+    
     public function users()
     {
 
@@ -129,6 +129,29 @@ class SopController extends Controller
             'success' => true,
             'msg' => 'Identitas Lembaga Berhasil Diperbarui.',
             'nama_lembaga' => ucwords(strtolower($data['nama_bumdesma']))
+        ]);
+    }
+
+    public function perguliran(Request $request, Kecamatan $kec)
+    {
+        $data = $request->only(['tahapan_baru']);
+
+        $validate = Validator::make($data, [
+            'tahapan_baru' => 'nullable|array|max:3',
+            'tahapan_baru.*' => 'required|string|max:100'
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json($validate->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // Simpan array tahapan sebagai JSON
+        $kec->tahapan_perguliran = json_encode($data['tahapan_baru']);
+        $kec->save();
+
+        return response()->json([
+            'success' => true,
+            'msg' => 'Pengaturan Perguliran Berhasil Disimpan.',
         ]);
     }
 
