@@ -113,7 +113,7 @@ class DashboardController extends Controller
         })->get();
 
         // Warna default untuk jenis simpanan (urutan penting)
-        $colors = ['#2ca8ff', '#7c3aed', '#ed3a7c', '#4adf83', '#0f0b06'];
+        $colors = ['#2ca8ff', '#7c3aed', '#4adf83', '#ed3a7c', '#0f0b06'];
 
         $data['simp_set'] = [];
 
@@ -121,7 +121,11 @@ class DashboardController extends Controller
             $dataa = [];
 
             foreach ($bulan_angka as $bln) {
-                $thn = $bln <= $tgl_hari_ini->month ? $tgl_hari_ini->year : $tgl_hari_ini->copy()->subYear()->year;
+                $thn = $tgl_hari_ini->year;
+                if ($bln >= $tgl_hari_ini->month) {
+                    $thn = $tgl_hari_ini->copy()->subYear()->year;
+                }
+
                 $awal = Carbon::createFromDate($thn, $bln, 1)->startOfMonth();
                 $akhir = $awal->copy()->endOfMonth();
                 $tgl_kondisi = $awal->copy()->subMonth()->day($tgl_angg);
@@ -149,7 +153,7 @@ class DashboardController extends Controller
                 'pointBackgroundColor' => $colors[$index % count($colors)],
                 'pointBorderColor' => $colors[$index % count($colors)],
                 'fill' => true,
-                'backgroundColor' => $colors[$index % count($colors)].'0D',
+                'backgroundColor' => $colors[$index % count($colors)].'1D',
                 'tension' => 0.4,
                 'borderWidth' => 2,
             ];

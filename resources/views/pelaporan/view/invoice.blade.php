@@ -182,7 +182,7 @@
             <tr style="background: rgb(232, 232, 232)">
                 <td height="70" align="center" style="font-size: 11px;">
                     <div>
-                        {{ $inv->jp->nama_jp }} SI UPK {{ $inv->kec->sebutan_kec }} {{ $inv->kec->nama_kec }}
+                        {{ $inv->jp->nama_jp }} SI LKM {{ $inv->kec->sebutan_kec }} {{ $inv->kec->nama_kec }}
                     </div>
                     <div>{{ $keterangan }}</div>
                 </td>
@@ -241,7 +241,7 @@
                         }
                     @endphp
                     <tr>
-                        <td align="center">{{ $trx->idt }}/SI UPK</td>
+                        <td align="center">{{ $trx->idt }}/SI LKM</td>
                         <td align="center">{{ Tanggal::tglIndo($trx->tgl_transaksi) }}</td>
                         <td align="center">{{ $trx->keterangan_transaksi }} {{ $keterangan }}</td>
                         <td align="right">{{ number_format($trx->jumlah, 2) }}</td>

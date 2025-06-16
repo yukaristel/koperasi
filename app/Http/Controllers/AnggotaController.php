@@ -12,6 +12,7 @@ use App\Models\PinjamanAnggota;
 use App\Models\PinjamanIndividu;
 use App\Models\StatusPinjaman;
 use App\Models\Simpanan;
+use App\Models\JenisKegiatan;
 use App\Models\Usaha;
 use App\Utils\Tanggal;
 use Illuminate\Http\Request;
@@ -77,7 +78,7 @@ class AnggotaController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $tgl = $kec->tgl_anggota;
         $anggota = Anggota::where('nik', $nik)->first();
-
+        $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
         $simpanan_anggota = null;
         $simpanan = null;
         $pinjaman = null;
@@ -113,9 +114,11 @@ class AnggotaController extends Controller
 
         }
 
+        $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
+
         return response()->json([
-            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled'))->render(),
-            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled'))->render(),
+            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
+            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
         ]);
     }
 
@@ -182,51 +185,47 @@ class AnggotaController extends Controller
     public function store(Request $request)
     {
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-
         $data = $request->only([
             'nik',
-            'nama_lengkap',
-            'nama_pangilan',
-            'desa',
+            'namadepan',
+            'nama_panggilan',
+            'jk',
             'tempat_lahir',
             'tgl_lahir',
-            'jenis_kelamin',
-            'no_telp',
-            'agama',
-            'pendidikan',
-            'status_pernikahan',
+            'desa',
             'alamat',
-            'domisi',
-            'no_kk',
+            'domisili',
+            'hp',
             'jenis_usaha',
-            'nik_penjamin',
-            'penjamin',
-            'hubungan',
+            'keterangan_usaha',
+            'agama',
+            'status_pernikahan',
+            'tempat_kerja',
+            'pendidikan',
+            'no_kk',
             'nama_ibu',
-            'tempat_kerja'
+            'nik_penjamin',
+            'hubungan_penjamin',
+            'nama_penjamin'
         ]);
 
 
 
         $rules = [
             'nik' => 'required|unique:anggota_' . Session::get('lokasi') . ',nik|min:16|max:16',
-            'nama_lengkap' => 'required',
-            'nama_pangilan' => 'required',
+            'namadepan' => 'required',
+            'nama_panggilan' => 'required',
             'desa' => 'required',
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
-            'jenis_kelamin' => 'required',
-            'no_telp' => 'required',
-            'agama' => 'required',
+            'jk' => 'required',
+            'hp' => 'required',
             'pendidikan' => 'required',
-            'status_pernikahan' => 'required',
             'alamat' => 'required',
-            'domisi' => 'required',
+            'domisili' => 'required',
             'no_kk' => 'required',
             'jenis_usaha' => 'required',
             'nik_penjamin' => 'required|max:16',
-            'penjamin' => 'required',
-            'hubungan' => 'required',
             'nama_ibu' => 'required',
             'tempat_kerja' => 'required'
         ];
@@ -246,22 +245,22 @@ class AnggotaController extends Controller
 
         $insert = [
             'nik' => $request->nik,
-            'namadepan' => $request->nama_lengkap,
-            'nama_pangilan' => $request->nama_pangilan,
-            'jk' => $request->jenis_kelamin,
+            'namadepan' => $request->namadepan,
+            'nama_panggilan' => $request->nama_panggilan,
+            'jk' => $request->jk,
             'tempat_lahir' => $request->tempat_lahir,
             'tgl_lahir' => Tanggal::tglNasional($request->tgl_lahir),
             'alamat' => $request->alamat,
-            'domisi' => $request->domisi,
+            'domisi' => $request->domisili,
             'desa' => $request->desa,
             'lokasi' => Session::get('lokasi'),
-            'hp' => $request->no_telp,
-            'agama' => $request->agama,
+            'hp' => $request->hp,
             'pendidikan' => $request->pendidikan,
-            'status_pernikahan' => $request->status_pernikahan,
             'kk' => $request->no_kk,
             'nik_penjamin' => $request->nik_penjamin,
-            'penjamin' => $request->penjamin,
+            'agama' => $request->agama,
+            'status_pernikahan' => $request->status_pernikahan,
+            'penjamin' => $request->nama_penjamin,
             'hubungan' => $request->hubungan,
             'nama_ibu' => $request->nama_ibu,
             'tempat_kerja' => $request->tempat_kerja,
@@ -273,11 +272,55 @@ class AnggotaController extends Controller
         ];
 
         $penduduk = Anggota::create($insert);
+        $nik = $request->nik;
+        $tgl = $kec->tgl_anggota;
+        $anggota = Anggota::where('nik', $nik)->first();
+        $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
+        $simpanan_anggota = null;
+        $simpanan = null;
+        $pinjaman = null;
+        $status = 'N'; // default
+        $disabled = ''; 
+
+        if ($anggota) {
+            $simpanan_anggota = Simpanan::where('nia', $anggota->id)
+                ->where('jenis_simpanan', '2')
+                ->with(['realSimpananTerbesar'])
+                ->first();
+
+            $simpanan = Simpanan::where('nia', $anggota->id)
+                ->whereNotIn('jenis_simpanan', [1, 2])
+                ->with(['realSimpananTerbesar','js','sts'])
+                ->get();
+
+            $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
+                'anggota',
+                'jpp',
+                'sis_pokok',
+                'saldo',
+                'sts',
+            ])->withCount('real_i')->get();
+
+            if ($anggota->status == 0) {
+                $status = 'B'; // Blacklist
+                $disabled = 'readonly'; 
+            }
+            if ($simpanan_anggota) {
+                $status = 'A'; // Aktif
+            }
+
+        }
+        
+        $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
+
         return response()->json([
+            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
+            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
+            'success' => true,
             'msg' => 'Penduduk dengan nama ' . $insert['namadepan'] . ' berhasil disimpan'
         ], Response::HTTP_ACCEPTED);
     }
-
+    
     /**
      * Display the specified resource.
      */
@@ -318,79 +361,87 @@ class AnggotaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Anggota $penduduk)
+    public function update(Request $request, $penduduk)
     {
         $data = $request->only([
+            'nia',
             'nik',
-            'nama_lengkap',
-            'nama_pangilan',
-            'desa',
+            'namadepan',
+            'nama_panggilan',
+            'jk',
             'tempat_lahir',
             'tgl_lahir',
-            'jenis_kelamin',
-            'no_telp',
-            'agama',
-            'pendidikan',
-            'status_pernikahan',
+            'desa',
             'alamat',
-            'domisi',
-            'no_kk',
+            'domisili',
+            'hp',
             'jenis_usaha',
-            'nik_penjamin',
-            'penjamin',
-            'hubungan',
+            'keterangan_usaha',
+            'tempat_kerja',
+            'pendidikan',
+            'agama',
+            'status_pernikahan',
+            'no_kk',
             'nama_ibu',
-            'tempat_kerja'
+            'nik_penjamin',
+            'hubungan_penjamin',
+            'nama_penjamin'
         ]);
 
         $rules = [
-            'nama_lengkap' => 'required',
-            'nama_pangilan' => 'required',
+            'namadepan' => 'required',
+            'jk' => 'required',
             'desa' => 'required',
             'tempat_lahir' => 'required',
             'tgl_lahir' => 'required',
-            'jenis_kelamin' => 'required',
-            'no_telp' => 'required',
             'agama' => 'required',
-            'pendidikan' => 'required',
-            'status_pernikahan' => 'required',
             'alamat' => 'required',
-            'domisi' => 'required',
-            'no_kk' => 'required',
             'jenis_usaha' => 'required',
-            'nik_penjamin' => 'required|max:16',
-            'penjamin' => 'required',
-            'hubungan' => 'required',
-            'nama_ibu' => 'required',
-            'tempat_kerja' => 'required'
+            'nik_penjamin' => 'required',
+            'nama_penjamin' => 'required',
+            'hubungan_penjamin' => 'required',
+            'nama_ibu' => 'required'
         ];
-
-        if ($request->nik != $penduduk->nik) {
-            $rules['nik'] = 'required|unique:anggota_' . Session::get('lokasi') . ',nik|min:16|max:16';
-        }
-
-        if (strlen($request->no_kk) >= 16) {
-            $rules['no_kk'] = 'required';
-            if ($request->no_kk != $penduduk->kk) {
-                $rules['no_kk'] = 'required|unique:anggota_' . Session::get('lokasi') . ',kk';
-            }
-        }
 
         $validate = Validator::make($data, $rules);
 
         if ($validate->fails()) {
-            return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
+            return response()->json(['errors' => $validate->errors()], 422);
         }
-
+        
+        $data = $request->only([
+            'nia',
+            'nik',
+            'namadepan',
+            'nama_panggilan',
+            'jk',
+            'tempat_lahir',
+            'tgl_lahir',
+            'desa',
+            'alamat',
+            'domisili',
+            'hp',
+            'jenis_usaha',
+            'keterangan_usaha',
+            'tempat_kerja',
+            'pendidikan',
+            'agama',
+            'status_pernikahan',
+            'no_kk',
+            'nama_ibu',
+            'nik_penjamin',
+            'hubungan_penjamin',
+            'nama_penjamin'
+        ]);
         $update = [
             'nik' => $request->nik,
-            'namadepan' => $request->nama_lengkap,
-            'nama_pangilan' => $request->nama_pangilan,
-            'jk' => $request->jenis_kelamin,
+            'namadepan' => $request->namadepan,
+            'nama_panggilan' => $request->nama_panggilan,
+            'jk' => $request->jk,
             'tempat_lahir' => $request->tempat_lahir,
             'tgl_lahir' => Tanggal::tglNasional($request->tgl_lahir),
             'alamat' => $request->alamat,
-            'domisi' => $request->domisi,
+            'domisi' => $request->domisili,
             'desa' => $request->desa,
             'lokasi' => Session::get('lokasi'),
             'hp' => $request->no_telp,
@@ -399,19 +450,21 @@ class AnggotaController extends Controller
             'status_pernikahan' => $request->status_pernikahan,
             'kk' => $request->no_kk,
             'nik_penjamin' => $request->nik_penjamin,
-            'penjamin' => $request->penjamin,
-            'hubungan' => $request->hubungan,
+            'penjamin' => $request->nama_penjamin,
+            'hubungan' => $request->hubungan_penjamin,
             'nama_ibu' => $request->nama_ibu,
             'tempat_kerja' => $request->tempat_kerja,
             'usaha' => $request->jenis_usaha,
+            'keterangan_usaha' => $request->keterangan_usaha,
             'foto' => '1',
             'terdaftar' => date('Y-m-d'),
             'status' => '1',
             'petugas' => auth()->user()->id,
         ];
 
-        $pend = Anggota::where('nik', $penduduk->nik)->update($update);
+        $pend = Anggota::where('nik', $request->nik)->update($update);
         return response()->json([
+            'success' => true,
             'msg' => 'Penduduk dengan nama ' . $update['namadepan'] . ' berhasil disimpan'
         ], Response::HTTP_ACCEPTED);
     }

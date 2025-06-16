@@ -184,6 +184,8 @@
     <div class="main-content">
         <x-app.navbar />
         @yield('content')
+        
+        @yield('modal')
     </div>
 
     <div class="fixed-plugin">
@@ -273,6 +275,7 @@
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-maskmoney/3.0.2/jquery.maskMoney.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/chartjs.min.js"></script>
     <script src="../assets/js/plugins/swiper-bundle.min.js" type="text/javascript"></script>
@@ -324,6 +327,11 @@
         toastr.options.closeButton = true;
         toastr.options.progressBar = true;
         toastr.options.timeOut = 3000;
+
+        $(".keuangan").maskMoney({
+            allowNegative: true
+        });
+
     </script>
 </body>
 

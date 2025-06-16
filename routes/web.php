@@ -169,6 +169,11 @@ Route::get('/pengaturan/{inv}/invoice', [SopController::class, 'detailInvoice'])
 
 Route::post('/pengaturan/sop/simpanttdpelaporan', [SopController::class, 'simpanTtdPelaporan'])->middleware('auth', 'is_aktif');
 
+
+Route::put('/penduduk/simpan/{nia}', [AnggotaController::class, 'simpan'])
+    ->name('penduduk.simpan')
+    ->middleware('auth', 'is_aktif');
+
 Route::get('/data/anggota', [AnggotaController::class, 'register'])->middleware('auth', 'is_aktif');
 
 Route::get('/anggota/load-form/{nik}', [AnggotaController::class, 'loadForm'])->middleware('auth', 'is_aktif');

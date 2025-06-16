@@ -2,11 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\resources",
-    "\\resources\\views",
-    "\\resources\\views\\sop",
-    "\\resources\\views\\sop\\partials"
+    "\\app\\Http",
+    "\\app\\Http\\Controllers"
   ],
-  "SelectedNode": "\\resources\\views\\sop\\partials\\_wellcome.blade.php",
   "PreviewInSolutionExplorer": false
 }

@@ -259,8 +259,9 @@
 
     $(document).on('click', '.btn-simpan', function (e) {
         e.preventDefault();
-    
+
         let btn = $(this);
+        let originalText = btn.text(); // Simpan teks awal
         let targetForm = $($(this).data('target'));
         let formData = new FormData(targetForm[0]);
         let actionUrl = targetForm.attr('action');
@@ -268,9 +269,10 @@
 
         // Hapus pesan error sebelumnya
         targetForm.find('small.text-danger').text('');
+
         $.ajax({
             url: actionUrl,
-            method: 'POST', 
+            method: 'POST',
             data: formData,
             processData: false,
             contentType: false,
@@ -278,7 +280,7 @@
                 btn.prop('disabled', true).text('Menyimpan...');
             },
             success: function (res) {
-                btn.prop('disabled', false).text('Simpan Perubahan');
+                btn.prop('disabled', false).text(originalText); // Kembalikan teks asli
                 if (res.success) {
                     toastr.success(res.msg);
                 } else {
@@ -286,14 +288,13 @@
                 }
             },
             error: function (xhr) {
-                btn.prop('disabled', false).text('Simpan Perubahan');
+                btn.prop('disabled', false).text(originalText); // Kembalikan teks asli
                 if (xhr.status === 301 || xhr.status === 422) {
                     let errors = xhr.responseJSON;
                     $.each(errors, function (key, messages) {
                         $('#msg_' + key).text(messages[0]);
                     });
                 } else {
-                    // Kalau response JSON ada dan berbentuk object error pesan
                     if (xhr.responseJSON && typeof xhr.responseJSON === 'object') {
                         $.each(xhr.responseJSON, function(key, messages) {
                             $.each(messages, function(i, msg) {
@@ -305,7 +306,6 @@
                     }
                 }
             }
-
         });
     });
 </script>

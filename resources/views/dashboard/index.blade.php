@@ -95,7 +95,7 @@ if ($surplus_bulan_lalu > 0) {
                     <div class="card border shadow-xs mb-4">
                         <div class="card-body text-start p-3 w-100">
                             <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
                                 <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
@@ -125,7 +125,7 @@ if ($surplus_bulan_lalu > 0) {
                     <div class="card border shadow-xs mb-4">
                         <div class="card-body text-start p-3 w-100">
                             <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24" fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -156,7 +156,7 @@ if ($surplus_bulan_lalu > 0) {
                     <div class="card border shadow-xs mb-4">
                         <div class="card-body text-start p-3 w-100">
                             <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24" fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -185,7 +185,7 @@ if ($surplus_bulan_lalu > 0) {
                     <div class="card border shadow-xs mb-4">
                         <div class="card-body text-start p-3 w-100">
                             <div
-                                class="icon icon-shape icon-sm bg-dark text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
                                 <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 24 24" fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -230,22 +230,6 @@ if ($surplus_bulan_lalu > 0) {
         };
 
         var ctx = document.getElementById("chart-simpanan").getContext("2d");
-
-        // Buat gradient untuk masing-masing dataset
-        var gradientPokok = ctx.createLinearGradient(0, 230, 0, 50);
-        gradientPokok.addColorStop(1, 'rgba(45,168,255,0.3)');
-        gradientPokok.addColorStop(0.2, 'rgba(45,168,255,0.0)');
-        gradientPokok.addColorStop(0, 'rgba(45,168,255,0)');
-
-        var gradientUmum = ctx.createLinearGradient(0, 230, 0, 50);
-        gradientUmum.addColorStop(1, 'rgba(124,58,237,0.3)');
-        gradientUmum.addColorStop(0.2, 'rgba(124,58,237,0.0)');
-        gradientUmum.addColorStop(0, 'rgba(124,58,237,0)');
-
-        var gradientSukarela = ctx.createLinearGradient(0, 230, 0, 50);
-        gradientSukarela.addColorStop(1, 'rgba(237,58,124,0.3)');
-        gradientSukarela.addColorStop(0.2, 'rgba(237,58,124,0.0)');
-        gradientSukarela.addColorStop(0, 'rgba(237,58,124,0)');
 
         new Chart(ctx, {
             type: "line",
@@ -422,7 +406,7 @@ if ($surplus_bulan_lalu > 0) {
                         tension: 0.4,
                         borderWidth: 0,
                         borderSkipped: false,
-                        backgroundColor: "#2ca8ff",
+                        backgroundColor: "#4adf83",
                         data: @json(array_values($saldo[4])),
                         maxBarThickness: 6
                     },
@@ -442,9 +426,9 @@ if ($surplus_bulan_lalu > 0) {
                         tension: 0,
                         borderWidth: 2,
                         pointRadius: 3,
-                        borderColor: "#832bf9",
-                        pointBorderColor: "#832bf9",
-                        pointBackgroundColor: "#832bf9",
+                        borderColor: "#2ca8ff",
+                        pointBorderColor: "#2ca8ff",
+                        pointBackgroundColor: "#2ca8ff",
                         backgroundColor: gradientStroke2,
                         fill: true,
                         data: @json(array_values($saldo['surplus'])),

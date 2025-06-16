@@ -1,32 +1,13 @@
 
 <div>
-    <div class="card mb-3 text-center">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <span><i class="fa fa-user"></i></span>
-            <span>|</span>
-        </div>
-        <div class="card-body">
-            @php
-                $fotoPath = "../assets/img/{$anggota->foto}.jpg";
-                $defaultFoto = $anggota->jk == 'L' ? '../assets/img/male.jpg' : '../assets/img/female.jpg';
-            @endphp
-
-            <img src="{{ file_exists(public_path($fotoPath)) ? asset($fotoPath) : asset($defaultFoto) }}" class="img-thumbnail w-50" alt="Foto Nasabah"> 
-            <br/>
-            <button class="btn btn-sm btn-secondary mb-2" >AMBIL FOTO</button>
-            <div class="d-grid gap-2 mt-3">
-                <button class="btn btn-primary btn-sm" >SIMPAN DATA</button>
-                <button class="btn btn-outline-secondary btn-sm" >Cetak Kartu Anggota</button>
-                <button class="btn btn-outline-danger btn-sm" >Black List NIK</button>
-            </div>
-        </div>
-    </div>
-    
     <div class="card mb-3">
-        <div class="card-header bg-primary text-white">
-            <div class="mb-2">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
                 <i class="fa fa-users"></i> Status Keanggotaan
             </div>
+            <a href="URL-DOKUMEN" target="_blank" class="text-white" title="Form Anggota">
+                <i class="fa fa-file-alt"></i>
+            </a>
         </div>
         <div class="card-body text-center">
 
@@ -46,7 +27,10 @@
 
             @if ($status === 'B')
                 <p class="text-github fw-bold">YBS Terblokir oleh sistem.</p>
-                <a href="" class="btn btn-github">Buka Blokir</a>
+                
+                <button type="button" id="blokir" name="blokir" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#ModalPinj">
+                    Buka Blokir
+                </button>
 
             @elseif ($status === 'A')
                 @if ($tgl_kondisi->greaterThan($tgl_hitung))
@@ -55,15 +39,68 @@
                     <p class="text-warning fw-bold">
                         Anggota Tidak Aktif sejak {{ $tgl_kondisi->format('d-m-Y') }}
                     </p>
-                    <a href="" class="btn btn-primary">Perpanjang Keanggotaan</a>
+                    
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPerpanjang">
+                        Perpanjang Keanggotaan
+                    </button>
+                    
+                    <button type="button" id="riwayat_anggota" name="riwayat_anggota" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#ModalPinj">
+                        Riwayat Pembayaran Keanggotaan
+                    </button>
                 @endif
 
             @else
                 <p class="text-secondary fw-bold">YBS Belum Terdaftar sebagai anggota.</p>
-                <a href="" class="btn btn-success">Daftarkan Anggota</a>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDaftarAnggota" data-id="{{ $anggota->id ?? '' }}">
+                  Daftarkan Anggota
+                </button>
             @endif
         </div>
     </div>
+
+    <div class="card mb-3 text-center">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span><i class="fa fa-user"></i></span>
+            <span>|</span>
+        </div>
+        <div class="card-body">
+            @php
+                // Cek dulu apakah $anggota ada
+                if ($anggota) {
+                    $fotoPath = "../assets/img/{$anggota->foto}.jpg";
+                    $defaultFoto = $anggota->jk == 'L' ? '../assets/img/male.jpg' : '../assets/img/female.jpg';
+                } else {
+                    $nik = request()->route('nik');
+                    $tanggalNIK = intval(substr($nik, 6, 2));
+                    $jk = $tanggalNIK >= 40 ? 'P' : 'L';
+
+                    $fotoPath = "../assets/img/kosong.jpg";
+                    $defaultFoto = $jk == 'L' ? '../assets/img/male.jpg' : '../assets/img/female.jpg';
+                }
+
+            @endphp
+            
+            <img src="{{ file_exists(public_path($fotoPath)) ? asset($fotoPath) : asset($defaultFoto) }}" class="img-thumbnail w-50" alt="Foto Nasabah"> 
+            <br/>
+            <br/>
+            <button type="button" class="btn btn-sm btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#ModalFoto">
+                AMBIL FOTO
+            </button>
+            
+
+            <div class="d-grid gap-2 mt-3">
+                <button id="simpan_data" name="simpan_data" class="btn btn-primary btn-sm btn-simpan-angg" data-target="#FormPenduduk">SIMPAN DATA</button>
+                <a href="/a" 
+                   class="btn btn-outline-secondary btn-sm" 
+                   target="_blank" 
+                   {{ !$anggota ? 'disabled' : '' }}>
+                   Cetak Kartu Anggota
+                </a>
+                <button class="btn btn-outline-danger btn-sm" {{ !$anggota ? 'disabled' : '' }}>Black List NIK</button>
+            </div>
+        </div>
+    </div>
+    
 
     <div class="card mb-3">
         <div class="card-header bg-primary text-white">
@@ -88,7 +125,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($simpanan->count())
+                        @if ($simpanan && $simpanan->count() > 0)
                             @foreach ($simpanan as $simp)
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailSimpanan" id="DetailSimpanan{{$simp->id}}">
                                     <td>{{ $simp->nomor_rekening }}</td>
@@ -118,7 +155,10 @@
                 <i class="fa fa-money-bill"></i> Pinjaman
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-sm btn-white" disabled>Tambah Pinjaman</button>
+                <button type="button" class="btn btn-sm btn-white" data-bs-toggle="modal" data-bs-target="#ModalPinj">
+                    Tambah Pinjaman
+                </button>
+
                 <button class="btn btn-sm btn-white" disabled>Form Pinjaman</button>
             </div>
         </div>
@@ -135,7 +175,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if ($pinjaman->count())
+                        @if ($pinjaman && $pinjaman->count() > 0)
                             @foreach ($pinjaman as $pinj)
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailProposalIndividu" id="DetailProposalIndividu{{$pinj->id}}">
                                     <td>{{ $pinj->id }}</td>
