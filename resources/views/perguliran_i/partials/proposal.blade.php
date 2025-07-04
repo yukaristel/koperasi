@@ -4,60 +4,85 @@
     <div class="card mb-3">
         <div class="card-body">
             <div class="row mt-0">
-                <div class="col-md-6 mb-3">
-                    <div class="border border-light border-2 border-radius-md p-3">
-                        <h6 class="text-primary mb-0">
-                            Proposal
-                        </h6>
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Tgl Pengajuan
-                                <span class="badge badge-success badge-pill">
-                                    {{ Tanggal::tglIndo($perguliran_i->tgl_proposal) }}
-                                </span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Pengajuan
-                                <span class="badge badge-success badge-pill">
-                                    {{ number_format($perguliran_i->proposal) }}
-                                </span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Jenis Jasa
-                                <span class="badge badge-success badge-pill">
-                                    {{ $perguliran_i->jasa->nama_jj }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="border border-light border-2 border-radius-md p-3">
-                        <h6 class="text-info text-gradient mb-0">
-                            &nbsp;
-                        </h6>
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Jasa
-                                <span class="badge badge-success badge-pill">
-                                    {{ $perguliran_i->pros_jasa . '% / ' . $perguliran_i->jangka . ' bulan' }}
-                                </span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Angs. Pokok
-                                <span class="badge badge-success badge-pill">
-                                    {{ $perguliran_i->sis_pokok->nama_sistem }}
-                                </span>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                                Angs. Jasa
-                                <span class="badge badge-success badge-pill">
-                                    {{ $perguliran_i->sis_jasa->nama_sistem }}
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                @php
+                    $semua_tahapan = [
+                        'data_proposal' => ['label' => 'PENGAJUAN PEMOHON', 'class' => 'bg-secondary'],
+                        'data_verifikasi' => ['label' => 'REKOMENDASI ANALIS', 'class' => 'bg-info'],
+                        'data_verifikasi1' => ['label' => 'APPROVED KEPALA', 'class' => 'bg-primary'],
+                        'data_verifikasi2' => ['label' => 'APPROVED BAWAS', 'class' => 'bg-dark'],
+                        'data_verifikasi3' => ['label' => 'VERIFIKASI LAINNYA', 'class' => 'bg-warning'],
+                        'data_waiting' => ['label' => 'WAITING', 'class' => 'bg-success'],
+                    ];
+
+                    // Filter tahapan sesuai status
+                    $status = $perguliran_i->status;
+                    $tahapan = [];
+
+                    if ($status === 'P') {
+                        $tahapan = ['data_proposal'];
+                    } elseif ($status === 'V') {
+                        $tahapan = ['data_proposal', 'data_verifikasi'];
+                    } elseif ($status === 'V1') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1'];
+                    } elseif ($status === 'V2') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2'];
+                    } elseif ($status === 'V3') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2', 'data_verifikasi3'];
+                    } else {
+                        $tahapan = array_keys($semua_tahapan); // tampilkan semua
+                    }
+                @endphp
+
+                <table class="table table-bordered table-striped w-100 small">
+                    <thead class="text-center">
+                        <tr>
+                            <th>Sumber Data/Status</th>
+                            <th>Tanggal</th>
+                            <th>Alokasi</th>
+                            <th>Jangka</th>
+                            <th>%</th>
+                            <th>Bunga</th>
+                            <th>SA. Pokok</th>
+                            <th>SA. Bunga</th>
+                            <th>Tujuan Kredit</th>
+                            <th>CEV</th>
+                            <th><i class="fas fa-user"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tahapan as $key)
+                            @php
+                                $data = $perguliran_i->$key;
+                                $parts = explode('#', $data);
+                                $tgl = isset($parts[0]) && $parts[0] !== '0000-00-00' ? Tanggal::tglIndo($parts[0]) : '00//0000';
+                                $alokasi = isset($parts[1]) ? number_format((float)$parts[1]) : 0;
+                                $jangka = $perguliran_i->jangka ?? '-';
+                                $jasa = $perguliran_i->pros_jasa ?? '-';
+                                $jj = ucfirst($perguliran_i->jenis_jasa->nama_jj ?? 'Flat');
+                                $sa_pokok = ucfirst($perguliran_i->sis_pokok->nama_sistem ?? '-');
+                                $sa_jasa = ucfirst($perguliran_i->sis_jasa->nama_sistem ?? '-');
+                                $alokasi_tujuan = $perguliran_i->alokasi_tujuan ?? 'Modal Kerja';
+                                $cev = 0;
+                                $ikon = $loop->index == 0 ? 'WJ' : 'SW'; // bebas kamu sesuaikan
+                                $label = $semua_tahapan[$key]['label'];
+                                $class = $semua_tahapan[$key]['class'];
+                            @endphp
+                            <tr>
+                                <td><span class="badge {{ $class }} text-dark fs-6">{{ $label }}</span></td>
+                                <td>{{ $tgl }}</td>
+                                <td>{{ $alokasi }}</td>
+                                <td>{{ $jangka }} bulan</td>
+                                <td>{{ $jasa }} %</td>
+                                <td>{{ $jj }}</td>
+                                <td>{{ $sa_pokok }}</td>
+                                <td>{{ $sa_jasa }}</td>
+                                <td>{{ $alokasi_tujuan }}</td>
+                                <td>{{ $cev }}</td>
+                                <td>{{ $ikon }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

@@ -17,6 +17,63 @@ if ($surplus_bulan_lalu > 0) {
 
 @extends('layouts.app')
 
+@section('style')
+    <style>
+        .btn-pulse-outer {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background-color: #009688;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        .btn-pulse-outer span.pulse-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background-color: #009688;
+            opacity: 0.4;
+            animation: pulse-ring 4s ease-out infinite;
+            z-index: 0;
+        }
+
+        .btn-pulse-outer span.pulse-ring.delay {
+            animation-delay: 1s;
+        }
+        .btn-pulse-outer span.pulse-ring.delay2 {
+            animation-delay: 2s;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.4;
+            }
+            70% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .btn-pulse-outer i {
+            position: relative;
+            z-index: 1;
+            color: white;
+            font-size: 24px;
+        }
+    </style>
+
+@endsection
+
 @section('content')
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <div class="container-fluid py-4 px-5">
@@ -181,35 +238,43 @@ if ($surplus_bulan_lalu > 0) {
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-sm-6">
-                    <div class="card border shadow-xs mb-4">
-                        <div class="card-body text-start p-3 w-100">
-                            <div
-                                class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.122-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
-                                        clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="w-100">
-                                        <p class="text-sm text-secondary mb-1">Jumlah Anggota</p>
-                                        <h4 class="mb-2 font-weight-bold">1.235</h4>
-                                        <div class="d-flex align-items-center">
-                                            <span class="text-sm text-success font-weight-bolder">
-                                                <i class="fa fa-chevron-up text-xs me-1"></i>18%
-                                            </span>
-                                            <span class="text-sm ms-1">dari 1.047</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+
+<div class="col-xl-3 col-sm-6">
+    <div class="card border shadow-xs mb-4">
+        <div class="card-body text-start p-3 w-100 d-flex justify-content-between align-items-center">
+            <div>
+                <div class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.122-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
+                            clip-rule="evenodd" />
+                    </svg>
                 </div>
+                <p class="text-sm text-secondary mb-1">Jumlah Anggota</p>
+                <h4 class="mb-2 font-weight-bold">1.235</h4>
+                <div class="d-flex align-items-center">
+                    <span class="text-sm text-success font-weight-bolder">
+                        <i class="fa fa-chevron-up text-xs me-1"></i>18%
+                    </span>
+                    <span class="text-sm ms-1">dari 1.047</span>
+                </div>
+            </div>
+            <div class="d-flex align-items-center justify-content-center" style="flex: 0 0 90px; height: 100%;">
+<a href="/data/anggota" class="btn-pulse-outer">
+    <span class="pulse-ring"></span>
+    <span class="pulse-ring delay"></span>
+    <span class="pulse-ring delay2"></span>
+    <i class="fas fa-play"></i>
+</a>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </main>

@@ -175,13 +175,14 @@
                         </tr>
                     </thead>
                     <tbody>
+
                         @if ($pinjaman && $pinjaman->count() > 0)
                             @foreach ($pinjaman as $pinj)
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailProposalIndividu" id="DetailProposalIndividu{{$pinj->id}}">
                                     <td>{{ $pinj->id }}</td>
                                     <td>{{ $pinj->tgl_cair }}</td>
-                                    <td>{{ number_format($pinj->alokasi) }}</td>
-                                    <td>{{ number_format($pinj->saldo->saldo_pokok) }}</td>
+                                    <td>{{ number_format($pinj->alokasi ?? 0) }}</td>
+                                    <td>{{ number_format($pinj->saldo->saldo_pokok ?? 0) }}</td>
                                     <td><span class="badge bg-{{ $pinj->sts->warna_status }} text-black">{{ $pinj->sts->nama_status }}</span></td>
                                 </tr>
                             @endforeach

@@ -6,7 +6,7 @@
         <div class="col-12 mb-3">
             <div class="bg-primary text-white p-3 rounded">
                 <h5 class="mb-0 text-white">
-                    <i class="fa fa-address-card text-white"></i> Register Nasabah
+                    <i class="fa fa-address-card text-white"></i> Keanggotaan
                 </h5>
             </div>
         </div>
@@ -287,19 +287,22 @@
             beforeSend: function () {
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...');
             },
-            success: function (res) {
+            success: function(response) {
+                toastr.clear();
                 btn.text(originalText);
-                if (res.success) {
-                    toastr.success(res.msg);
+
+                if (response.success) {
+                    toastr.success(response.msg || 'Transaksi ' + (jenisMutasi == '1' ? 'setor' : 'tarik') + ' berhasil disimpan');
                     document.querySelectorAll('.modal.show').forEach(modalEl => {
                         const modalInstance = bootstrap.Modal.getInstance(modalEl);
                         if (modalInstance) modalInstance.hide();
                     });
-                    $('#isi_kiri').html(res.html_kiri);
-                    $('#isi_kanan').html(res.html_kanan);
+
+                    if (response.html_kiri) $('#isi_kiri').html(response.html_kiri);
+                    if (response.html_kanan) $('#isi_kanan').html(response.html_kanan);
                     $('#namadepan').focus();
                 } else {
-                    toastr.warning(res.msg || 'Proses berhasil tetapi ada peringatan');
+                    toastr.warning(response.msg || 'Gagal menyimpan transaksi');
                 }
             },
             error: function (xhr) {
@@ -325,6 +328,70 @@
 
         let modal = $(this);
         modal.find('input#nia').val(anggotaId); 
+    });
+    
+    $('#modalPerpanjang').on('show.bs.modal', function (event) {
+        let button = $(event.relatedTarget); 
+        let anggotaId = button.data('id'); 
+
+        let modal = $(this);
+        modal.find('input#nia').val(anggotaId); 
+    });
+    
+    $('#simpanTransaksiAnggota').click(function() {
+        var jenisMutasi = '3';
+        var tglTransaksi = $('#tgl_transaksi_anggota').val();
+        var jumlah = $('#jumlah_anggota').val();
+        var nia = $('#nia').val();
+
+        if (!jenisMutasi || !tglTransaksi || !jumlah) {
+            toastr.warning('Mohon lengkapi semua field.');
+            return;
+        }
+
+        // Menampilkan loading manual jika ingin tetap menunjukkan proses
+        let loadingToast = toastr.info('Sedang memproses transaksi...', 'Mohon menunggu', {
+            timeOut: 0,
+            extendedTimeOut: 0,
+            tapToDismiss: false,
+            closeButton: false
+        });
+
+        $.ajax({
+            url: '/simpanan/simpan-transaksi',
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                jenis_mutasi: jenisMutasi,
+                tgl_transaksi: tglTransaksi,
+                jumlah: jumlah,
+                nomor_rekening: nomorRekening,
+                nama_debitur: namaDebitur,
+                nia: nia
+            },
+            success: function(response) {
+                toastr.clear(); // hilangkan loading
+                if (response.success) {
+                    toastr.success('Transaksi ' + (jenisMutasi == '1' ? 'setor' : 'tarik') + ' berhasil disimpan');
+                    refreshTransaksiContainer();
+                    resetForm();
+                } else {
+                    toastr.error('Gagal menyimpan transaksi: ' + response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                toastr.clear(); // hilangkan loading
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    $.each(errors, function (key, messages) {
+                        $('#msg_' + key).text(messages[0]);
+                    });
+                    toastr.warning('Silakan periksa kembali data yang diisi');
+                } else {
+                    toastr.error('Terjadi kesalahan: ' + error);
+                }
+            }
+        });
     });
 
 </script>
@@ -354,7 +421,7 @@
         </div>
           <div class="mb-3">
             <label for="simpanan_pokok" class="form-label">Simpanan Pokok</label>
-            <input type="text" class="form-control keuangan" id="setoran_awal" name="setoran_awal" required>
+            <input type="text" class="form-control keuangan" id="setoran_awal" name="setoran_awal" value="0" required>
           </div>
           <div class="mb-3">
             <label for="simpanan_wajib" class="form-label">Simpanan Wajib</label>
@@ -374,80 +441,292 @@
   </div>
 </div>
 
+
+
+
+
 <div class="modal fade" id="ModalPinj" tabindex="-1" aria-labelledby="navsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg modal-custom-height">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="navsModalLabel">Modal dengan Tab Navigasi</h5>
+      <div class="modal-header sticky-top bg-white">
+        <h5 class="modal-title" id="navsModalLabel">Register Pinjaman Anggota</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        
         {{-- Tabs --}}
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1"
-              type="button" role="tab" aria-controls="tab1" aria-selected="true">Tab 1</button>
+            <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab" aria-controls="tab1" aria-selected="true">Data Pengajuan Pinjaman</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2"
-              type="button" role="tab" aria-controls="tab2" aria-selected="false">Tab 2</button>
+            <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab" aria-controls="tab2" aria-selected="false">Laba Rugi</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3"
-              type="button" role="tab" aria-controls="tab3" aria-selected="false">Tab 3</button>
+            <button class="nav-link" id="tab3-tab" data-bs-toggle="tab" data-bs-target="#tab3" type="button" role="tab" aria-controls="tab3" aria-selected="false">Neraca Keuangan</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4"
-              type="button" role="tab" aria-controls="tab4" aria-selected="false">Tab 4</button>
+            <button class="nav-link" id="tab4-tab" data-bs-toggle="tab" data-bs-target="#tab4" type="button" role="tab" aria-controls="tab4" aria-selected="false">Aspek Jaminan</button>
           </li>
         </ul>
 
         {{-- Tab Content --}}
         <div class="tab-content mt-3" id="myTabContent">
           <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-            Konten Tab 1
+            <div class="row">
+              <div class="col-md-6">
+                <div class="position-relative mb-3">
+                  <label for="jenis_produk_pinjaman" class="form-label">Jenis Produk Pinjaman</label>
+                  <select class="js-example-basic-single form-control" name="jenis_produk_pinjaman" id="jenis_produk_pinjaman" style="width: 100%;">
+                    @foreach ($jenis_pp as $jpp)
+                    <option value="{{ $jpp->id }}">
+                      {{ $jpp->nama_jpp }} ({{ $jpp->deskripsi_jpp }})
+                    </option>
+                    @endforeach
+                  </select>
+                  <small class="text-danger" id="msg_jenis_produk_pinjaman"></small>
+                </div>
+              </div>
+      
+              <div class="col-md-6">
+                <div class="position-relative mb-3">
+                  <label for="tgl_proposal" class="form-label">Tgl proposal</label>
+                  <input autocomplete="off" type="text" name="tgl_proposal" id="tgl_proposal" class="form-control date" value="{{ date('d/m/Y') }}">
+                  <small class="text-danger" id="msg_tgl_proposal"></small>
+                </div>
+              </div>
+      
+              <div class="col-md-6">
+                <div class="position-relative mb-3">
+                  <label for="pengajuan" class="form-label">Pengajuan Rp.</label>
+                  <input autocomplete="off" type="text" name="pengajuan" id="pengajuan" class="form-control">
+                  <small class="text-danger" id="msg_pengajuan"></small>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="position-relative mb-3">
+                  <label for="sistem_angsuran_pokok" class="form-label">Sistem Angs. Pokok</label>
+                  <select class="js-example-basic-single form-control" name="sistem_angsuran_pokok" id="sistem_angsuran_pokok" style="width: 100%;">
+                    @foreach ($sistem_angsuran as $sa)
+                    <option value="{{ $sa->id }}">
+                      {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
+                    </option>
+                    @endforeach
+                  </select>
+                  <small class="text-danger" id="msg_sistem_angsuran_pokok"></small>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="position-relative mb-3">
+                  <label for="jangka" class="form-label">Jangka</label>
+                  <input autocomplete="off" type="number" name="jangka" id="jangka" class="form-control" value="{{ $kec->def_jangka }}">
+                  <small class="text-danger" id="msg_jangka"></small>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <div class="position-relative mb-3">
+                  <label for="pros_jasa" class="form-label">Prosentase Jasa (%)</label>
+                  <input autocomplete="off" type="number" name="pros_jasa" id="pros_jasa" class="form-control" value="{{ $kec->def_jasa }}">
+                  <small class="text-danger" id="msg_pros_jasa"></small>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="position-relative mb-3">
+                  <label for="sistem_angsuran_jasa" class="form-label">Sistem Angs. Jasa</label>
+                  <select class="js-example-basic-single form-control" name="sistem_angsuran_jasa" id="sistem_angsuran_jasa" style="width: 100%;">
+                    @foreach ($sistem_angsuran as $sa)
+                    <option value="{{ $sa->id }}">
+                      {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
+                    </option>
+                    @endforeach
+                  </select>
+                  <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
+                </div>
+              </div>
+            </div>
           </div>
+  
           <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
-            Konten Tab 2
+            <div class="row">
+                <div class="col-md-6 border-end">
+                    <div class="position-relative mb-3">
+                        <label for="pendapatan" class="form-label">PENDAPATAN</label>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pendapatan1" class="form-label">Penghasilan Pemohon</label>
+                        <input autocomplete="off" type="text" name="pendapatan1" id="pendapatan1" class="form-control">
+                        <small class="text-danger" id="msg_pendapatan1"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pendapatan2" class="form-label">Penghasilan Suami/Istri</label>
+                        <input autocomplete="off" type="text" name="pendapatan2" id="pendapatan2" class="form-control">
+                        <small class="text-danger" id="msg_pendapatan2"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pendapatan3" class="form-label">Penghasilan Lainnya</label>
+                        <input autocomplete="off" type="text" name="pendapatan3" id="pendapatan3" class="form-control">
+                        <small class="text-danger" id="msg_pendapatan3"></small>
+                    </div>
+                </div>
+
+                <div class="col-md-6 border-start">
+                    <div class="position-relative mb-3">
+                        <label for="biaya" class="form-label">BIAYA</label>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya1" class="form-label">Pangan</label>
+                        <input autocomplete="off" type="text" name="biaya1" id="biaya1" class="form-control">
+                        <small class="text-danger" id="msg_biaya1"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya2" class="form-label">Sandang</label>
+                        <input autocomplete="off" type="text" name="biaya2" id="biaya2" class="form-control">
+                        <small class="text-danger" id="msg_biaya2"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya3" class="form-label">Listrik & Air</label>
+                        <input autocomplete="off" type="text" name="biaya3" id="biaya3" class="form-control">
+                        <small class="text-danger" id="msg_biaya3"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya4" class="form-label">Telpon & Internet</label>
+                        <input autocomplete="off" type="text" name="biaya4" id="biaya4" class="form-control">
+                        <small class="text-danger" id="msg_biaya4"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya5" class="form-label">Biaya Pendidikan</label>
+                        <input autocomplete="off" type="text" name="biaya5" id="biaya5" class="form-control">
+                        <small class="text-danger" id="msg_biaya5"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya6" class="form-label">Angsuran Bank Lain</label>
+                        <input autocomplete="off" type="text" name="biaya6" id="biaya6" class="form-control">
+                        <small class="text-danger" id="msg_biaya6"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="biaya7" class="form-label">Biaya Lainnya</label>
+                        <input autocomplete="off" type="text" name="biaya7" id="biaya7" class="form-control">
+                        <small class="text-danger" id="msg_biaya7"></small>
+                    </div>
+                </div>
+            </div>
           </div>
+          
           <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="tab3-tab">
-            Konten Tab 3
+            <div class="row">
+                <div class="col-md-6 border-end">
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">AKTIVA</label>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Uang Tunai</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Simpanan</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Kendaraan</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Tanah</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Bangunan</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="aktiva" class="form-label">Aktiva Lain-lain</label>
+                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <small class="text-danger" id="msg_aktiva"></small>
+                    </div>
+                </div>
+
+                <div class="col-md-6 border-start">
+                    <div class="position-relative mb-3">
+                        <label for="pasiva" class="form-label">PASIVA</label>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pasiva1" class="form-label">Pinjaman Pribadi</label>
+                        <input autocomplete="off" type="text" name="pasiva1" id="pasiva1" class="form-control">
+                        <small class="text-danger" id="msg_pasiva1"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pasiva2" class="form-label">Pinjaman</label>
+                        <input autocomplete="off" type="text" name="pasiva2" id="pasiva2" class="form-control">
+                        <small class="text-danger" id="msg_pasiva2"></small>
+                    </div>
+                    <div class="position-relative mb-3">
+                        <label for="pasiva3" class="form-label">Pinjaman Bank</label>
+                        <input autocomplete="off" type="text" name="pasiva3" id="pasiva3" class="form-control">
+                        <small class="text-danger" id="msg_pasiva3"></small>
+                    </div>
+                </div>
+            </div>
           </div>
+  
           <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="tab4-tab">
-            Konten Tab 4
+          
+            <div class="col-md-12">
+                <div class="position-relative mb-3">
+                    <label for="jaminan" class="form-label">JAMINAN</label>
+                </div>
+                <div class="position-relative mb-3">
+                    <label for="jaminan" class="form-label">Dari Permohonan Pinjaman ini, Dijaminkan Harta/Benda Berupa :</label>
+                    <textarea name="jaminan" id="jaminan" class="form-control" rows="4" autocomplete="off" placeholder="Tuliskan deskripsi jaminan selengkap mungkin, misalnya :
+nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya"></textarea>
+                    <small class="text-danger" id="msg_jaminan"></small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative mb-3">
+                    <label for="nilai_jaminan" class="form-label">Estimasi Nilai Jual Rp. :</label>
+                    <input autocomplete="off" type="text" name="nilai_jaminan" id="nilai_jaminan" class="form-control">
+                    <small class="text-danger" id="msg_nilai_jaminan"></small>
+                </div>
+            </div>
           </div>
         </div>
-
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      <div class="modal-footer sticky-bottom bg-white">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Simpan Registrasi Pinjaman</button>
       </div>
     </div>
   </div>
 </div>
 
+
 <div class="modal fade" id="modalPerpanjang" tabindex="-1" aria-labelledby="modalPerpanjangLabel" aria-hidden="true">
   <div class="modal-dialog">
-    <form action="/transaksi" method="POST">
-      @csrf
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="modalPerpanjangLabel">Perpanjang Keanggotaan</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <input type="hidden" id="nia" name="nia" value="">
         </div>
         <div class="modal-body">
           <div class="mb-3">
             <label for="tanggal" class="form-label">Tanggal Transaksi</label>
-            <input type="date" name="tanggal" id="tanggal" class="form-control" value="{{ date('Y-m-d') }}" required>
+            <input type="date" name="tgl_transaksi_anggota" id="tgl_transaksi_anggota" class="form-control" value="{{ date('Y-m-d') }}" required>
           </div>
           <div class="mb-3">
             <label for="jumlah" class="form-label">Jumlah</label>
-            <input type="number" name="jumlah" id="jumlah" class="form-control" value="" required>
+            <input type="number" name="jumlah_anggota" id="jumlah_anggota" class="form-control" value="0" required>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-success">Simpan</button>
+          <button type="button" name="simpanTransaksiAnggota" id="simpanTransaksiAnggota" class="btn btn-success">Simpan</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
         </div>
       </div>

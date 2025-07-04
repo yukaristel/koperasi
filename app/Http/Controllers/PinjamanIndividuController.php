@@ -37,7 +37,8 @@ class PinjamanIndividuController extends Controller
         $status = strtolower($status);
         
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        
+        $tambahan = $kec->tahapan_perguliran;
+
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
                 $query->where('lokasi', '0')
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -51,7 +52,7 @@ class PinjamanIndividuController extends Controller
 
         
         $title = 'Tahapan Perguliran Individu';
-        return view('perguliran_i.index')->with(compact('title', 'status', 'jenis_pp'));
+        return view('perguliran_i.index')->with(compact('title','tambahan', 'status', 'jenis_pp'));
     }
 
     public function peraktif()
@@ -76,7 +77,6 @@ class PinjamanIndividuController extends Controller
             ->orderBy('kode', 'asc')
             ->get();
 
-        
         $title = 'Tahapan Perguliran Individu';
         return view('perguliran_i.aktif')->with(compact('title', 'status', 'jenis_pp'));
     }
@@ -112,22 +112,29 @@ class PinjamanIndividuController extends Controller
     {
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'P')
-                ->where('jenis_pinjaman', 'I')
+                ->where('jenis_pinjaman', '1')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
-                    $jangka = $row->jangka;
-                    $pros = $row->pros_jasa;
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
 
                     $jasa = number_format($pros / $jangka, 2);
                     return $jasa . '% / ' . $jangka . ' bln';
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
-                    $jpp = $row->jpp;
-                    $status = $jpp->warna_jpp;
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
 
-                    $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
                 })
                 ->editColumn('tgl_proposal', function ($row) {
@@ -137,6 +144,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->proposal);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
                     return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
                 })
                 ->rawColumns(['anggota.namadepan'])
@@ -148,22 +158,29 @@ class PinjamanIndividuController extends Controller
     {
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'V')
-                ->where('jenis_pinjaman', 'I')
+                ->where('jenis_pinjaman', '1')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
-                    $jangka = $row->jangka;
-                    $pros = $row->pros_jasa;
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
 
                     $jasa = number_format($pros / $jangka, 2);
                     return $jasa . '% / ' . $jangka . ' bln';
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
-                    $jpp = $row->jpp;
-                    $status = $jpp->warna_jpp;
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
 
-                    $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
                 })
                 ->editColumn('tgl_verifikasi', function ($row) {
@@ -173,6 +190,145 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->verifikasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
+                    return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
+                })
+                ->rawColumns(['anggota.namadepan'])
+                ->make(true);
+        }
+    }
+    
+    public function verified1()
+    {
+        if (request()->ajax()) {
+            $pinj_i = PinjamanIndividu::where('status', 'V1')
+                ->where('jenis_pinjaman', '1')
+                ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
+
+            return DataTables::of($pinj_i)
+                ->addColumn('jasa', function ($row) {
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
+
+                    $jasa = number_format($pros / $jangka, 2);
+                    return $jasa . '% / ' . $jangka . ' bln';
+                })
+                ->editColumn('anggota.namadepan', function ($row) {
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
+
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
+                    return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
+                })
+                ->editColumn('tgl_verifikasi1', function ($row) {
+                    return Tanggal::tglIndo($row->tgl_verifikasi1);
+                })
+                ->editColumn('verifikasi1', function ($row) {
+                    return number_format($row->verifikasi1);
+                })
+                ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
+                    return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
+                })
+                ->rawColumns(['anggota.namadepan'])
+                ->make(true);
+        }
+    }
+    public function verified2()
+    {
+        if (request()->ajax()) {
+            $pinj_i = PinjamanIndividu::where('status', 'V2')
+                ->where('jenis_pinjaman', '1')
+                ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
+
+            return DataTables::of($pinj_i)
+                ->addColumn('jasa', function ($row) {
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
+
+                    $jasa = number_format($pros / $jangka, 2);
+                    return $jasa . '% / ' . $jangka . ' bln';
+                })
+                ->editColumn('anggota.namadepan', function ($row) {
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
+
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
+                    return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
+                })
+                ->editColumn('tgl_verifikasi2', function ($row) {
+                    return Tanggal::tglIndo($row->tgl_verifikasi2);
+                })
+                ->editColumn('verifikasi2', function ($row) {
+                    return number_format($row->verifikasi2);
+                })
+                ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
+                    return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
+                })
+                ->rawColumns(['anggota.namadepan'])
+                ->make(true);
+        }
+    }
+    public function verified3()
+    {
+        if (request()->ajax()) {
+            $pinj_i = PinjamanIndividu::where('status', 'V3')
+                ->where('jenis_pinjaman', '1')
+                ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
+
+            return DataTables::of($pinj_i)
+                ->addColumn('jasa', function ($row) {
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
+
+                    $jasa = number_format($pros / $jangka, 2);
+                    return $jasa . '% / ' . $jangka . ' bln';
+                })
+                ->editColumn('anggota.namadepan', function ($row) {
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
+
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
+                    return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
+                })
+                ->editColumn('tgl_verifikasi3', function ($row) {
+                    return Tanggal::tglIndo($row->tgl_verifikasi3);
+                })
+                ->editColumn('verifikasi3', function ($row) {
+                    return number_format($row->verifikasi3);
+                })
+                ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
                     return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
                 })
                 ->rawColumns(['anggota.namadepan'])
@@ -184,22 +340,29 @@ class PinjamanIndividuController extends Controller
     {
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'W')
-                ->where('jenis_pinjaman', 'I')
+                ->where('jenis_pinjaman', '1')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
-                    $jangka = $row->jangka;
-                    $pros = $row->pros_jasa;
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
 
                     $jasa = number_format($pros / $jangka, 2);
                     return $jasa . '% / ' . $jangka . ' bln';
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
-                    $jpp = $row->jpp;
-                    $status = $jpp->warna_jpp;
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
 
-                    $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
                 })
                 ->editColumn('tgl_tunggu', function ($row) {
@@ -209,6 +372,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->alokasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
                     return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
                 })
                 ->rawColumns(['anggota.namadepan'])
@@ -220,22 +386,28 @@ class PinjamanIndividuController extends Controller
     {
         if (request()->ajax()) {
             $pinj_i = PinjamanIndividu::where('status', 'A')
-                ->where('jenis_pinjaman', 'I')
+                ->where('jenis_pinjaman', '1')
                 ->with('anggota', 'anggota.d', 'jpp', 'sts')->get();
-
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
-                    $jangka = $row->jangka;
-                    $pros = $row->pros_jasa;
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
 
                     $jasa = number_format($pros / $jangka, 2);
                     return $jasa . '% / ' . $jangka . ' bln';
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
-                    $jpp = $row->jpp;
-                    $status = $jpp->warna_jpp;
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
 
-                    $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
                 })
                 ->editColumn('tgl_cair', function ($row) {
@@ -245,6 +417,9 @@ class PinjamanIndividuController extends Controller
                     return number_format($row->alokasi);
                 })
                 ->editColumn('anggota.alamat', function ($row) {
+                    if (!$row->anggota || !$row->anggota->d) {
+                        return '<span class="text-danger">Data tidak lengkap</span>';
+                    }
                     return $row->anggota->alamat . ' ' . $row->anggota->d->nama_desa;
                 })
                 ->rawColumns(['anggota.namadepan'])
@@ -257,23 +432,30 @@ class PinjamanIndividuController extends Controller
         if (request()->ajax()) {
             $tb_pinkel = 'pinjaman_anggota_' . Session::get('lokasi');
             $pinj_i = PinjamanIndividu::where('status', 'A')
-                ->where('jenis_pinjaman', 'I')
+                ->where('jenis_pinjaman', '1')
                 ->whereRaw($tb_pinkel . '.alokasi<=(SELECT SUM(realisasi_pokok) FROM real_angsuran_i_' . Session::get('lokasi') . ' WHERE loan_id=' . $tb_pinkel . '.id)')
                 ->with('anggota', 'jpp', 'sts')->get();
 
             return DataTables::of($pinj_i)
                 ->addColumn('jasa', function ($row) {
-                    $jangka = $row->jangka;
-                    $pros = $row->pros_jasa;
+                    $jangka = floatval($row->jangka ?: 0);
+                    $pros = floatval($row->pros_jasa ?: 0);
+
+                    if ($jangka == 0) {
+                        return '0.00% / 0 bln';
+                    }
 
                     $jasa = number_format($pros / $jangka, 2);
                     return $jasa . '% / ' . $jangka . ' bln';
                 })
                 ->editColumn('anggota.namadepan', function ($row) {
-                    $jpp = $row->jpp;
-                    $status = $jpp->warna_jpp;
+                    if (!$row->anggota || !$row->jpp) {
+                        return '<div><small class="text-danger">Data tidak lengkap</small></div>';
+                    }
 
-                    $namadepan = $row->anggota->namadepan . '(' . $jpp->nama_jpp . ')';
+                    $status = $row->jpp->warna_jpp;
+                    $namadepan = $row->anggota->namadepan . ' (' . $row->jpp->nama_jpp . ')';
+
                     return '<div>' . $namadepan . ' <small class="float-end badge badge-' . $status . '">Loan ID.' . $row->id . '</small></div>';
                 })
                 ->editColumn('tgl_cair', function ($row) {
@@ -502,6 +684,12 @@ class PinjamanIndividuController extends Controller
             $view = 'waiting';
         } elseif ($perguliran_i->status == 'V') {
             $view = 'verifikasi';
+        } elseif ($perguliran_i->status == 'V1') {
+            $view = 'verifikasi1';
+        } elseif ($perguliran_i->status == 'V2') {
+            $view = 'verifikasi2';
+        } elseif ($perguliran_i->status == 'V3') {
+            $view = 'verifikasi3';
         } elseif ($perguliran_i->status == 'P') {
             $view = 'proposal';
         } elseif ($perguliran_i->status == '0') {
@@ -513,12 +701,11 @@ class PinjamanIndividuController extends Controller
             $pinj_i_aktif = PinjamanIndividu::where([
                 ['nia', $perguliran_i->nia],
                 ['status', 'A'],
-                ['jenis_pinjaman', 'I']
+                ['jenis_pinjaman', '1']
             ])->with('anggota')->orderBy('tgl_cair', 'DESC')->first();
 
             $pinj_aktif = $pinj_i_aktif;
         }
-
         return view('perguliran_i.partials/' . $view)->with(compact('perguliran_i', 'jenis_jasa', 'sistem_angsuran', 'sumber_bayar', 'debet', 'pinj_aktif'));
     }
 

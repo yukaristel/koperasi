@@ -145,8 +145,8 @@ class SopController extends Controller
             return response()->json($validate->errors(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        // Simpan array tahapan sebagai JSON
-        $kec->tahapan_perguliran = json_encode($data['tahapan_baru']);
+        // Simpan array tahapan sebagai JSON atau NULL
+        $kec->tahapan_perguliran = !empty($data['tahapan_baru']) ? json_encode($data['tahapan_baru']) : null;
         $kec->save();
 
         return response()->json([

@@ -290,13 +290,21 @@ class SimpananController extends Controller
         $jenisMutasi = $request->jenis_mutasi;
         $tglTransaksi = $request->tgl_transaksi;
         $jumlah = $request->jumlah;
-        $nomorRekening = $request->nomor_rekening;
-        $lembaga = $request->lembaga;
-        $jabatan = $request->jabatan;
-        $catatan_simpanan = $request->catatan_simpanan;
-        $namaDebitur = $request->nama_debitur;
-        $cif = $request->nia;
+        $nomorRekening = $request->nomor_rekening ?? 0;
+        $namaDebitur = $request->nama_debitur ?? 0;
+        $cif = $request->cif ?? 0;
 
+        if($jenisMutasi=='3'){
+            $simpanan_anggota = Simpanan::where('nia', $request->nia)
+                            ->where('jenis_simpanan', '2')
+                            ->where('status', 'A')
+                            ->with('anggota')
+                            ->first();
+            $nomorRekening  = $simpanan_anggota->nomor_rekening;
+            $cif            = $simpanan_anggota->id;
+            $namaDebitur    = $simpanan_anggota->anggota->namadepan;
+            $jenisMutasi='1';
+        }
         $simpanan = Simpanan::where('id', $cif)->first();
         $jenisSimpanan = JenisSimpanan::where('id', $simpanan->jenis_simpanan)->first();
         

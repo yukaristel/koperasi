@@ -164,6 +164,28 @@
             z-index: 1050 !important;
         }
 
+        .modal-custom-height {
+          height: 90vh;
+          max-height: 90vh;
+        }
+
+        .modal-custom-height .modal-content {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .modal-custom-height .modal-body {
+          overflow-y: auto;
+          flex: 1 1 auto;
+        }
+
+        /* Optional: agar header dan footer tidak tertimpa konten saat scroll */
+        .modal-header,
+        .modal-footer {
+          z-index: 1;
+        }
+
         .sidenav {
             z-index: 1040 !important; /* JANGAN lebih tinggi dari modal */
         }

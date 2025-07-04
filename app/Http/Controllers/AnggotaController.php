@@ -8,6 +8,8 @@ use App\Models\Kecamatan;
 use App\Models\Keluarga;
 use App\Models\RealSimpanan;
 use App\Models\RealAngsuranI;
+use App\Models\JenisProdukPinjaman;
+use App\Models\SistemAngsuran;
 use App\Models\PinjamanAnggota;
 use App\Models\PinjamanIndividu;
 use App\Models\StatusPinjaman;
@@ -70,7 +72,20 @@ class AnggotaController extends Controller
     public function register()
     {
         $title = 'Register Penduduk';
-        return view('penduduk.register')->with(compact('title'));
+        $jenis_pp = JenisProdukPinjaman::where(function ($query) {
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
+            ->orWhere(function ($query) {
+                $query->where('lokasi', session('lokasi'))
+                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+            })
+            ->orderBy('kode', 'asc')
+            ->get();
+            
+        $sistem_angsuran = SistemAngsuran::all();
+        
+        return view('penduduk.register')->with(compact('title','jenis_pp', 'sistem_angsuran'));
     }
 
     public function loadForm($nik)

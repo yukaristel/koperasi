@@ -3,7 +3,12 @@
     "",
     "\\app",
     "\\app\\Http",
-    "\\app\\Http\\Controllers"
+    "\\app\\Http\\Controllers",
+    "\\resources",
+    "\\resources\\views",
+    "\\resources\\views\\perguliran_i",
+    "\\resources\\views\\perguliran_i\\partials"
   ],
+  "SelectedNode": "\\resources\\views\\perguliran_i\\partials\\aktif.blade.php",
   "PreviewInSolutionExplorer": false
 }
