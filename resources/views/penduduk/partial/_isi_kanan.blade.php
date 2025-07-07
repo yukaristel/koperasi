@@ -100,7 +100,6 @@
             </div>
         </div>
     </div>
-    
 
     <div class="card mb-3">
         <div class="card-header bg-primary text-white">
@@ -146,7 +145,6 @@
                 </table>
             </div>
         </div>
-
     </div>
 
     <div class="card">
@@ -175,7 +173,6 @@
                         </tr>
                     </thead>
                     <tbody>
-
                         @if ($pinjaman && $pinjaman->count() > 0)
                             @foreach ($pinjaman as $pinj)
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailProposalIndividu" id="DetailProposalIndividu{{$pinj->id}}">
@@ -198,6 +195,5 @@
                 </table>
             </div>
         </div>
-
     </div>
 </div>

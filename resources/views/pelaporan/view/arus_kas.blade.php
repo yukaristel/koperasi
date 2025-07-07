@@ -183,6 +183,14 @@
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
                     style="font-size: 11px;">
                     <tr style="background: rgb(128, 128, 128)">
+                        <td align="center">&nbsp;</td>
+                        <td>Pembayaran Taksiran PPh</td>
+                        <td align="right">{{ number_format($pph, 2) }}</td>
+                    </tr>
+                    @php
+                        $total_bulan_ini = $total_bulan_ini-$pph;
+                    @endphp
+                    <tr style="background: rgb(128, 128, 128)">
                         <td width="5%" align="center">&nbsp;</td>
                         <td width="80%">Kenaikan (Penurunan) Kas</td>
                         <td width="15%" align="right">{{ number_format($total_bulan_ini, 2) }}</td>
