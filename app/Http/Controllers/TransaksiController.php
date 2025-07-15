@@ -517,7 +517,6 @@ class TransaksiController extends Controller
 
         $tgl_transaksi = Tanggal::tglNasional($request->tgl_transaksi);
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-
         if (strtotime($tgl_transaksi) < strtotime($kec->tgl_pakai)) {
             return response()->json([
                 'success' => false,

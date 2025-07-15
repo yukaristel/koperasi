@@ -31,7 +31,7 @@
     </div>
 </div>
 <script>
-        $('.js-select2').select2({
-        theme: 'bootstrap-5'
-        });
+    $('.js-select2').select2({
+        theme: 'bootstrap4'
+    });
 </script>

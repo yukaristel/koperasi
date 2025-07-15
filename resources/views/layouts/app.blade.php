@@ -26,8 +26,76 @@
     <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
-
     <style>
+        .modal {
+            z-index: 1060 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 1050 !important;
+            background-color: rgba(0, 0, 0, 0.3) !important;
+        }
+
+        .modal-custom-height {
+            height: 90vh;
+            max-height: 90vh;
+        }
+
+        .modal-custom-height .modal-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-custom-height .modal-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+        }
+
+        .modal-header,
+        .modal-footer {
+            z-index: 1;
+        }
+
+        .bg-primary,
+        .btn-success,
+        .btn-outline-primary:hover,
+        .btn-outline-primary.active,
+        .nav-pills .nav-link.active,
+        .dataTables_wrapper .dataTables_paginate .pagination .page-item.active .page-link,
+        .dataTables_wrapper .dataTables_paginate .pagination .page-item .page-link:hover {
+            background-color: #129990 !important;
+            color: #fff !important;
+            border-color: #129990 !important;
+        }
+
+        .bg-primary h5,
+        .text-primary,
+        .btn-outline-primary,
+        .btn-outline-primary:disabled,
+        .btn-outline-primary.disabled,
+        .dataTables_wrapper .dataTables_paginate .pagination .page-link {
+            color: #129990 !important;
+            border-color: #129990 !important;
+        }
+
+        .btn-outline-primary {
+            background-color: transparent !important;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #129990 !important;
+            box-shadow: 0 0 8px 2px rgba(18, 153, 144, 0.6) !important;
+        }
+
+        .dataTable,
+        .dataTable thead th,
+        .dataTable tbody td {
+            font-size: 0.8rem !important;
+        }
+
         .dataTables_length select {
             height: 38px;
             padding: 6px 12px;
@@ -43,51 +111,12 @@
             gap: 5px;
         }
 
-        .dataTable,
-        .dataTable thead th,
-        .dataTable tbody td {
-            font-size: 0.8rem !important;
+        .modal-open .select2-dropdown {
+            z-index: 10060 !important;
         }
 
-        .bg-primary h5,
-        .text-primary {
-            color: #129990 !important;
-        }
-
-        .bg-primary,
-        .btn-success {
-            background-color: #129990 !important;
-        }
-
-        .btn-outline-primary,
-        .btn-outline-primary:disabled,
-        .btn-outline-primary.disabled {
-            color: #129990;
-            border-color: #129990;
-            background-color: transparent;
-        }
-
-        .btn-outline-primary:hover,
-        .btn-outline-primary.active {
-            background-color: #129990;
-            color: #fff;
-            border-color: #129990;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: #129990;
-            color: #fff;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #129990 !important;
-            box-shadow: 0 0 8px 2px rgba(18, 153, 144, 0.6) !important;
-        }
-
-        .text-black {
-            color: #333 !important;
+        .modal-open .select2-close-mask {
+            z-index: 10055 !important;
         }
 
         .hover tbody tr:hover {
@@ -95,34 +124,8 @@
             cursor: pointer;
         }
 
-        .modal,
-        .modal-backdrop {
-            z-index: 1060 !important;
-        }
-
-        .modal-custom-height {
-            height: 90vh;
-            max-height: 90vh;
-        }
-
-        .modal-custom-height .modal-content {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-custom-height .modal-body {
-            overflow-y: auto;
-            flex: 1 1 auto;
-        }
-
-        .modal-header,
-        .modal-footer {
-            z-index: 1;
-        }
-
-        .sidenav {
-            z-index: 1040 !important;
+        .text-black {
+            color: #333 !important;
         }
 
         .badge-github {
@@ -130,26 +133,12 @@
             color: #000;
         }
 
-        .dataTables_wrapper .dataTables_paginate .pagination .page-item.active .page-link,
-        .dataTables_wrapper .dataTables_paginate .pagination .page-item .page-link:hover {
-            background-color: #129990;
-            border-color: #129990;
-            color: #fff;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .pagination .page-link {
-            color: #129990;
-            border: 1px solid #129990;
-        }
-
-        .modal-open .select2-dropdown {
-            z-index: 10060;
-        }
-
-        .modal-open .select2-close-mask {
-            z-index: 10055;
+        .sidenav {
+            z-index: 1040 !important;
         }
     </style>
+
+
 
     @yield('style')
 </head>
@@ -234,7 +223,7 @@
     </div>
 
     @stack('modal')
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/jquery-3.6.0.min.js"></script>

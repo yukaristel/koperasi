@@ -59,7 +59,7 @@
                                     <small class="text-danger" id="msg_nominal"></small>
                                 </div>
                             </div>
-                            <button type="button" id="simpanTransaksi"
+                            <button type="button" id="SimpanTransaksi"
                                 class="mt-5 mb-1 btn btn-dark btn-sm float-end">Simpan Transaksi</button>
                         </div>
                     </div>
@@ -165,49 +165,54 @@
         <input type="hidden" name="del_id_pinj" id="del_id_pinj">
     </form>
 @endsection
-
 @section('modal')
+    <!-- Modal Detail Transaksi -->
     <div class="modal fade" id="detailTransaksi" tabindex="-1" aria-labelledby="detailTransaksiLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="detailTransaksiLabel">
-
-                    </h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="detailTransaksiLabel">Detail Transaksi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="LayoutdetailTransaksi"></div>
+                    <div id="LayoutdetailTransaksi" class="p-2">
+                        <p class="text-muted">Memuat detail transaksi...</p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="BtnCetakBuktiTransaksi" class="btn btn-sm btn-info">
                         Cetak Bukti Transaksi
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+                        Tutup
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Cetak Bukti Transaksi -->
     <div class="modal fade" id="CetakBuktiTransaksi" tabindex="-1" aria-labelledby="CetakBuktiTransaksiLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="CetakBuktiTransaksiLabel">
-
-                    </h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h1 class="modal-title fs-5" id="CetakBuktiTransaksiLabel">Cetak Bukti Transaksi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="LayoutCetakBuktiTransaksi"></div>
+                    <div id="LayoutCetakBuktiTransaksi" class="p-2">
+                        <p class="text-muted">Memuat data cetak transaksi...</p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="BtnCetak" class="btn btn-sm btn-info">
                         Print
                     </button>
-                    <button type="button" id="BtnCetakBuktiTransaksi" class="btn btn-danger btn-sm">Tutup</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-bs-dismiss="modal">
+                        Tutup
+                    </button>
                 </div>
             </div>
         </div>
@@ -216,65 +221,47 @@
 
 @section('script')
     <script>
-        $(document).ready(function() {
-            $('.date').datetimepicker({
-                timepicker: false,
-                format: 'd/m/Y'
-            });
+        $('.date').datetimepicker({
+            timepicker: false,
+            format: 'd/m/Y'
         });
 
-        $(document).ready(function() {
-            $('.selectJurnalUmum').select2({
-                theme: 'bootstrap4',
-            });
+        $('.selectJurnalUmum').select2({
+            theme: 'bootstrap4'
         });
 
-        $("#nominal").maskMoney({
+        $('#nominal').maskMoney({
             allowNegative: true
         });
 
-        var formatter = new Intl.NumberFormat('en-US', {
+        const formatter = new Intl.NumberFormat('en-US', {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        })
+            maximumFractionDigits: 2
+        });
 
-        $(document).on('change', '#jenis_transaksi', function(e) {
-            e.preventDefault()
+        let value_disimpan_ke = '';
 
-            if ($(this).val().length > 0) {
-                $.get('/transaksi/ambil_rekening/' + $(this).val(), function(result) {
-                    $('#kd_rekening').html(result)
-                })
+        $(document).on('change', '#jenis_transaksi', function() {
+            if (this.value) {
+                $.get('/transaksi/ambil_rekening/' + this.value, result => $('#kd_rekening').html(result));
             }
-        })
+        });
 
-        $(document).on('change', '#tgl_transaksi', function(e) {
-            e.preventDefault()
+        $(document).on('change', '#tgl_transaksi', function() {
+            const [d, m, y] = this.value.split('/');
+            $('select#tahun').val(y).change();
+            $('select#bulan').val(m).change();
+        });
 
-            var tgl_transaksi = $(this).val().split('/')
-            var tahun = tgl_transaksi[2];
-            var bulan = tgl_transaksi[1];
-            var hari = tgl_transaksi[0];
+        $(document).on('change', '#sumber_dana', function() {
+            const sumber_dana = this.value;
+            const [d, m, y] = $('#tgl_transaksi').val().split('/');
 
-            $('select#tahun').val(tahun).change()
-            $('select#bulan').val(bulan).change()
-        })
+            $.get(`/trasaksi/saldo/${sumber_dana}?tahun=${y}&bulan=${m}&hari=${d}`, res => {
+                $('#saldo').html(formatter.format(res.saldo));
+            });
 
-        $(document).on('change', '#sumber_dana', function(e) {
-            e.preventDefault()
-            var sumber_dana = $(this).val()
-
-            var tgl_transaksi = $('#tgl_transaksi').val().split('/')
-            var tahun = tgl_transaksi[2];
-            var bulan = tgl_transaksi[1];
-            var hari = tgl_transaksi[0];
-
-            $.get('/trasaksi/saldo/' + sumber_dana + '?tahun=' + tahun + '&bulan=' + bulan + '&hari=' + hari,
-                function(result) {
-                    $('#saldo').html(formatter.format(result.saldo))
-                })
-            // --- Mapping sumber_dana ke disimpan_ke ---
-            var pilihanSimpan = {
+            const map = {
                 '1.2.02.01': '5.1.07.01',
                 '1.2.02.02': '5.1.07.02',
                 '1.2.02.03': '5.1.07.03',
@@ -284,203 +271,142 @@
                 '1.2.04.04': '5.1.07.07'
             };
 
-            if (pilihanSimpan[sumber_dana]) {
-                $('#disimpan_ke').val(pilihanSimpan[sumber_dana]).trigger('change');
+            if (map[sumber_dana]) $('#disimpan_ke').val(map[sumber_dana]).trigger('change');
+        });
+
+        $(document).on('change', '#sumber_dana, #disimpan_ke', function() {
+            const sumber_dana = $('#sumber_dana').val();
+            const disimpan_ke = $('#disimpan_ke').val();
+            const tgl_transaksi = $('#tgl_transaksi').val();
+            const jenis_transaksi = $('#jenis_transaksi').val();
+
+            if (sumber_dana === disimpan_ke) {
+                $('#SimpanTransaksi').prop('disabled', true);
+                $('#disimpan_ke').val(value_disimpan_ke).change();
+                Toastr('warning', 'Kode Akun tidak boleh sama');
+                return;
             }
-        })
 
-        var value_disimpan_ke = ''
-        $(document).on('change', '#sumber_dana,#disimpan_ke', function(e) {
-            e.preventDefault()
-
-            var tgl_transaksi = $('#tgl_transaksi').val()
-            var jenis_transaksi = $('#jenis_transaksi').val()
-            var sumber_dana = $('#sumber_dana').val()
-            var disimpan_ke = $('#disimpan_ke').val()
-
-            if (sumber_dana == disimpan_ke) {
-                $('#SimpanTransaksi').attr('disabled', true)
-                $('#disimpan_ke').val(value_disimpan_ke).change()
-
-                Toastr('warning', 'Kode Akun tidak boleh sama')
-                return false
-            } else {
-                $('#SimpanTransaksi').attr('disabled', false)
-                value_disimpan_ke = disimpan_ke
-            }
+            $('#SimpanTransaksi').prop('disabled', false);
+            value_disimpan_ke = disimpan_ke;
 
             $.get('/transaksi/form_nominal/', {
                 jenis_transaksi,
                 sumber_dana,
                 disimpan_ke,
                 tgl_transaksi
-            }, function(result) {
-                $('#form_nominal').html(result)
-            })
-        })
+            }, result => $('#form_nominal').html(result));
+        });
 
-        $(document).on('change', '#harga_satuan,#jumlah', function(e) {
-            var harga = ($('#harga_satuan').val()) ? $('#harga_satuan').val() : 0
-            var jumlah = ($('#jumlah').val()) ? $('#jumlah').val() : 0
-
-            harga = parseInt(harga.split(',').join('').split('.00').join(''))
-
-            var harga_perolehan = harga * jumlah
-            $('#harga_perolehan').val(formatter.format(harga_perolehan))
-        })
+        $(document).on('change', '#harga_satuan, #jumlah', function() {
+            let harga = parseInt($('#harga_satuan').val().replace(/[,.]/g, '') || 0);
+            let jumlah = parseInt($('#jumlah').val() || 0);
+            $('#harga_perolehan').val(formatter.format(harga * jumlah));
+        });
 
         $(document).on('click', '#SimpanTransaksi', function(e) {
-            e.preventDefault()
-            $('small').html('')
-            $('#notifikasi').html('')
+            e.preventDefault();
+            $('small').html('');
+            $('#notifikasi').html('');
 
-            var form = $('#FormTransaksi')
-            $.ajax({
-                type: 'POST',
-                url: form.attr('action'),
-                data: form.serialize(),
-                success: function(result) {
+            $.post($('#FormTransaksi').attr('action'), $('#FormTransaksi').serialize())
+                .done(result => {
                     if (result.success) {
                         Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                            $('#notifikasi').html(result.view)
-                            var sumber_dana = $('#sumber_dana').val()
-                            var tgl_transaksi = $('#tgl_transaksi').val().split('/')
-                            var tahun = tgl_transaksi[2];
-                            var bulan = tgl_transaksi[1];
-                            var hari = tgl_transaksi[0];
-
-                            $.get('/trasaksi/saldo/' + sumber_dana + '?tahun=' + tahun +
-                                '&bulan=' + bulan + '&hari=' + hari,
-                                function(res) {
-                                    $('#saldo').html(formatter.format(res.saldo))
-                                })
-                        })
+                            $('#notifikasi').html(result.view);
+                            const sumber_dana = $('#sumber_dana').val();
+                            const [d, m, y] = $('#tgl_transaksi').val().split('/');
+                            $.get(`/trasaksi/saldo/${sumber_dana}?tahun=${y}&bulan=${m}&hari=${d}`,
+                                res => {
+                                    $('#saldo').html(formatter.format(res.saldo));
+                                });
+                        });
                     } else {
-                        Swal.fire('Error', result.msg, 'error')
-                    }
-                },
-                error: function(result) {
-                    const respons = result.responseJSON;
-
-                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                    $.map(respons, function(res, key) {
-                        $('#' + key).parent('.input-group.input-group-static').addClass(
-                            'is-invalid')
-                        $('#msg_' + key).html(res)
-                    })
-                }
-            })
-        })
-
-        $(document).on('change', '#nama_barang', function(e) {
-            var value = $(this).val().split('#')
-
-            var id = value[0]
-            var unit = parseInt(value[1])
-            var nilai_buku = parseInt(value[2])
-
-            var harga = nilai_buku / unit
-
-            $('#unit').attr('max', unit)
-
-            $('#unit').val(unit)
-            $('#harsat').val(harga)
-            $('#nilai_buku').val(formatter.format(nilai_buku))
-            $('#harga_jual').val(formatter.format(nilai_buku))
-        })
-
-        $(document).on('change', '#relasi', function(e) {
-            var value = $(this).val().split('#')
-
-            var nik = value[0]
-            var namadepan = value[1]
-            var id_pinjaman = parseInt(value[2]) //parseInt untuk nilai (int)
-            var fee_agen = parseInt(value[3])
-
-            // $('#fee_agen').val(fee_agen)
-            // $('#keterangan').val("Fee ke Agen A.N " + namadepan + " (" + id_pinjaman + ")")
-
-            $('#fee_agen').val(fee_agen);
-
-            if (namadepan && !isNaN(id_pinjaman)) {
-                $('#keterangan').val("Fee ke Agen A.N " + namadepan + " (" + id_pinjaman + ")");
-            }
-        })
-
-        $(document).on('change', '#unit', function() {
-            var max = parseInt($(this).attr('max'))
-            var unit = parseInt($(this).val())
-
-            if (unit > max) {
-                $(this).val(max)
-                unit = max
-            }
-
-            if (unit < 1) {
-                $(this).val(max)
-                unit = max
-            }
-
-            var harga = parseInt($('#harsat').val())
-            var nilai_buku = unit * harga
-
-            $('#nilai_buku').val(formatter.format(nilai_buku))
-            $('#harga_jual').val(formatter.format(nilai_buku))
-        })
-
-        $(document).on('change', '#alasan', function() {
-            var status = $(this).val()
-            console.log(status)
-
-            if (status == "dijual") {
-                $('#col_nilai_buku,#col_unit').attr('class', 'col-sm-4')
-                $('#col_harga_jual').show()
-                $("#col_harga_jual").focus()
-            } else {
-                $('#col_nilai_buku,#col_unit').attr('class', 'col-sm-6')
-                $('#col_harga_jual').hide()
-            }
-        })
-
-        $(document).on('click', '#BtndetailTransaksi', function(e) {
-            var tahun = $('select#tahun').val()
-            var bulan = $('select#bulan').val()
-            var hari = $('select#tanggal').val()
-            var kode_akun = $('#sumber_dana').val()
-
-            if (kode_akun != '') {
-                $.ajax({
-                    url: '/transaksi/detail_transaksi',
-                    type: 'get',
-                    data: {
-                        tahun,
-                        bulan,
-                        hari,
-                        kode_akun
-                    },
-                    success: function(result) {
-                        $('#detailTransaksi').modal('show')
-
-                        $('#detailTransaksiLabel').html(result.label)
-                        $('#LayoutdetailTransaksi').html(result.view)
-
-                        $('#CetakBuktiTransaksiLabel').html(result.label)
-                        $('#LayoutCetakBuktiTransaksi').html(result.cetak)
+                        Swal.fire('Error', result.msg, 'error');
                     }
                 })
+                .fail(result => {
+                    const res = result.responseJSON;
+                    Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error');
+                    $.each(res, (key, val) => {
+                        $('#' + key).closest('.input-group').addClass('is-invalid');
+                        $('#msg_' + key).html(val);
+                    });
+                });
+        });
+
+        $(document).on('change', '#nama_barang', function() {
+            const [id, unit, nilai_buku] = $(this).val().split('#').map(v => parseInt(v));
+            const harga = nilai_buku / unit;
+
+            $('#unit').attr('max', unit).val(unit);
+            $('#harsat').val(harga);
+            $('#nilai_buku, #harga_jual').val(formatter.format(nilai_buku));
+        });
+
+        $(document).on('change', '#unit', function() {
+            const max = parseInt($(this).attr('max'));
+            let unit = parseInt(this.value);
+            unit = Math.min(Math.max(unit, 1), max);
+            $(this).val(unit);
+
+            const harga = parseInt($('#harsat').val());
+            const total = unit * harga;
+            $('#nilai_buku, #harga_jual').val(formatter.format(total));
+        });
+
+        $(document).on('change', '#relasi', function() {
+            const [nik, nama, id_pinjaman, fee] = $(this).val().split('#');
+            $('#fee_agen').val(fee);
+            if (nama && !isNaN(id_pinjaman)) {
+                $('#keterangan').val(`Fee ke Agen A.N ${nama} (${id_pinjaman})`);
             }
-        })
+        });
+
+        $(document).on('change', '#alasan', function() {
+            if (this.value === "dijual") {
+                $('#col_nilai_buku, #col_unit').attr('class', 'col-sm-4');
+                $('#col_harga_jual').show().focus();
+            } else {
+                $('#col_nilai_buku, #col_unit').attr('class', 'col-sm-6');
+                $('#col_harga_jual').hide();
+            }
+        });
+
+        $(document).on('click', '#BtndetailTransaksi', function() {
+            const tahun = $('#tahun').val();
+            const bulan = $('#bulan').val();
+            const hari = $('#tanggal').val();
+            const kode_akun = $('#sumber_dana').val();
+
+            if (kode_akun) {
+                $.get('/transaksi/detail_transaksi', {
+                    tahun,
+                    bulan,
+                    hari,
+                    kode_akun
+                }, result => {
+                    $('#detailTransaksi').modal('show');
+                    $('#detailTransaksiLabel, #CetakBuktiTransaksiLabel').html(result.label);
+                    $('#LayoutdetailTransaksi').html(result.view);
+                    $('#LayoutCetakBuktiTransaksi').html(result.cetak);
+                });
+            }
+        });
 
         $(document).on('click', '#BtnCetakBuktiTransaksi', function(e) {
-            e.preventDefault()
+            e.preventDefault();
+            $('#CetakBuktiTransaksi').modal('toggle');
+        });
 
-            $('#CetakBuktiTransaksi').modal('toggle')
-        })
+        $(document).on('click', '#BtnCetak', function(e) {
+            e.preventDefault();
+            $('#FormCetakDokumenTransaksi').submit();
+        });
 
         $(document).on('click', '.btn-struk', function(e) {
-            e.preventDefault()
-
-            var idtp = $(this).attr('data-idtp')
+            e.preventDefault();
+            const idtp = $(this).data('idtp');
             Swal.fire({
                 title: "Cetak Kuitansi Angsuran",
                 showDenyButton: true,
@@ -488,107 +414,61 @@
                 denyButtonText: "Dot Matrix",
                 confirmButtonColor: "#3085d6",
                 denyButtonColor: "#3085d6",
-            }).then((result) => {
+            }).then(result => {
                 if (result.isConfirmed) {
-                    open_window('/transaksi/angsuran/struk/' + idtp)
+                    open_window('/transaksi/angsuran/struk/' + idtp);
                 } else if (result.isDenied) {
-                    open_window('/transaksi/angsuran/struk_matrix/' + idtp)
+                    open_window('/transaksi/angsuran/struk_matrix/' + idtp);
                 }
             });
-        })
+        });
 
-        $(document).on('click', '.btn-link', function(e) {
-            var action = $(this).attr('data-action')
+        $(document).on('click', '.btn-link', function() {
+            open_window($(this).data('action'));
+        });
 
-            open_window(action)
-        })
+        $(document).on('click', '.btn-reversal, .btn-delete', function(e) {
+            e.preventDefault();
+            const idt = $(this).data('idt');
+            const isReversal = $(this).hasClass('btn-reversal');
+            const formId = isReversal ? '#formReversal' : '#formHapus';
+            const modalText = isReversal ?
+                'Setelah menekan tombol Reversal dibawah, maka aplikasi akan membuat transaksi minus (-) senilai Rp. -' :
+                'Setelah menekan tombol Hapus Transaksi dibawah, maka transaksi ini akan dihapus dari aplikasi secara permanen.';
+            const btnText = isReversal ? 'Reversal' : 'Hapus Transaksi';
 
-        $(document).on('click', '.btn-reversal', function(e) {
-            e.preventDefault()
+            $.get('/transaksi/data/' + idt, result => {
+                $('#rev_idt, #del_idt').val(result.idt);
+                $('#rev_idtp, #del_idtp').val(result.idtp);
+                $('#rev_id_pinj, #del_id_pinj').val(result.id_pinj);
 
-            var idt = $(this).attr('data-idt')
-            $.get('/transaksi/data/' + idt, function(result) {
-
-                $('#rev_idt').val(result.idt)
-                $('#rev_idtp').val(result.idtp)
-                $('#rev_id_pinj').val(result.id_pinj)
                 Swal.fire({
                     title: 'Peringatan',
-                    text: 'Setelah menekan tombol Reversal dibawah, maka aplikasi akan membuat transaksi minus (-) senilai Rp. -' +
-                        result.jumlah,
+                    text: modalText + (result.jumlah || ''),
                     showCancelButton: true,
-                    confirmButtonText: 'Reversal',
+                    confirmButtonText: btnText,
                     cancelButtonText: 'Batal',
                     icon: 'warning'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var form = $('#formReversal')
-                        $.ajax({
-                            type: form.attr('method'),
-                            url: form.attr('action'),
-                            data: form.serialize(),
-                            success: function(result) {
-                                if (result.success) {
-                                    Swal.fire('Berhasil!', result.msg, 'success')
-                                        .then(() => {
-                                            $('#detailTransaksi').modal('hide')
-                                        })
-                                }
+                }).then(res => {
+                    if (res.isConfirmed) {
+                        $.post($(formId).attr('action'), $(formId).serialize(), res => {
+                            if (res.success) {
+                                Swal.fire('Berhasil!', res.msg, 'success').then(() => {
+                                    $('#detailTransaksi').modal('hide');
+                                });
                             }
-                        })
+                        });
                     }
-                })
-            })
-        })
+                });
+            });
+        });
 
-        $(document).on('click', '.btn-delete', function(e) {
-            e.preventDefault()
-
-            var idt = $(this).attr('data-idt')
-            $.get('/transaksi/data/' + idt, function(result) {
-
-                $('#del_idt').val(result.idt)
-                $('#del_idtp').val(result.idtp)
-                $('#del_id_pinj').val(result.id_pinj)
-                Swal.fire({
-                    title: 'Peringatan',
-                    text: 'Setelah menekan tombol Hapus Transaksi dibawah, maka transaksi ini akan dihapus dari aplikasi secara permanen.',
-                    showCancelButton: true,
-                    confirmButtonText: 'Hapus Transaksi',
-                    cancelButtonText: 'Batal',
-                    icon: 'warning'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var form = $('#formHapus')
-                        $.ajax({
-                            type: form.attr('method'),
-                            url: form.attr('action'),
-                            data: form.serialize(),
-                            success: function(result) {
-                                if (result.success) {
-                                    Swal.fire('Berhasil!', result.msg, 'success')
-                                        .then(() => {
-                                            $('#detailTransaksi').modal('hide')
-                                        })
-                                }
-                            }
-                        })
-                    }
-                })
-            })
-        })
-
-        $(document).on('click', '#BtnCetak', function(e) {
-            e.preventDefault()
-
-            $('#FormCetakDokumenTransaksi').submit()
-        })
+        initializeBootstrapTooltip();
 
         function initializeBootstrapTooltip() {
-            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')),
-                tooltipList = tooltipTriggerList.map(function(e) {
-                    return new bootstrap.Tooltip(e)
-                });
+            $('[data-bs-toggle="tooltip"]').each(function() {
+                new bootstrap.Tooltip(this);
+            });
         }
     </script>
 @endsection
