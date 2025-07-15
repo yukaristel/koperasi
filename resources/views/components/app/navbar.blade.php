@@ -12,19 +12,13 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    @php
-                        $segments = request()->segments(); // Ambil semua segmen URL
-                    @endphp
-
+                    @php $segments = request()->segments(); @endphp
                     <div class="page-title ms-xl-0 ms-5">
-                        @foreach ($segments as $index => $segment)
-                            @php
-                                $text = ucwords(str_replace(['-', '_'], ' ', $segment));
-                            @endphp
-
-                            @if ($index === 0)
+                        @foreach ($segments as $i => $s)
+                            @php $text = ucwords(str_replace(['-', '_'], ' ', $s)); @endphp
+                            @if ($i === 0)
                                 <h5 class="fw-bold d-inline">{{ $text }}</h5>
-                            @elseif ($index === 1)
+                            @elseif ($i === 1)
                                 <span class="text-muted mx-1">/</span>
                                 <span class="h6 d-inline">{{ $text }}</span>
                             @else
@@ -37,19 +31,23 @@
             </ol>
         </nav>
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
-            <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-            </div>
+            <div class="ms-md-auto pe-md-3 d-flex align-items-center"></div>
             <div class="mb-0 font-weight-bold breadcrumb-text text-white">
-                <form method="POST" action="/logout">
+                <form id="logout-form" method="POST" action="/logout">
                     @csrf
-
-                    <a href="login" onclick="event.preventDefault();
-                this.closest('form').submit();">
-                        <button class="btn btn-sm  btn-danger  mb-0 me-1" type="submit">Log out</button>
-                    </a>
+                    <button type="button" id="btn-logout" class="btn btn-sm btn-danger mb-0 me-1">Log out</button>
                 </form>
             </div>
             <ul class="navbar-nav  justify-content-end">
+                <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                    <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                        <div class="sidenav-toggler-inner">
+                            <i class="sidenav-toggler-line"></i>
+                            <i class="sidenav-toggler-line"></i>
+                            <i class="sidenav-toggler-line"></i>
+                        </div>
+                    </a>
+                </li>
                 <li class="nav-item px-3 d-flex align-items-center">
                     <a href="javascript:;" class="nav-link text-body p-0">
                         <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
@@ -60,8 +58,32 @@
                         </svg>
                     </a>
                 </li>
+                <li class="nav-item dropdown pe-2 d-flex align-items-center">
+                    <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor"
+                            class="cursor-pointer">
+                            <path fill-rule="evenodd"
+                                d="M5.25 9a6.75 6.75 0 0113.5 0v.75c0 2.123.8 4.057 2.118 5.52a.75.75 0 01-.297 1.206c-1.544.57-3.16.99-4.831 1.243a3.75 3.75 0 11-7.48 0 24.585 24.585 0 01-4.831-1.244.75.75 0 01-.298-1.205A8.217 8.217 0 005.25 9.75V9zm4.502 8.9a2.25 2.25 0 104.496 0 25.057 25.057 0 01-4.496 0z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+                        <li class="mb-1">
+                            <a class="dropdown-item d-flex align-items-center text-sm text-nowrap" href="#">
+                                <span class="fw-bold">My Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center text-sm text-nowrap" href="#">
+                                <span class="fw-bold">TS / Invoice</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
                 <li class="nav-item ps-2 d-flex align-items-center">
-                    <a href="/pengaturan-user" class="nav-link text-body p-0">
+                    <a href="javascript:;" class="nav-link text-body p-0">
                         <img src="../assets/img/team-2.jpg" class="avatar avatar-sm" alt="avatar" />
                     </a>
                 </li>
@@ -69,4 +91,24 @@
         </div>
     </div>
 </nav>
-<!-- End Navbar -->
+
+<!-- SweetAlert Script -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('btn-logout').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Yakin ingin logout?',
+            text: "Sesi Anda akan diakhiri.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, logout',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('logout-form').submit();
+            }
+        });
+    });
+</script>
