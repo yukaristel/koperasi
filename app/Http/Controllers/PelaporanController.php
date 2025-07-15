@@ -1555,7 +1555,6 @@ class PelaporanController extends Controller
 
         $data['saldo_bulan_lalu'] = $keuangan->saldoKas($tgl_lalu);
         // $data['arus_kas'] = ArusKas::where('sub', '0')->with('child')->orderBy('id', 'ASC')->get();
-        use App\Models\Transaksi;
 
         $data['pph'] = Transaksi::whereBetween('tgl_transaksi', [$data['tgl_awal'], $data['tgl_kondisi']])
             ->where(function ($query) {

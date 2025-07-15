@@ -14,7 +14,7 @@
     </div>
 
     {{-- KONTEN --}}
-    <div class="container-fluid py-4 px-5">
+    <div class="container-fluid">
             <table id="desa-table" class="table align-items-center justify-content-center mb-0 table-hover hover">
                 <thead class="bg-gray-100">
                     <tr>

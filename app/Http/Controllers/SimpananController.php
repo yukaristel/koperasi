@@ -64,7 +64,7 @@ class SimpananController extends Controller
                     return $status;
                 })
                 ->editColumn('jumlah', function ($row) {
-                    return 'Rp ' . number_format($row->jumlah, 0, ',', '.');
+                    return 'Rp ' . number_format(0, 0, ',', '.');
                 })
                 ->editColumn('tgl_buka', function ($row) {
                     return date('d/m/Y', strtotime($row->tgl_buka));
@@ -74,6 +74,46 @@ class SimpananController extends Controller
         }
         $title = 'Daftar Simpanan';
         return view('simpanan.index')->with(compact('title'));
+    }
+    public function anggota()
+    {
+        if (request()->ajax()) {
+            $simpanan = Simpanan::with(['anggota', 'js'])
+                ->orderBy('id', 'DESC');
+            return DataTables::of($simpanan)
+                ->addColumn('nama_anggota', function ($row) {
+                    return $row->anggota->namadepan ?? '-';
+                })
+                ->addColumn('jenis_simpanan', function ($row) {
+                    return $row->js->nama_js ?? '-';
+                })
+                ->addColumn('status', function ($row) {
+                    $status = '<span class="badge bg-secondary">-</span>';
+                    if ($row->status) {
+                        $badge = $row->status == 'A' ? 'success' : 'danger';
+                        $status = '<span class="badge bg-' . $badge . '">' . ($row->status == 'A' ? 'Aktif' : 'Non-Aktif') . '</span>';
+                    }
+                    return $status;
+                })
+                ->addColumn('status', function ($row) {
+                    $status = '<span class="badge bg-secondary">-</span>';
+                    if ($row->status) {
+                        $badge = $row->status == 'A' ? 'success' : 'danger';
+                        $status = '<span class="badge bg-' . $badge . '">' . ($row->status == 'A' ? 'Aktif' : 'Non-Aktif') . '</span>';
+                    }
+                    return $status;
+                })
+                ->editColumn('jumlah', function ($row) {
+                    return 'Rp ' . number_format($row->jumlah, 0, ',', '.');
+                })
+                ->editColumn('tgl_buka', function ($row) {
+                    return date('d/m/Y', strtotime($row->tgl_buka));
+                })
+                ->rawColumns(['status'])
+                ->make(true);
+        }
+        $title = 'Daftar Simpanan Anggota';
+        return view('simpanan.anggota')->with(compact('title'));
     }
     
     public function getTransaksi() {

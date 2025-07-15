@@ -409,6 +409,7 @@ Route::get('/cetak_kuitansi/{idt}', [SimpananController::class, 'cetakKwitansi']
 Route::get('/simpanan/get-transaksi', [SimpananController::class, 'getTransaksi'])->middleware('auth', 'is_aktif');
 
 Route::post('/simpanan/simpan-transaksi', [SimpananController::class, 'simpanTransaksi']);
+Route::get('/simpanan/anggota', [SimpananController::class, 'anggota'])->middleware('auth', 'is_aktif');
 Route::resource('/simpanan', SimpananController::class)->middleware('auth', 'is_aktif');
 Route::get('/bunga', [SimpananController::class, 'bunga'])->middleware('auth', 'is_aktif');
 Route::get('/bunga/info', [SimpananController::class, 'infoBunga'])->middleware('auth', 'is_aktif');

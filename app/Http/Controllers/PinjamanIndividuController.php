@@ -800,6 +800,7 @@ class PinjamanIndividuController extends Controller
     public function update(Request $request, PinjamanIndividu $perguliran_i)
     {
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        dd($request->status);
         if ($request->status == 'P') {
             $tgl = 'tgl_proposal';
             $alokasi = 'proposal';

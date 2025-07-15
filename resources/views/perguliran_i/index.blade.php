@@ -2,7 +2,7 @@
 
 @section('content')
 
-<div class="container-fluid py-4 px-5">
+<div class="container-fluid">
     <div class="nav-wrapper position-relative end-0">
        <ul class="nav nav-pills nav-fill p-1 d-flex w-100" role="tablist">
           <li class="nav-item">

@@ -23,7 +23,7 @@
                     <div class="page-title-icon">
                         <i class="fa fa-bank"></i>
                     </div>
-                    <div><b>Daftar Simpanan Dan Utang</b>
+                    <div><b>Daftar Simpanan Anggota</b>
                         <div class="page-title-subheading">
                              {{ Session::get('nama_lembaga') }}
                         </div>
@@ -41,10 +41,8 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Nomor Rekening</th>
                                         <th>Nama Anggota</th>
                                         <th>Jenis Simpanan</th>
-                                        <th>Jumlah</th>
                                         <th>Tanggal Buka</th>
                                         <th>Status</th>
                                     </tr>

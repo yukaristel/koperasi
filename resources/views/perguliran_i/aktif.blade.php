@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid py-4 px-5">
+<div class="container-fluid">
     <style>
         @media (max-width: 576px) {
             .nav-item .nav-link {

@@ -64,9 +64,4 @@
         </ul>
 
     </div>
-    <div class="sidenav-footer mx-4 ">
-        <a class="btn bg-gradient-primary inline-block px-5 py-3 mx-auto text-xs align-middle transition-all ease-in border-0 rounded-lg select-none" href="#" target="_blank">
-            Ini apa ?
-        </a>
-    </div>
 </aside>

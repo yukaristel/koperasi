@@ -205,8 +205,11 @@
     
     <div class="main-content">
         <x-app.navbar />
+        
+<div class="container-fluid py-3 px-3">
         @yield('content')
         
+</div>
         @yield('modal')
     </div>
 

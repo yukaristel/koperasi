@@ -776,5 +776,56 @@
         })
 
         $(".money").maskMoney();
+
+
+
+    
+    $(document).on('click', '#simpan_verifikasi', function (e) {
+        e.preventDefault();
+        $('small.text-danger').text('');
+
+        let btn = $(this);
+        let originalText = btn.html();
+        var form = $('#FormInputV')
+
+        $.ajax({
+                type: 'post',
+                url: form.attr('action'),
+                data: form.serialize(),
+            beforeSend: function () {
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...');
+            },
+            success: function(response) {
+                toastr.clear();
+                btn.text(originalText);
+
+                if (response.success) {
+                    toastr.success(response.msg || 'Data berhasil disimpan');
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500); // beri delay 1.5 detik agar toastr terlihat
+                } else {
+                    toastr.warning(response.msg || 'Gagal menyimpan transaksi');
+                }
+            },
+            error: function (xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    $.each(errors, function (key, messages) {
+                        $('#msg_' + key).text(messages[0]);
+                    });
+                    toastr.warning('Silakan periksa kembali data yang diisi');
+                } else {
+                    toastr.error('Terjadi kesalahan server');
+                }
+            },
+            complete: function () {
+                btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+
+
     </script>
 @endsection

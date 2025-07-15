@@ -76,7 +76,7 @@ if ($surplus_bulan_lalu > 0) {
 
 @section('content')
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <div class="container-fluid py-4 px-5">
+        <div class="container-fluid">
             <div class="row my-4 d-flex align-items-stretch">
                 <div class="col-lg-3 col-md-6 mb-md-0 mb-4">
                     <div class="card shadow-xs border h-100">

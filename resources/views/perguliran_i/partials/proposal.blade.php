@@ -1,4 +1,4 @@
-<form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInput">
+<form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInputV">
     @csrf
     @method('PUT')
     <div class="card mb-3">
@@ -96,7 +96,7 @@
 
     <div class="card mb-3">
         <div class="card-header pb-0 p-3">
-            <h6>Input Rekom Verifikator</h6>
+            <h6>Input Rekom Verifikator/Analis</h6>
         </div>
         <div class="card-body p-3">
             <input type="hidden" name="_id" id="_id" value="{{ $perguliran_i->id }}">
@@ -105,7 +105,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group mb-3">
-                        <label for="tgl_verifikasi" class="form-label">Tgl Verifikasi</label>
+                        <label for="tgl_verifikasi" class="form-label">Tgl Verifikasi/Analisa Pinjaman</label>
                         <input type="text" name="tgl_verifikasi" id="tgl_verifikasi" autocomplete="off"
                             class="form-control date" value="{{ Tanggal::tglIndo($perguliran_i->tgl_proposal) }}">
                         <small class="text-danger" id="msg_tgl_verifikasi"></small>
@@ -113,9 +113,9 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group mb-3">
-                        <label for="verifikasi" class="form-label">Verifikasi Rp.</label>
+                        <label for="verifikasi" class="form-label">Verifikasi/Analisa Pinjaman Rp.</label>
                         <input type="text" name="verifikasi" id="verifikasi" autocomplete="off"
-                            class="form-control money" value="{{ number_format($perguliran_i->proposal, 2) }}">
+                            class="form-control keuangan" value="{{ $alokasi }}">
                         <small class="text-danger" id="msg_verifikasi"></small>
                     </div>
                 </div>
@@ -180,80 +180,18 @@
             </div>
 
             <div class="form-group mb-3">
-                <label for="catatan_verifikasi" class="form-label">Catatan Verifikasi</label>
+                <label for="catatan_verifikasi" class="form-label">Catatan Verifikasi/Analisa Pinjaman</label>
                 <textarea class="form-control" name="catatan_verifikasi" id="catatan_verifikasi" rows="3"
                     placeholder="Catatan">{{ $perguliran_i->catatan_verifikasi }}</textarea>
                 <small class="text-danger" id="msg_catatan_verifikasi"></small>
             </div>
 
-            <button type="button" id="Simpan" class="btn btn-github float-end btn-sm"
-                @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', []))) disabled @endif>
-                Simpan Rekom Verifikator
-            </button>
+                <button type="button" id="simpan_verifikasi" class="btn btn-github float-end btn-sm"
+                    {{-- @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', []))) disabled @endif --}}>
+                    Simpan Rekom Verifikator/Analis
+                </button>
+
         </div>
     </div>
 
 </form>
-
-<script>
-    var formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    })
-
-    new Choices($('#jenis_jasa')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-    new Choices($('#sistem_angsuran_pokok')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-    new Choices($('#sistem_angsuran_jasa')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-
-    $(".money").maskMoney();
-
-    $(".date").flatpickr({
-        dateFormat: "d/m/Y"
-    })
-
-    $(document).on('click', '#Simpan', async function(e) {
-        e.preventDefault()
-        $('small').html('')
-
-        var form = $('#FormInput')
-        $.ajax({
-            type: 'POST',
-            url: form.attr('action'),
-            data: form.serialize(),
-            success: function(result) {
-                Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                    window.location.href = '/detail_i/' + result.id
-                })
-            },
-            error: function(result) {
-                const respons = result.responseJSON;
-
-                Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                $.map(respons, function(res, key) {
-                    $('#' + key).parent('.input-group.input-group-static')
-                        .addClass(
-                            'is-invalid')
-                    $('#msg_' + key).html(res)
-                })
-            }
-        })
-    })
-</script>
