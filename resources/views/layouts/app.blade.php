@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>{{ $title ?? 'SiKopii' }}</title>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css">
     <link rel="stylesheet"
@@ -241,6 +241,78 @@
     <script src="../assets/js/plugins/swiper-bundle.min.js"></script>
     <script src="../assets/js/corporate-ui-dashboard.min.js?v=1.0.0"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+    <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Inisialisasi TinyMCE
+            tinymce.init({
+                selector: '.tiny-mce-editor',
+                height: 300,
+                menubar: false,
+                plugins: 'table visualblocks fullscreen link code',
+                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | alignleft aligncenter alignright | table link fullscreen code | removeformat',
+                font_family_formats: 'Arial=arial,helvetica,sans-serif; Courier New=courier new,courier,monospace;',
+                branding: false,
+                tinycomments_mode: 'embedded',
+                tinycomments_author: 'ARAFII'
+            });
+
+            // Tombol Simpan
+            $(document).on('click', '#simpanTtdPelaporan', function(e) {
+                e.preventDefault();
+
+                tinymce.triggerSave(); // Sinkronisasi isi editor ke textarea
+
+                const form = $('#formTtdPelaporan');
+
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function(result) {
+                        if (result.success) {
+                            Toastr('success', result.msg);
+                        } else {
+                            Toastr('error', 'Gagal menyimpan.');
+                        }
+                    },
+                    error: function() {
+                        Toastr('error', 'Terjadi kesalahan pada server.');
+                    }
+                });
+            });
+        });
+
+        // Fungsi Toastr Custom (pakai Swal.fire Toast)
+        function Toastr(icon, text) {
+            const font = "1.2rem Nimrod MT";
+            const canvas = document.createElement("canvas");
+            const context = canvas.getContext("2d");
+            context.font = font;
+            const width = context.measureText(text).width;
+            const formattedWidth = Math.ceil(width) + 100;
+
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+
+            Toast.fire({
+                icon: icon,
+                title: text,
+                width: formattedWidth
+            });
+        }
+    </script>
 
     <script>
         $.ajaxSetup({

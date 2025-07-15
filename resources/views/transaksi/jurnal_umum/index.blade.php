@@ -1,154 +1,157 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="px-5 py-4 container-fluid ">
-        <form action="/transaksi" method="post" id="FormTransaksi">
-            @csrf
-            <div class="mb-5 row justify-content-center">
-                <div class="col-lg-9 col-12 ">
-                    <div class="card">
-                        <div class="p-3 pb-3 pe-3 ps-3 pt-3 card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="tgl_transaksi">Tgl Transaksi</label>
-                                    <input autocomplete="off" type="text" name="tgl_transaksi" id="tgl_transaksi"
-                                        class="form-control date" value="{{ date('d/m/Y') }}">
-                                    <small class="text-danger" id="msg_tgl_transaksi"></small>
+    <form action="/transaksi" method="post" id="FormTransaksi">
+        @csrf
+        <div class="app-main__inner">
+            <div class="tab-content">
+                <br>
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="main-card mb-3 card">
+                            <div class="p-3 pb-3 pe-3 ps-3 pt-3 card-body">
+                                <div class="row">
+                                    <div class="col-lg-6 col-12">
+                                        <label for="tgl_transaksi">Tgl Transaksi</label>
+                                        <input autocomplete="off" type="text" name="tgl_transaksi" id="tgl_transaksi"
+                                            class="form-control date" value="{{ date('d/m/Y') }}">
+                                        <small class="text-danger" id="msg_tgl_transaksi"></small>
+                                    </div>
+                                    <div class="col-lg-6 col-12">
+                                        <label for="jenis_transaksi">Jenis Transaksi</label>
+                                        <select class="selectJurnalUmum form-control" name="jenis_transaksi"
+                                            id="jenis_transaksi">
+                                            <option value="">-- Pilih Jenis Transaksi --</option>
+                                            @foreach ($jenis_transaksi as $jt)
+                                                <option value="{{ $jt->id }}">
+                                                    {{ $jt->nama_jt }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-danger" id="msg_jenis_transaksi"></small>
+                                    </div>
                                 </div>
-                                <div class="col-6">
-                                    <label for="jenis_transaksi">Jenis Transaksi</label>
-                                    <select class="selectJurnalUmum form-control" name="jenis_transaksi"
-                                        id="jenis_transaksi">
-                                        <option value="">-- Pilih Jenis Transaksi --</option>
-                                        @foreach ($jenis_transaksi as $jt)
-                                            <option value="{{ $jt->id }}">
-                                                {{ $jt->nama_jt }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <small class="text-danger" id="msg_jenis_transaksi"></small>
+                                <div class="row" id="kd_rekening">
+                                    <div class="col-lg-6 col-12">
+                                        <label for="sumber_dana">Sumber Dana</label>
+                                        <select class="selectJurnalUmum form-control" name="sumber_dana" id="sumber_dana">
+                                            <option value="">-- Sumber Dana --</option>
+                                        </select>
+                                        <small class="text-danger" id="msg_sumber_dana"></small>
+                                    </div>
+                                    <div class="col-lg-6 col-12">
+                                        <label for="disimpan_ke">Disimpan Ke</label>
+                                        <select class="selectJurnalUmum form-control" name="disimpan_ke" id="disimpan_ke">
+                                            <option value="">-- Disimpan Ke --</option>
+                                        </select>
+                                        <small class="text-danger" id="msg_disimpan_ke"></small>
+                                    </div>
                                 </div>
+                                <div class="row" id="form_nominal">
+                                    <div class="col-12">
+                                        <label for="keterangan">Keterangan</label>
+                                        <input autocomplete="off" type="text" name="keterangan" id="keterangan"
+                                            class="form-control">
+                                        <small class="text-danger" id="msg_keterangan"></small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="nominal">Nominal Rp.</label>
+                                        <input autocomplete="off" type="text" name="nominal" id="nominal"
+                                            class="form-control">
+                                        <small class="text-danger" id="msg_nominal"></small>
+                                    </div>
+                                </div>
+                                <button type="button" id="SimpanTransaksi"
+                                    class="mt-5 mb-1 btn btn-dark btn-sm float-end">Simpan Transaksi</button>
                             </div>
-                            <div class="row" id="kd_rekening">
-                                <div class="col-6">
-                                    <label for="sumber_dana">Sumber Dana</label>
-                                    <select class="selectJurnalUmum form-control" name="sumber_dana" id="sumber_dana">
-                                        <option value="">-- Sumber Dana --</option>
-                                    </select>
-                                    <small class="text-danger" id="msg_sumber_dana"></small>
-                                </div>
-                                <div class="col-6">
-                                    <label for="disimpan_ke">Disimpan Ke</label>
-                                    <select class="selectJurnalUmum form-control" name="disimpan_ke" id="disimpan_ke">
-                                        <option value="">-- Disimpan Ke --</option>
-                                    </select>
-                                    <small class="text-danger" id="msg_disimpan_ke"></small>
-                                </div>
-                            </div>
-                            <div class="row" id="form_nominal">
-                                <div class="col-12">
-                                    <label for="keterangan">Keterangan</label>
-                                    <input autocomplete="off" type="text" name="keterangan" id="keterangan"
-                                        class="form-control">
-                                    <small class="text-danger" id="msg_keterangan"></small>
-                                </div>
-                                <div class="col-12">
-                                    <label for="nominal">Nominal Rp.</label>
-                                    <input autocomplete="off" type="text" name="nominal" id="nominal"
-                                        class="form-control">
-                                    <small class="text-danger" id="msg_nominal"></small>
-                                </div>
-                            </div>
-                            <button type="button" id="SimpanTransaksi"
-                                class="mt-5 mb-1 btn btn-dark btn-sm float-end">Simpan Transaksi</button>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-12 ">
-                    <div class="card">
-                        <div class="p-3 pb-3 pe-3 ps-3 pt-3 card-body">
-                            <div class="d-flex justify-content-between">
-                                <div class="text-sm">Saldo:</div>
-                                <div class="text-sm fw-bold">
-                                    Rp. <span id="saldo">0.00</span>
+
+                    <div class="col-md-3">
+                        <div class="main-card mb-3 card">
+                            <div class="p-3 pb-3 pe-3 ps-3 pt-3 card-body">
+                                <div class="d-flex justify-content-between">
+                                    <div class="text-sm">Saldo:</div>
+                                    <div class="text-sm fw-bold">
+                                        Rp. <span id="saldo">0.00</span>
+                                    </div>
                                 </div>
-                            </div>
-                            <hr class="horizontal dark">
-                            <div class="text-sm fw-bold text-center">Cetak Buku Bantu</div>
-                            <hr class="horizontal dark mb-0">
-                            <div class="row">
-                                <div class="col-12">
-                                    <label class="form-label" for="tahun">Tahunan</label>
-                                    <select class="selectJurnalUmum form-control" name="tahun" id="tahun">
-                                        @php
-                                            $tgl_pakai = $kec->tgl_pakai;
-                                            $th_pakai = explode('-', $tgl_pakai)[0];
-                                        @endphp
-                                        @for ($i = date('Y'); $i >= $th_pakai; $i--)
-                                            <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
-                                                {{ $i }}
+                                <hr class="horizontal dark">
+                                <div class="text-sm fw-bold text-center">Cetak Buku Bantu</div>
+                                <hr class="horizontal dark mb-0">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label class="form-label" for="tahun">Tahunan</label>
+                                        <select class="selectJurnalUmum form-control" name="tahun" id="tahun">
+                                            @php
+                                                $tgl_pakai = $kec->tgl_pakai;
+                                                $th_pakai = explode('-', $tgl_pakai)[0];
+                                            @endphp
+                                            @for ($i = date('Y'); $i >= $th_pakai; $i--)
+                                                <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
+                                                    {{ $i }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                        <small class="text-danger" id="msg_tahun"></small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="bulan">Bulanan</label>
+                                        <select class="selectJurnalUmum form-control" name="bulan" id="bulan">
+                                            <option value="">--</option>
+                                            <option {{ date('m') == '01' ? 'selected' : '' }} value="01">01.
+                                                JANUARI</option>
+                                            <option {{ date('m') == '02' ? 'selected' : '' }} value="02">02.
+                                                FEBRUARI</option>
+                                            <option {{ date('m') == '03' ? 'selected' : '' }} value="03">03. MARET
                                             </option>
-                                        @endfor
-                                    </select>
-                                    <small class="text-danger" id="msg_tahun"></small>
+                                            <option {{ date('m') == '04' ? 'selected' : '' }} value="04">04. APRIL
+                                            </option>
+                                            <option {{ date('m') == '05' ? 'selected' : '' }} value="05">05. MEI
+                                            </option>
+                                            <option {{ date('m') == '06' ? 'selected' : '' }} value="06">06. JUNI
+                                            </option>
+                                            <option {{ date('m') == '07' ? 'selected' : '' }} value="07">07. JULI
+                                            </option>
+                                            <option {{ date('m') == '08' ? 'selected' : '' }} value="08">08.
+                                                AGUSTUS</option>
+                                            <option {{ date('m') == '09' ? 'selected' : '' }} value="09">09.
+                                                SEPTEMBER
+                                            </option>
+                                            <option {{ date('m') == '10' ? 'selected' : '' }} value="10">10.
+                                                OKTOBER</option>
+                                            <option {{ date('m') == '11' ? 'selected' : '' }} value="11">11.
+                                                NOVEMBER
+                                            </option>
+                                            <option {{ date('m') == '12' ? 'selected' : '' }} value="12">12.
+                                                DESEMBER
+                                            </option>
+                                        </select>
+                                        <small class="text-danger" id="msg_bulan"></small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label" for="tanggal">Tanggal</label>
+                                        <select class="selectJurnalUmum form-control" name="tanggal" id="tanggal">
+                                            <option value="">--</option>
+                                            @for ($j = 1; $j <= 31; $j++)
+                                                @php $no=str_pad($j, 2, "0" , STR_PAD_LEFT) @endphp
+                                                <option value="{{ $no }}">{{ $no }}</option>
+                                            @endfor
+                                        </select>
+                                        <small class="text-danger" id="msg_tanggal"></small>
+                                    </div>
                                 </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="bulan">Bulanan</label>
-                                    <select class="selectJurnalUmum form-control" name="bulan" id="bulan">
-                                        <option value="">--</option>
-                                        <option {{ date('m') == '01' ? 'selected' : '' }} value="01">01.
-                                            JANUARI</option>
-                                        <option {{ date('m') == '02' ? 'selected' : '' }} value="02">02.
-                                            FEBRUARI</option>
-                                        <option {{ date('m') == '03' ? 'selected' : '' }} value="03">03. MARET
-                                        </option>
-                                        <option {{ date('m') == '04' ? 'selected' : '' }} value="04">04. APRIL
-                                        </option>
-                                        <option {{ date('m') == '05' ? 'selected' : '' }} value="05">05. MEI
-                                        </option>
-                                        <option {{ date('m') == '06' ? 'selected' : '' }} value="06">06. JUNI
-                                        </option>
-                                        <option {{ date('m') == '07' ? 'selected' : '' }} value="07">07. JULI
-                                        </option>
-                                        <option {{ date('m') == '08' ? 'selected' : '' }} value="08">08.
-                                            AGUSTUS</option>
-                                        <option {{ date('m') == '09' ? 'selected' : '' }} value="09">09.
-                                            SEPTEMBER
-                                        </option>
-                                        <option {{ date('m') == '10' ? 'selected' : '' }} value="10">10.
-                                            OKTOBER</option>
-                                        <option {{ date('m') == '11' ? 'selected' : '' }} value="11">11.
-                                            NOVEMBER
-                                        </option>
-                                        <option {{ date('m') == '12' ? 'selected' : '' }} value="12">12.
-                                            DESEMBER
-                                        </option>
-                                    </select>
-                                    <small class="text-danger" id="msg_bulan"></small>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="tanggal">Tanggal</label>
-                                    <select class="selectJurnalUmum form-control" name="tanggal" id="tanggal">
-                                        <option value="">--</option>
-                                        @for ($j = 1; $j <= 31; $j++)
-                                            @php $no=str_pad($j, 2, "0" , STR_PAD_LEFT) @endphp
-                                            <option value="{{ $no }}">{{ $no }}</option>
-                                        @endfor
-                                    </select>
-                                    <small class="text-danger" id="msg_tanggal"></small>
-                                </div>
+                                <button type="button" id="BtndetailTransaksi"
+                                    class="mt-4 mb-1 btn btn-success btn-sm w-100">
+                                    Detail Transaksi
+                                </button>
                             </div>
-                            <button type="button" id="BtndetailTransaksi"
-                                class="mt-4 mb-1 btn btn-success btn-sm w-100">
-                                Detail Transaksi
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
-
+        </div>
+    </form>
     <form action="/transaksi/reversal" method="post" id="formReversal">
         @csrf
 
