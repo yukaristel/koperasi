@@ -12,7 +12,7 @@ use App\Models\User;
 use App\Utils\Keuangan;
 use App\Utils\Tanggal;
 use Auth;
-use DB; 
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Session;
@@ -20,45 +20,41 @@ use Session;
 class AuthController extends Controller
 {
     private const ID_KEC = 1;
-
     public function index()
     {
         $keuangan = new Keuangan;
-
         if ($keuangan->startWith(request()->getHost(), 'master.sidbm')) {
             return redirect('/master');
         }
-
-        // Handle URL lokal
-        if (request()->server('SERVER_NAME') === '127.0.0.1' || request()->server('SERVER_NAME') === 'localhost') {
-                    $kec = Kecamatan::where('id', self::ID_KEC)->with('kabupaten')->first();
-                    //$pus = Rekap::where('id', 1)->first();return redirect('/rekap');
+        $host = request()->getHost();
+        if (
+            $host === '127.0.0.1' ||
+            $host === 'localhost' ||
+            str_ends_with($host, '.test')
+        ) {
+            $kec = Kecamatan::where('id', self::ID_KEC)->with('kabupaten')->first();
         } else {
-            $kec = Kecamatan::where('web_kec', explode('//', request()->url(''))[1])
-                ->orWhere('web_alternatif', explode('//', request()->url(''))[1])
+            $kec = Kecamatan::where('web_kec', $host)
+                ->orWhere('web_alternatif', $host)
                 ->first();
         }
-
         if (!$kec) {
-            $kab = Kabupaten::where('web_kab', explode('//', request()->url(''))[1])
-                ->orWhere('web_kab_alternatif', explode('//', request()->url(''))[1])
+            $kab = Kabupaten::where('web_kab', $host)
+                ->orWhere('web_kab_alternatif', $host)
                 ->first();
-                if (!$kab) {
-                    $pus = Rekap::where('web_rekap', explode('//', request()->url(''))[1])
-                        ->first();
-                    if (!$pus) {
-                        abort(404);
-                    }
-                    return redirect('/rekap');
+            if (!$kab) {
+                $pus = Rekap::where('web_rekap', $host)->first();
+                if (!$pus) {
+                    abort(404);
                 }
+                return redirect('/rekap');
+            }
             return redirect('/kab');
         }
-
         $logo = '/assets/img/icon/favicon.png';
         if ($kec->logo) {
             $logo = '/storage/logo/' . $kec->logo;
         }
-
         return view('auth.login')->with(compact('kec', 'logo'));
     }
 
@@ -107,32 +103,32 @@ class AuthController extends Controller
 
         $user = User::where([['uname', $username], ['lokasi', $lokasi]])->first();
         $rekap = Rekap::whereRaw("CONCAT(',', REPLACE(lokasi, ' ', ''), ',') LIKE ?", ['%,' . $lokasi . ',%'])->first();
-        
+
         if (!$rekap) {
-        return redirect()->back();
+            return redirect()->back();
         }
         if ($user) {
             if ($password === $user->pass) {
                 if (Auth::loginUsingId($user->id)) {
                     $hak_akses = explode(',', $user->hak_akses);
                     $menu = Menu::where('parent_id', '0')
-                            ->whereNotIn('id', $hak_akses)
-                            ->where('aktif', 'Y')
-                            ->where(function ($query) use ($lokasi) {
-                                $query->where('lokasi', '0')
-                                      ->orWhere('lokasi', 'LIKE', '%#' . $lokasi . '#%');
-                            })
-                            ->with([
-                                'child' => function ($query) use ($hak_akses) {
-                                    $query->whereNotIn('id', $hak_akses);
-                                },
-                                'child.child'  => function ($query) use ($hak_akses) {
-                                    $query->whereNotIn('id', $hak_akses);
-                                }
-                            ])
-                            ->orderBy('sort', 'ASC')
-                            ->orderBy('id', 'ASC')
-                            ->get();
+                        ->whereNotIn('id', $hak_akses)
+                        ->where('aktif', 'Y')
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('lokasi', '0')
+                                ->orWhere('lokasi', 'LIKE', '%#' . $lokasi . '#%');
+                        })
+                        ->with([
+                            'child' => function ($query) use ($hak_akses) {
+                                $query->whereNotIn('id', $hak_akses);
+                            },
+                            'child.child'  => function ($query) use ($hak_akses) {
+                                $query->whereNotIn('id', $hak_akses);
+                            }
+                        ])
+                        ->orderBy('sort', 'ASC')
+                        ->orderBy('id', 'ASC')
+                        ->get();
 
                     $angsuran = true;
                     if (in_array('19', $hak_akses) || in_array('21', $hak_akses)) {
@@ -205,23 +201,23 @@ class AuthController extends Controller
                 if (Auth::loginUsingId($user->id)) {
                     $hak_akses = explode(',', $user->hak_akses);
                     $menu = Menu::where('parent_id', '0')
-                            ->whereNotIn('id', $hak_akses)
-                            ->where('aktif', 'Y')
-                            ->where(function ($query) use ($lokasi) {
-                                $query->where('lokasi', '0')
-                                      ->orWhere('lokasi', 'LIKE', '%#' . $lokasi . '#%');
-                            })
-                            ->with([
-                                'child' => function ($query) use ($hak_akses) {
-                                    $query->whereNotIn('id', $hak_akses);
-                                },
-                                'child.child'  => function ($query) use ($hak_akses) {
-                                    $query->whereNotIn('id', $hak_akses);
-                                }
-                            ])
-                            ->orderBy('sort', 'ASC')
-                            ->orderBy('id', 'ASC')
-                            ->get();
+                        ->whereNotIn('id', $hak_akses)
+                        ->where('aktif', 'Y')
+                        ->where(function ($query) use ($lokasi) {
+                            $query->where('lokasi', '0')
+                                ->orWhere('lokasi', 'LIKE', '%#' . $lokasi . '#%');
+                        })
+                        ->with([
+                            'child' => function ($query) use ($hak_akses) {
+                                $query->whereNotIn('id', $hak_akses);
+                            },
+                            'child.child'  => function ($query) use ($hak_akses) {
+                                $query->whereNotIn('id', $hak_akses);
+                            }
+                        ])
+                        ->orderBy('sort', 'ASC')
+                        ->orderBy('id', 'ASC')
+                        ->get();
 
                     $angsuran = true;
                     if (in_array('19', $hak_akses) || in_array('21', $hak_akses)) {
@@ -383,6 +379,5 @@ class AuthController extends Controller
 
             $no++;
         }
-
     }
 }
