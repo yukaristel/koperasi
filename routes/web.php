@@ -281,6 +281,8 @@ Route::resource('/pinjaman_anggota', PinjamanAnggotaController::class)->middlewa
 Route::post('/lunaskan_pemanfaat/{pinjaman}', [PinjamanAnggotaController::class, 'lunaskan'])->middleware('auth', 'is_aktif');
 Route::post('/hapus_pemanfaat/{pinjaman}', [PinjamanAnggotaController::class, 'penghapusan'])->middleware('auth', 'is_aktif');
 
+Route::get('/anggota/cetak_kartu/{id}', [AnggotaController::class, 'cetakKartu'])->middleware('auth');
+
 Route::get('/transaksi/jurnal_umum', [TransaksiController::class, 'jurnalUmum'])->middleware('auth', 'is_aktif');
 Route::get('/transaksi/jurnal_angsuran', [TransaksiController::class, 'jurnalAngsuran'])->middleware('auth', 'is_aktif');
 Route::get('/transaksi/jurnal_angsuran_individu', [TransaksiController::class, 'jurnalAngsuranIndividu'])->middleware('auth', 'is_aktif');

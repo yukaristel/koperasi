@@ -20,6 +20,8 @@ use App\Utils\Tanggal;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use DNS1D;
 use Session;
 use Yajra\DataTables\DataTables;
 
@@ -86,6 +88,19 @@ class AnggotaController extends Controller
         $sistem_angsuran = SistemAngsuran::all();
         
         return view('penduduk.register')->with(compact('title','jenis_pp', 'sistem_angsuran'));
+    }
+
+    public function cetakKartu($id)
+    {
+        $anggota = Anggota::findOrFail($id);
+
+        $generator = new BarcodeGeneratorPNG();
+        $barcode = base64_encode($generator->getBarcode($anggota->nik, $generator::TYPE_CODE_128));
+        $barcode2 = DNS1D::getBarcodePNG($anggota->nik, 'C128');
+        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+        $logo = asset('storage/logo/' . $kec->logo);
+
+        return view('Penduduk.dokumen.kartu', compact('anggota', 'barcode', 'barcode2', 'logo'));
     }
 
     public function loadForm($nik)
