@@ -82,6 +82,7 @@ class Keuangan
 
     public function penyebut($nilai)
     {
+        $nilai = str_replace(',', '', $nilai);
         $nilai = abs($nilai);
         $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
         $temp = "";
@@ -208,6 +209,83 @@ class Keuangan
         }
 
         return $saldo;
+    }
+
+    public function getSaldo($rek)
+    {
+        $awal_debit = 0;
+        $saldo_debit = 0;
+        $awal_kredit = 0;
+        $saldo_kredit = 0;
+
+        $nomor = 0;
+        foreach ($rek->kom_saldo as $kom_saldo) {
+            if ($nomor > 2) {
+                continue;
+            }
+
+            if ($kom_saldo->bulan == 0) {
+                $awal_debit += floatval($kom_saldo->debit);
+                $awal_kredit += floatval($kom_saldo->kredit);
+            } else {
+                $saldo_debit += floatval($kom_saldo->debit);
+                $saldo_kredit += floatval($kom_saldo->kredit);
+            }
+
+            $nomor++;
+        }
+
+        if ($rek->lev1 == 1 || $rek->lev1 == '5') {
+            $saldo_awal = $awal_debit - $awal_kredit;
+            $saldo = $saldo_awal + ($saldo_debit - $saldo_kredit);
+        } else {
+            $saldo_awal = $awal_kredit - $awal_debit;
+            $saldo = $saldo_awal + ($saldo_kredit - $saldo_debit);
+        }
+
+        return [
+            'saldo_awal' => $saldo_awal,
+            'saldo_berjalan' => $saldo
+        ];
+    }
+
+    public function getTbSaldo($komSaldo)
+    {
+        $awal_debit = 0;
+        $saldo_debit = 0;
+        $awal_kredit = 0;
+        $saldo_kredit = 0;
+
+        $nomor = 0;
+        foreach ($komSaldo as $kom_saldo) {
+            if ($nomor > 2) {
+                continue;
+            }
+
+            if ($kom_saldo->bulan == 0) {
+                $awal_debit += floatval($kom_saldo->debit);
+                $awal_kredit += floatval($kom_saldo->kredit);
+            } else {
+                $saldo_debit += floatval($kom_saldo->debit);
+                $saldo_kredit += floatval($kom_saldo->kredit);
+            }
+
+            $nomor++;
+        }
+
+        $kode_akun = explode('.', $komSaldo[0]->kode_akun);
+        if ($kode_akun[0] == 1 || $kode_akun[0] == '5') {
+            $saldo_awal = $awal_debit - $awal_kredit;
+            $saldo = $saldo_awal + ($saldo_debit - $saldo_kredit);
+        } else {
+            $saldo_awal = $awal_kredit - $awal_debit;
+            $saldo = $saldo_awal + ($saldo_kredit - $saldo_debit);
+        }
+
+        return [
+            'saldo_awal' => $saldo_awal,
+            'saldo_berjalan' => $saldo
+        ];
     }
 
     public function komSaldoLR($rek, $tanggal)
@@ -516,6 +594,8 @@ class Keuangan
         $sum_kolek1 = 0;
         $sum_kolek2 = 0;
         $sum_kolek3 = 0;
+        $sum_kolek4 = 0;
+        $sum_kolek5 = 0;
 
         $pinjaman_anggota = PinjamanIndividu::where('sistem_angsuran', '!=', '12')
             ->where(function ($query) use ($data) {
@@ -580,12 +660,14 @@ class Keuangan
             $wajib_pokok = 0;
             $wajib_jasa = 0;
             $angsuran_ke = 0;
+                    $jatuh_tempo = 0;
             if ($pinkel->target) {
                 $target_pokok = $pinkel->target->target_pokok;
                 $target_jasa = $pinkel->target->target_jasa;
                 $wajib_pokok = $pinkel->target->wajib_pokok;
                 $wajib_jasa = $pinkel->target->wajib_jasa;
                 $angsuran_ke = $pinkel->target->angsuran_ke;
+                        $jatuh_tempo = $pinkel->target->jatuh_tempo;
             }
 
             $tunggakan_pokok = $target_pokok - $sum_pokok;
@@ -623,24 +705,29 @@ class Keuangan
             $selisih_bulan = $data['bulan'] - $bl_cair;
 
             $selisih = $selisih_bulan + $selisih_tahun;
+            $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
 
-            $_kolek = 0;
-            if ($wajib_pokok != '0') {
-                $_kolek = ($tunggakan_pokok / $wajib_pokok);
-            }
-            $kolek = round($_kolek + ($selisih - $angsuran_ke));
-            if ($kolek <= 3) {
+                    $kolek = 0;
+                    if ($tunggakan_pokok <= 0) {
+                        $kolek = 0;
+                    } elseif ($jatuh_tempo != 0) {
+                        $kolek = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
+                        if ($kolek < 0) {
+                            $kolek = 0;
+                        }
+                    }
+            $kolek1 = $kolek2 = $kolek3 = $kolek4 = $kolek5 = 0;
+
+            if ($kolek < 10) {
                 $kolek1 = $saldo_pokok;
-                $kolek2 = 0;
-                $kolek3 = 0;
-            } elseif ($kolek <= 5) {
-                $kolek1 = 0;
+            } elseif ($kolek < 90) {
                 $kolek2 = $saldo_pokok;
-                $kolek3 = 0;
-            } else {
-                $kolek1 = 0;
-                $kolek2 = 0;
+            } elseif ($kolek < 120) {
                 $kolek3 = $saldo_pokok;
+            } elseif ($kolek < 180) {
+                $kolek4 = $saldo_pokok;
+            } else {
+                $kolek5 = $saldo_pokok;
             }
 
             $sum_nunggak_pokok += $tunggakan_pokok;
@@ -650,18 +737,22 @@ class Keuangan
             $sum_kolek1 += $kolek1;
             $sum_kolek2 += $kolek2;
             $sum_kolek3 += $kolek3;
+            $sum_kolek4 += $kolek4;
+            $sum_kolek5 += $kolek5;
         }
 
         $kolek_1 = $sum_kolek1 * 0 / 100;
-        $kolek_2 = $sum_kolek2 * 50 / 100;
-        $kolek_3 = $sum_kolek3 * 100 / 100;
+        $kolek_2 = $sum_kolek2 * 5 / 100;
+        $kolek_3 = $sum_kolek3 * 15 / 100;
+        $kolek_4 = $sum_kolek4 * 50 / 100;
+        $kolek_5 = $sum_kolek5 * 100 / 100;
 
         return [
             'nunggak_pokok' => $sum_nunggak_pokok,
             'nunggak_jasa' => $sum_nunggak_jasa,
             'saldo_pokok' => $sum_saldo_pokok,
             'saldo_jasa' => $sum_saldo_jasa,
-            'sum_kolek' => ($kolek_1 + $kolek_2 + $kolek_3)
+            'sum_kolek' => ($kolek_1 + $kolek_2 + $kolek_3 + $kolek_4 + $kolek_5)
         ];
     }
 
@@ -805,7 +896,12 @@ class Keuangan
         $bulan_lalu = $bulan - 1;
         $tgl_lalu = date('Y-m-d', strtotime('-1 month', strtotime($tgl_kondisi)));
 
-        $kode_akun = '5.4.01.01';
+        $kode_akun = '5.5.01.01';
+
+        $lokasi_arthamari = ['351', '352', '353', '354'];
+        $lokasi = Session::get('lokasi');
+        $kode_akun = in_array($lokasi, $lokasi_arthamari) ? '5.5.01.01' : '5.4.01.01';
+
         $saldo = Rekening::where('kode_akun', $kode_akun)->with([
             'kom_saldo' => function ($query) use ($tahun, $bulan, $bulan_lalu) {
                 $query->where('tahun', $tahun)->where(function ($query) use ($bulan, $bulan_lalu) {
@@ -1019,6 +1115,126 @@ class Keuangan
                         'saldo_bln_lalu' => $saldo_bulan_lalu
                     ];
                 }
+            }
+
+            // Pendapatan
+            if ($akn2->lev1 == '4' && $akn2->lev2 == '1') {
+                $pendapatan[$akn2->lev2] = [
+                    'kode_akun' => $akn2->kode_akun,
+                    'nama_akun' => $akn2->nama_akun,
+                    'rek'       => $data
+                ];
+            }
+
+            // Beban
+            if ($akn2->lev1 == '5' && ($akn2->lev2 == '1' || $akn2->lev2 == '2')) {
+                $beban[$akn2->lev2] = [
+                    'kode_akun' => $akn2->kode_akun,
+                    'nama_akun' => $akn2->nama_akun,
+                    'rek'       => $data
+                ];
+            }
+
+            // Pendapatan Non Operasional
+            if ($akn2->lev1 == '4' && ($akn2->lev2 == '2' || $akn2->lev2 == '3')) {
+                $pendapatan_non_ops[$akn2->lev2] = [
+                    'kode_akun' => $akn2->kode_akun,
+                    'nama_akun' => $akn2->nama_akun,
+                    'rek'       => $data
+                ];
+            }
+
+            // Beban Non Operasional
+            if ($akn2->lev1 == '5' && $akn2->lev2 == '3') {
+                $beban_non_ops[$akn2->lev2] = [
+                    'kode_akun' => $akn2->kode_akun,
+                    'nama_akun' => $akn2->nama_akun,
+                    'rek'       => $data
+                ];
+            }
+        }
+
+        return [
+            'pendapatan' => $pendapatan,
+            'beban' => $beban,
+            'pendapatan_non_ops' => $pendapatan_non_ops,
+            'beban_non_ops' => $beban_non_ops
+        ];
+    }
+
+    public function rekening_laba_rugi($tgl_kondisi)
+    {
+        $tanggal = explode('-', $tgl_kondisi);
+        $tahun = $tanggal[0];
+        $bulan = $tanggal[1];
+        $hari = $tanggal[2];
+
+        $bulan_lalu = $bulan - 1;
+
+        $akun2 = AkunLevel2::where('lev1', '>=', '4')->with([
+            'rek',
+            'rek.kom_saldo' => function ($query) use ($tahun, $bulan, $bulan_lalu, $hari) {
+                if ($bulan == '1' && $hari == '1') {
+                    $query->where([
+                        ['tahun', $tahun],
+                        ['bulan', '0']
+                    ]);
+                } else {
+                    $query->where('tahun', $tahun)->where(function ($query) use ($bulan, $bulan_lalu) {
+                        $query->whereIn('bulan', ['0', $bulan_lalu, $bulan]);
+                    });
+                }
+            }
+        ])->orderBy('kode_akun')->get();
+
+        $pendapatan = [];
+        $beban = [];
+        $pendapatan_non_ops = [];
+        $beban_non_ops = [];
+        foreach ($akun2 as $akn2) {
+            $data = [];
+
+            foreach ($akn2->rek as $rek) {
+                $debit_bulan_ini = 0;
+                $kredit_bulan_ini = 0;
+
+                $debit_bulan_lalu = 0;
+                $kredit_bulan_lalu = 0;
+
+                $debit_awal = 0;
+                $kredit_awal = 0;
+                foreach ($rek->kom_saldo as $saldo) {
+                    if ($saldo->bulan == '0') {
+                        $debit_awal += floatval($saldo->debit);
+                        $kredit_awal += floatval($saldo->kredit);
+                    }
+
+                    if ($saldo->bulan == $bulan) {
+                        $debit_bulan_ini += floatval($saldo->debit);
+                        $kredit_bulan_ini += floatval($saldo->kredit);
+                    }
+
+                    if ($saldo->bulan == $bulan_lalu) {
+                        $debit_bulan_lalu += floatval($saldo->debit);
+                        $kredit_bulan_lalu += floatval($saldo->kredit);
+                    }
+                }
+
+                $saldo_awal = $debit_awal - $kredit_awal;
+                $saldo_bulan_ini = $saldo_awal + ($debit_bulan_ini - $kredit_bulan_ini);
+                $saldo_bulan_lalu = $saldo_awal + ($debit_bulan_lalu - $kredit_bulan_lalu);
+                if ($rek->lev1 == 4) {
+                    $saldo_awal = $kredit_awal - $debit_awal;
+                    $saldo_bulan_ini = $saldo_awal + ($kredit_bulan_ini - $debit_bulan_ini);
+                    $saldo_bulan_lalu = $saldo_awal + ($kredit_bulan_lalu - $debit_bulan_lalu);
+                }
+
+                $data[$rek->kode_akun] = [
+                    'kode_akun' => $rek->kode_akun,
+                    'nama_akun' => $rek->nama_akun,
+                    'saldo' => $saldo_bulan_ini,
+                    'saldo_bln_lalu' => $saldo_bulan_lalu
+                ];
             }
 
             // Pendapatan

@@ -4,6 +4,8 @@ namespace App\Utils;
 
 use Carbon\Carbon;
 use App\Utils\Keuangan;
+use DateTime;
+use DateTimeZone;
 
 class Tanggal
 {
@@ -29,13 +31,13 @@ class Tanggal
 
         return date('d/m/Y');
     }
-    
+
     public static function tglNasional($tanggal)
     {
         if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
-            return $tanggal; 
+            return $tanggal;
         }
-    
+
         $tgl = Carbon::createFromFormat('d/m/Y', $tanggal)->format('Y-m-d');
         return $tgl;
     }
@@ -171,5 +173,33 @@ class Tanggal
         }
 
         return $nama;
+    }
+
+    public static function parseTanggal($text)
+    {
+        $bulanMap = [
+            'Januari' => 'January',
+            'Februari' => 'February',
+            'Maret' => 'March',
+            'April' => 'April',
+            'Mei' => 'May',
+            'Juni' => 'June',
+            'Juli' => 'July',
+            'Agustus' => 'August',
+            'September' => 'September',
+            'Oktober' => 'October',
+            'November' => 'November',
+            'Desember' => 'December',
+        ];
+
+        foreach ($bulanMap as $indo => $en) {
+            if (stripos($text, $indo) !== false) {
+                $text = str_ireplace($indo, $en, $text);
+                break;
+            }
+        }
+
+        $date = DateTime::createFromFormat('d F Y', $text, new DateTimeZone('Asia/Jakarta'));
+        return $date ? $date->format('Y-m-d') : false;
     }
 }
