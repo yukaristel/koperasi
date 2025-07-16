@@ -1,317 +1,200 @@
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="row mt-0">
-            <div class="col-md-6 mb-3">
-                <div class="border border-light border-2 border-radius-md p-3">
-                        <h6 class="text-primary mb-0">
-                            Proposal
-                        </h6>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Tgl Pengajuan
-                            <span class="badge badge-success badge-pill">
-                                {{ Tanggal::tglIndo($perguliran_i->tgl_proposal) }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Pengajuan
-                            <span class="badge badge-success badge-pill">
-                                {{ number_format($perguliran_i->proposal) }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Jenis Jasa
-                            <span class="badge badge-success badge-pill">
-                                {{ $perguliran_i->jasa->nama_jj }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Jasa
-                            <span class="badge badge-success badge-pill">
-                                {{ $perguliran_i->pros_jasa . '% / ' . $perguliran_i->jangka . ' bulan' }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Angs. Pokok
-                            <span class="badge badge-success badge-pill">
-                                {{ $perguliran_i->sis_pokok->nama_sistem }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Angs. Jasa
-                            <span class="badge badge-success badge-pill">
-                                {{ $perguliran_i->sis_jasa->nama_sistem }}
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="border border-light border-2 border-radius-md p-3">
-                    <h6 class="text-danger text-gradient mb-0">
-                        Verified
-                    </h6>
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Tgl Verifikasi
-                            <span class="badge badge-danger badge-pill">
-                                {{ Tanggal::tglIndo($perguliran_i->tgl_verifikasi) }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Verifikasi
-                            <span class="badge badge-danger badge-pill">
-                                {{ number_format($perguliran_i->verifikasi) }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Jenis Jasa
-                            <span class="badge badge-danger badge-pill">
-                                {{ $perguliran_i->jasa->nama_jj }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Jasa
-                            <span class="badge badge-danger badge-pill">
-                                {{ $perguliran_i->pros_jasa . '% / ' . $perguliran_i->jangka . ' bulan' }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Angs. Pokok
-                            <span class="badge badge-danger badge-pill">
-                                {{ $perguliran_i->sis_pokok->nama_sistem }}
-                            </span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center text-sm">
-                            Angs. Jasa
-                            <span class="badge badge-danger badge-pill">
-                                {{ $perguliran_i->sis_jasa->nama_sistem }}
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <hr class="horizontal dark">
-
-    </div>
-</div>
-
-<div class="card card-body p-2 pb-0 mb-3">
-    <form action="/perguliran_i/dokumen?status=P" target="_blank" method="post">
-        @csrf
-
-        <input type="hidden" name="id" value="{{ $perguliran_i->id }}">
-        <div class="d-grid">
-            <button type="submit" name="report" value="RekomendasiVerifikator#pdf" class="btn btn-info btn-sm mb-2">Cetak Rekomendasi Verifikator/Analis</button>
-        </div>
- <div class="d-grid">
-    <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenProposal"
-     class="btn btn-success btn-sm mb-2" style="background-color: green;">Cetak Dokumen Proposal</button>
-</div>
-
-    </form>
-</div>
-
-<form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInput">
+<form action="/perguliran_i/{{ $perguliran_i->id }}" method="post" id="FormInputV">
     @csrf
     @method('PUT')
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row mt-0">
+                @php
+                    $semua_tahapan = [
+                        'data_proposal' => ['label' => 'PENGAJUAN PEMOHON', 'class' => 'bg-secondary'],
+                        'data_verifikasi' => ['label' => 'REKOMENDASI ANALIS', 'class' => 'bg-info'],
+                        'data_verifikasi1' => ['label' => 'APPROVED KEPALA', 'class' => 'bg-primary'],
+                        'data_verifikasi2' => ['label' => 'APPROVED BAWAS', 'class' => 'bg-dark'],
+                        'data_verifikasi3' => ['label' => 'VERIFIKASI LAINNYA', 'class' => 'bg-warning'],
+                        'data_waiting' => ['label' => 'WAITING', 'class' => 'bg-success'],
+                    ];
 
+                    // Filter tahapan sesuai status
+                    $status = $perguliran_i->status;
+                    $tahapan = [];
+
+                    if ($status === 'P') {
+                        $tahapan = ['data_proposal'];
+                    } elseif ($status === 'V') {
+                        $tahapan = ['data_proposal', 'data_verifikasi'];
+                    } elseif ($status === 'V1') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1'];
+                    } elseif ($status === 'V2') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2'];
+                    } elseif ($status === 'V3') {
+                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2', 'data_verifikasi3'];
+                    } else {
+                        $tahapan = array_keys($semua_tahapan); // tampilkan semua
+                    }
+                @endphp
+
+                <table class="table table-bordered table-striped w-100 small">
+                    <thead class="text-center">
+                        <tr>
+                            <th>Sumber Data/Status</th>
+                            <th>Tanggal</th>
+                            <th>Alokasi</th>
+                            <th>Jangka</th>
+                            <th>%</th>
+                            <th>Bunga</th>
+                            <th>SA. Pokok</th>
+                            <th>SA. Bunga</th>
+                            <th>Tujuan Kredit</th>
+                            <th>CEV</th>
+                            <th><i class="fas fa-user"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($tahapan as $key)
+                            @php
+                                $data = $perguliran_i->$key;
+                                $parts = explode('#', $data);
+                                $tgl = isset($parts[0]) ? $parts[0] : '0000-00-00';
+                                $alokasi = isset($parts[1]) ? number_format((float)$parts[1]) : 0;
+                                $jangka = $perguliran_i->jangka ?? '-';
+                                $jasa = $perguliran_i->pros_jasa ?? '-';
+                                $jj = ucfirst($perguliran_i->jenis_jasa->nama_jj ?? 'Flat');
+                                $sa_pokok = ucfirst($perguliran_i->sis_pokok->nama_sistem ?? '-');
+                                $sa_jasa = ucfirst($perguliran_i->sis_jasa->nama_sistem ?? '-');
+                                $alokasi_tujuan = $perguliran_i->alokasi_tujuan ?? 'Modal Kerja';
+                                $cev = 0;
+                                $ikon = $loop->index == 0 ? 'WJ' : 'SW'; // bebas kamu sesuaikan
+                                $label = $semua_tahapan[$key]['label'];
+                                $class = $semua_tahapan[$key]['class'];
+                            @endphp
+                            <tr>
+                                <td><span class="badge {{ $class }} text-dark fs-6">{{ $label }}</span></td>
+                                <td>{{ $tgl }}</td>
+                                <td>{{ $alokasi }}</td>
+                                <td>{{ $jangka }} bulan</td>
+                                <td>{{ $jasa }} %</td>
+                                <td>{{ $jj }}</td>
+                                <td>{{ $sa_pokok }}</td>
+                                <td>{{ $sa_jasa }}</td>
+                                <td>{{ $alokasi_tujuan }}</td>
+                                <td>{{ $cev }}</td>
+                                <td>{{ $ikon }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-body p-2 pb-0 mb-3">
+        <div class="d-grid">
+            <button type="button" data-bs-toggle="modal" data-bs-target="#CetakDokumenProposal"
+                class="btn btn-success btn-sm mb-2">Cetak Dokumen Proposal</button>
+        </div>
+    </div>
+    @if($v2)
     <div class="card mb-3">
         <div class="card-header pb-0 p-3">
-            <h6>
-                Input Keputusan Pendanaan
-            </h6>
+            <h6>Input {{$v2}}</h6>
         </div>
         <div class="card-body p-3">
             <input type="hidden" name="_id" id="_id" value="{{ $perguliran_i->id }}">
-            <input type="hidden" name="status" id="status" value="W">
+            <input type="hidden" name="status" id="status" value="V2">
+
             <div class="row">
-              <div class="col-md-3">
-                <div class="mb-3">
-                  <label for="tgl_tunggu" class="form-label">Tgl Tunggu</label>
-                  <input autocomplete="off" type="text" name="tgl_tunggu" id="tgl_tunggu"
-                    class="form-control date" value="{{ Tanggal::tglIndo($perguliran_i->tgl_verifikasi) }}">
-                  <small class="text-danger" id="msg_tgl_tunggu"></small>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="tgl_verifikasi" class="form-label">Tgl  {{$v2}}</label>
+                        <input type="date" name="tgl_verifikasi" id="tgl_verifikasi" autocomplete="off"
+                            class="form-control date" value="{{$tgl}}">
+                        <small class="text-danger" id="msg_tgl_verifikasi"></small>
+                    </div>
                 </div>
-              </div>
-
-              <div class="col-md-3">
-                <div class="mb-3">
-                  <label for="alokasi" class="form-label">Alokasi Rp.</label>
-                  <input autocomplete="off" type="text" name="alokasi" id="alokasi"
-                    class="form-control money" value="{{ number_format($perguliran_i->verifikasi, 2) }}">
-                  <small class="text-danger" id="msg_alokasi"></small>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="verifikasi" class="form-label"> {{$v2}} Rp.</label>
+                        <input type="text" name="verifikasi" id="verifikasi" autocomplete="off"
+                            class="form-control keuangan" value="{{ $alokasi }}">
+                        <small class="text-danger" id="msg_verifikasi"></small>
+                    </div>
                 </div>
-              </div>
-
-              <div class="col-md-3">
-                <div class="mb-3">
-                  <label for="jangka" class="form-label">Jangka</label>
-                  <input autocomplete="off" type="number" name="jangka" id="jangka" class="form-control"
-                    value="{{ $perguliran_i->jangka }}">
-                  <small class="text-danger" id="msg_jangka"></small>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="jangka" class="form-label">Jangka</label>
+                        <input type="number" name="jangka" id="jangka" autocomplete="off"
+                            class="form-control" value="{{ $perguliran_i->jangka }}">
+                        <small class="text-danger" id="msg_jangka"></small>
+                    </div>
                 </div>
-              </div>
-
-              <div class="col-md-3">
-                <div class="mb-3">
-                  <label for="pros_jasa" class="form-label">Prosentase Jasa (%)</label>
-                  <input autocomplete="off" type="number" name="pros_jasa" id="pros_jasa" class="form-control"
-                    value="{{ $perguliran_i->pros_jasa }}">
-                  <small class="text-danger" id="msg_pros_jasa"></small>
+                <div class="col-md-3">
+                    <div class="form-group mb-3">
+                        <label for="pros_jasa" class="form-label">Prosentase Jasa (%)</label>
+                        <input type="number" name="pros_jasa" id="pros_jasa" autocomplete="off"
+                            class="form-control" value="{{ $perguliran_i->pros_jasa }}">
+                        <small class="text-danger" id="msg_pros_jasa"></small>
+                    </div>
                 </div>
-              </div>
             </div>
 
             <div class="row">
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label class="form-label" for="jenis_jasa">Jenis Jasa</label>
-                  <select class="form-control" name="jenis_jasa" id="jenis_jasa">
-                    @foreach ($jenis_jasa as $jj)
-                      <option {{ $jj->id == $perguliran_i->jenis_jasa ? 'selected' : '' }} value="{{ $jj->id }}">
-                        {{ $jj->nama_jj }}
-                      </option>
-                    @endforeach
-                  </select>
-                  <small class="text-danger" id="msg_jenis_jasa"></small>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="jenis_jasa" class="form-label">Jenis Jasa</label>
+                        <select class="form-control" name="jenis_jasa" id="jenis_jasa">
+                            @foreach ($jenis_jasa as $jj)
+                                <option {{ $jj->id == $perguliran_i->jenis_jasa ? 'selected' : '' }} value="{{ $jj->id }}">
+                                    {{ $jj->nama_jj }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="msg_jenis_jasa"></small>
+                    </div>
                 </div>
-              </div>
-
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label class="form-label" for="sistem_angsuran_pokok">Sistem Angs. Pokok</label>
-                  <select class="form-control" name="sistem_angsuran_pokok" id="sistem_angsuran_pokok">
-                    @foreach ($sistem_angsuran as $sa)
-                      <option {{ $sa->id == $perguliran_i->sistem_angsuran ? 'selected' : '' }} value="{{ $sa->id }}">
-                        {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
-                      </option>
-                    @endforeach
-                  </select>
-                  <small class="text-danger" id="msg_sistem_angsuran_pokok"></small>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="sistem_angsuran_pokok" class="form-label">Sistem Angs. Pokok</label>
+                        <select class="form-control" name="sistem_angsuran_pokok" id="sistem_angsuran_pokok">
+                            @foreach ($sistem_angsuran as $sa)
+                                <option {{ $sa->id == $perguliran_i->sistem_angsuran ? 'selected' : '' }} value="{{ $sa->id }}">
+                                    {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="msg_sistem_angsuran_pokok"></small>
+                    </div>
                 </div>
-              </div>
-
-              <div class="col-md-4">
-                <div class="mb-3">
-                  <label class="form-label" for="sistem_angsuran_jasa">Sistem Angs. Jasa</label>
-                  <select class="form-control" name="sistem_angsuran_jasa" id="sistem_angsuran_jasa">
-                    @foreach ($sistem_angsuran as $sa)
-                      <option {{ $sa->id == $perguliran_i->sa_jasa ? 'selected' : '' }} value="{{ $sa->id }}">
-                        {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
-                      </option>
-                    @endforeach
-                  </select>
-                  <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
+                <div class="col-md-4">
+                    <div class="form-group mb-3">
+                        <label for="sistem_angsuran_jasa" class="form-label">Sistem Angs. Jasa</label>
+                        <select class="form-control" name="sistem_angsuran_jasa" id="sistem_angsuran_jasa">
+                            @foreach ($sistem_angsuran as $sa)
+                                <option {{ $sa->id == $perguliran_i->sa_jasa ? 'selected' : '' }} value="{{ $sa->id }}">
+                                    {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
+                    </div>
                 </div>
-              </div>
             </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="tgl_cair" class="form-label">Tanggal Cair</label>
-                  <input autocomplete="off" type="text" name="tgl_cair" id="tgl_cair"
-                    class="form-control date" value="{{ Tanggal::tglIndo($perguliran_i->tgl_verifikasi) }}">
-                  <small class="text-danger" id="msg_tgl_cair"></small>
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="nomor_spk" class="form-label">Nomor SPK</label>
-                  <input autocomplete="off" type="text" name="nomor_spk" id="nomor_spk"
-                    class="form-control" value="{{ $perguliran_i->spk_no }}">
-                  <small class="text-danger" id="msg_nomor_spk"></small>
-                </div>
-              </div>
+            <div class="form-group mb-3">
+                <label for="catatan_verifikasi" class="form-label">Catatan  {{$v2}}</label>
+                <textarea class="form-control" name="catatan_verifikasi" id="catatan_verifikasi" rows="3"
+                    placeholder="Catatan">{{ $perguliran_i->catatan_verifikasi }}</textarea>
+                <small class="text-danger" id="msg_catatan_verifikasi"></small>
             </div>
 
-            <div class="d-flex justify-content-end mt-3">
-                <button type="button" id="kembaliProposal" class="btn btn-warning btn-sm"
-                    @if (!in_array('perguliran.balik_proposal', Session::get('tombol', [])))
-                        disabled
-                    @endif
-                >
-                    Kembalikan Ke Proposal
+                <button type="button" id="simpan_verifikasi" class="btn btn-github float-end btn-sm"
+                    {{-- @if (!in_array('perguliran.simpan_verifikator', Session::get('tombol', []))) disabled @endif --}}>
+                    Simpan {{$v2}}
                 </button>
-                <button type="button" id="Simpan" class="btn btn-github ms-1 btn-sm"
-                    @if (!in_array('perguliran.simpan_dana', Session::get('tombol', [])))
-                        disabled
-                    @endif
-                >
-                    Simpan Keputusan Pendanaan
-                </button>
-            </div>
+
         </div>
     </div>
+    
+    @else
+        @include('perguliran_i.partials._waiting')
+    @endif
 </form>
-
-<form action="/perguliran_i/kembali_proposal/{{ $perguliran_i->id }}" method="post" id="formKembaliProposal">
-    @csrf
-</form>
-
-<script>
-    var formatter = new Intl.NumberFormat('en-US', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    })
-
-    new Choices($('#jenis_jasa')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-    new Choices($('#sistem_angsuran_pokok')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-    new Choices($('#sistem_angsuran_jasa')[0], {
-        shouldSort: false,
-        fuseOptions: {
-            threshold: 0.1,
-            distance: 1000
-        }
-    })
-
-    $(".money").maskMoney();
-
-    $(".date").flatpickr({
-        dateFormat: "d/m/Y"
-    })
-
-    $(document).on('click', '#Simpan', async function(e) {
-        e.preventDefault()
-        $('small').html('')
-
-        var form = $('#FormInput')
-        $.ajax({
-            type: 'POST',
-            url: form.attr('action') + '?save=true',
-            data: form.serialize(),
-            success: function(result) {
-                Swal.fire('Berhasil', result.msg, 'success').then(() => {
-                    window.location.href = '/detail_i/' + result.id
-                })
-            },
-            error: function(result) {
-                const respons = result.responseJSON;
-
-                Swal.fire('Error', 'Cek kembali input yang anda masukkan', 'error')
-                $.map(respons, function(res, key) {
-                    $('#' + key).parent('.input-group.input-group-static')
-                        .addClass(
-                            'is-invalid')
-                    $('#msg_' + key).html(res)
-                })
-            }
-        })
-    })
-</script>

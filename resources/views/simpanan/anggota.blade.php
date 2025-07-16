@@ -41,9 +41,10 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Nomor Rekening</th>
                                         <th>Nama Anggota</th>
-                                        <th>Jenis Simpanan</th>
                                         <th>Tanggal Buka</th>
+                                        <th>Jumlah</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -82,7 +83,7 @@
             },
             processing: true,
             serverSide: true,
-            ajax: "/simpanan",
+            ajax: "/simpanan/anggota",
             columns: [
                 {
                     data: 'id',
@@ -97,23 +98,12 @@
                     name: 'anggota.namadepan'
                 },
                 {
-                    data: 'jenis_simpanan',
-                    name: 'jenis_simpanan'
+                    data: 'tgl_buka',
+                    name: 'tgl_buka'
                 },
                 {
                     data: 'jumlah',
-                    name: 'jumlah',
-                    visible: false,
-                    searchable: false
-                    // render: function(data, type, row) {
-                    //     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(data);
-                    // }
-                },
-                {
-                    data: 'tgl_buka',
-                    name: 'tgl_buka',
-                    visible: false,
-                    searchable: false
+                    name: 'jumlah'
                 },
                 {
                     data: 'status',

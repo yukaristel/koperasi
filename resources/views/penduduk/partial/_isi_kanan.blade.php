@@ -37,7 +37,7 @@
                     <p class="text-success fw-bold">Anggota Aktif</p>
                 @else
                     <p class="text-warning fw-bold">
-                        Anggota Tidak Aktif sejak {{ $tgl_kondisi->format('d-m-Y') }}
+                        Anggota Menunggak (angka kurangnya) sejak {{ $tgl_kondisi->format('d-m-Y') }}
                     </p>
                     
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPerpanjang">
@@ -81,11 +81,6 @@
             @endphp
             
             <img src="{{ file_exists(public_path($fotoPath)) ? asset($fotoPath) : asset($defaultFoto) }}" class="img-thumbnail w-50" alt="Foto Nasabah"> 
-            <br/>
-            <br/>
-            <button type="button" class="btn btn-sm btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#ModalFoto">
-                AMBIL FOTO
-            </button>
             
 
             <div class="d-grid gap-2 mt-3">
@@ -175,7 +170,7 @@
                     <tbody>
                         @if ($pinjaman && $pinjaman->count() > 0)
                             @foreach ($pinjaman as $pinj)
-                                <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailProposalIndividu" id="DetailProposalIndividu{{$pinj->id}}">
+                                <tr class="fw-normal" style="cursor: pointer;" onclick="window.location.href='{{ url('/detail_i/' . $pinj->id) }}'">
                                     <td>{{ $pinj->id }}</td>
                                     <td>{{ $pinj->tgl_cair }}</td>
                                     <td>{{ number_format($pinj->alokasi ?? 0) }}</td>
@@ -183,6 +178,7 @@
                                     <td><span class="badge bg-{{ $pinj->sts->warna_status }} text-black">{{ $pinj->sts->nama_status }}</span></td>
                                 </tr>
                             @endforeach
+
                             <tr>
                                 <td colspan="5"><i>* Klik untuk detail</i></td>
                             </tr>

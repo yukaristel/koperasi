@@ -16,7 +16,7 @@
         "maatwebsite/excel": "^3.1",
         "milon/barcode": "^10.0",
         "nesbot/carbon": "^2.68",
-        "picqer/php-barcode-generator": "^2.3",
+        "picqer/php-barcode-generator": "^2.2",
         "tinymce/tinymce": "^6.7",
         "yajra/laravel-datatables": "10.0"
     },

@@ -21,7 +21,7 @@
                     <small id="nik_message" class="text-danger">* Silahkan ketik/Scan NIK</small>
                     <hr>
                     <div id="isi_kiri">
-                        <h6 class="fw-bold">1. IDENTITAS NASABAH</h6>
+                        <h6 class="fw-bold">1. IDENTITAS ANGGOTA</h6>
                         <div class="row">
                             <div class="col-md-2 mb-2">
                                 <label class="form-label">NIA</label>
@@ -138,8 +138,6 @@
                     </div>
                     <div class="card-body">
                         <img src="../assets/img/male.jpg" class="img-thumbnail w-50" alt="Foto Nasabah">
-                        <br/>
-                        <button class="btn btn-sm btn-secondary mb-2" disabled>AMBIL FOTO</button>
                         <div class="d-grid gap-2 mt-3">
                             <button class="btn btn-primary btn-sm" disabled>SIMPAN DATA</button>
                             <button class="btn btn-outline-secondary btn-sm" disabled>Cetak Kartu Anggota</button>
@@ -394,6 +392,116 @@
         });
     });
 
+    $(document).ready(function () {
+        $('#simpanPinjaman').click(function () {
+            let btn = $(this);
+            let originalText = btn.html();
+
+            let data = {
+                _token: '{{ csrf_token() }}',
+
+                // Tab 1: Data Pengajuan Pinjaman
+                jenis_produk_pinjaman: $('#jenis_produk_pinjaman').val(),
+                nia: $('#nia').val(),
+                tgl_proposal: $('#tgl_proposal').val(),
+                pengajuan: $('#pengajuan').val(),
+                jangka: $('#jangka').val(),
+                pros_jasa: $('#pros_jasa').val(),
+                sistem_angsuran_pokok: $('#sistem_angsuran_pokok').val(),
+                sistem_angsuran_jasa: $('#sistem_angsuran_jasa').val(),
+
+                // Tab 2: Laba Rugi
+                pendapatan1: $('#pendapatan1').val(),
+                pendapatan2: $('#pendapatan2').val(),
+                pendapatan3: $('#pendapatan3').val(),
+
+                biaya1: $('#biaya1').val(),
+                biaya2: $('#biaya2').val(),
+                biaya3: $('#biaya3').val(),
+                biaya4: $('#biaya4').val(),
+                biaya5: $('#biaya5').val(),
+                biaya6: $('#biaya6').val(),
+                biaya7: $('#biaya7').val(),
+
+                // Tab 3: Neraca Keuangan
+                aktiva1: $('#aktiva1').val(),
+                aktiva2: $('#aktiva2').val(),
+                aktiva3: $('#aktiva3').val(),
+                aktiva4: $('#aktiva4').val(),
+                aktiva5: $('#aktiva5').val(),
+                aktiva6: $('#aktiva6').val(),
+
+                pasiva1: $('#pasiva1').val(),
+                pasiva2: $('#pasiva2').val(),
+                pasiva3: $('#pasiva3').val(),
+
+                // Tab 4: Jaminan
+                jaminan: $('#jaminan').val(),
+                nilai_jaminan: $('#nilai_jaminan').val()
+            };
+
+            // Validasi sederhana
+            if (!data.pengajuan || !data.tgl_proposal) {
+                toastr.warning('Mohon lengkapi semua field yang wajib.');
+                return;
+            }
+
+            // Tampilkan loading
+            let loadingToast = toastr.info('Sedang menyimpan data...', 'Mohon tunggu', {
+                timeOut: 0,
+                extendedTimeOut: 0,
+                tapToDismiss: false,
+                closeButton: false
+            });
+
+            // Kirim data
+            $.ajax({
+                url: '/perguliran_i',
+                method: 'POST',
+                data: data,
+                beforeSend: function () {
+                    btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menyimpan...');
+                },
+                success: function (response) {
+                    toastr.clear();
+                    btn.html(originalText);
+
+                    if (response.success) {
+                        toastr.success(response.msg || 'Data pinjaman berhasil disimpan.');
+
+                        // Tutup modal jika ada
+                        document.querySelectorAll('.modal.show').forEach(modalEl => {
+                            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                            if (modalInstance) modalInstance.hide();
+                        });
+
+                        // Update tampilan jika ada response
+                        if (response.html_kiri) $('#isi_kiri').html(response.html_kiri);
+                        if (response.html_kanan) $('#isi_kanan').html(response.html_kanan);
+                        $('#namadepan').focus();
+                    } else {
+                        toastr.warning(response.msg || 'Gagal menyimpan data.');
+                    }
+                },
+                error: function (xhr) {
+                    toastr.clear();
+                    if (xhr.status === 422) {
+                        let errors = xhr.responseJSON.errors;
+                        $.each(errors, function (key, messages) {
+                            $('#msg_' + key).text(messages[0]);
+                        });
+                        toastr.warning('Silakan periksa kembali data yang diisi.');
+                    } else {
+                        toastr.error('Terjadi kesalahan server.');
+                    }
+                },
+                complete: function () {
+                    btn.prop('disabled', false).html(originalText);
+                }
+            });
+        });
+    });
+
 </script>
 @endsection
 
@@ -472,6 +580,7 @@
         {{-- Tab Content --}}
         <div class="tab-content mt-3" id="myTabContent">
           <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
+            <input type="hidden" id="nia" name="nia" value="">
             <div class="row">
               <div class="col-md-6">
                 <div class="position-relative mb-3">
@@ -490,7 +599,7 @@
               <div class="col-md-6">
                 <div class="position-relative mb-3">
                   <label for="tgl_proposal" class="form-label">Tgl proposal</label>
-                  <input autocomplete="off" type="text" name="tgl_proposal" id="tgl_proposal" class="form-control date" value="{{ date('d/m/Y') }}">
+                  <input autocomplete="off" type="date" name="tgl_proposal" id="tgl_proposal" class="form-control date" value="{{ date('Y-m-d') }}">
                   <small class="text-danger" id="msg_tgl_proposal"></small>
                 </div>
               </div>
@@ -623,32 +732,32 @@
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Uang Tunai</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva1" id="aktiva1" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Simpanan</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva2" id="aktiva2" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Kendaraan</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva3" id="aktiva3" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Tanah</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva4" id="aktiva4" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Bangunan</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva5" id="aktiva5" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                     <div class="position-relative mb-3">
                         <label for="aktiva" class="form-label">Aktiva Lain-lain</label>
-                        <input autocomplete="off" type="text" name="aktiva" id="aktiva" class="form-control">
+                        <input autocomplete="off" type="text" name="aktiva6" id="aktiva6" class="form-control">
                         <small class="text-danger" id="msg_aktiva"></small>
                     </div>
                 </div>
@@ -684,8 +793,7 @@
                 </div>
                 <div class="position-relative mb-3">
                     <label for="jaminan" class="form-label">Dari Permohonan Pinjaman ini, Dijaminkan Harta/Benda Berupa :</label>
-                    <textarea name="jaminan" id="jaminan" class="form-control" rows="4" autocomplete="off" placeholder="Tuliskan deskripsi jaminan selengkap mungkin, misalnya :
-nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya"></textarea>
+                    <textarea name="jaminan" id="jaminan" class="form-control" rows="4" autocomplete="off" placeholder="Tuliskan deskripsi jaminan selengkap mungkin, misalnya : nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya"></textarea>
                     <small class="text-danger" id="msg_jaminan"></small>
                 </div>
             </div>
@@ -700,7 +808,8 @@ nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya">
         </div>
       </div>
       <div class="modal-footer sticky-bottom bg-white">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Simpan Registrasi Pinjaman</button>
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal" aria-label="Tutup">Tutup</button>
+          <button type="button" class="btn btn-primary" name="simpanPinjaman" id="simpanPinjaman">Simpan Registrasi Pinjaman</button>
       </div>
     </div>
   </div>

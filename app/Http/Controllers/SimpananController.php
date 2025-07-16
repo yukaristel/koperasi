@@ -38,7 +38,8 @@ class SimpananController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $simpanan = Simpanan::with(['anggota', 'js'])
+            $simpanan = Simpanan::where('jenis_simpanan', '>', 2)
+                ->with(['anggota', 'js'])
                 ->orderBy('id', 'DESC');
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
@@ -78,7 +79,8 @@ class SimpananController extends Controller
     public function anggota()
     {
         if (request()->ajax()) {
-            $simpanan = Simpanan::with(['anggota', 'js'])
+            $simpanan = Simpanan::where('jenis_simpanan', 2)
+                ->with(['anggota', 'js'])
                 ->orderBy('id', 'DESC');
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
@@ -104,7 +106,7 @@ class SimpananController extends Controller
                     return $status;
                 })
                 ->editColumn('jumlah', function ($row) {
-                    return 'Rp ' . number_format($row->jumlah, 0, ',', '.');
+                    return 'Rp ' . number_format(0, 0, ',', '.');
                 })
                 ->editColumn('tgl_buka', function ($row) {
                     return date('d/m/Y', strtotime($row->tgl_buka));
@@ -112,7 +114,7 @@ class SimpananController extends Controller
                 ->rawColumns(['status'])
                 ->make(true);
         }
-        $title = 'Daftar Simpanan Anggota';
+        $title = 'Daftar Simpanan';
         return view('simpanan.anggota')->with(compact('title'));
     }
     

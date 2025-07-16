@@ -54,7 +54,7 @@
                             @php
                                 $data = $perguliran_i->$key;
                                 $parts = explode('#', $data);
-                                $tgl = isset($parts[0]) && $parts[0] !== '0000-00-00' ? Tanggal::tglIndo($parts[0]) : '00//0000';
+                                $tgl = isset($parts[0]) ? $parts[0] : '0000-00-00';
                                 $alokasi = isset($parts[1]) ? number_format((float)$parts[1]) : 0;
                                 $jangka = $perguliran_i->jangka ?? '-';
                                 $jasa = $perguliran_i->pros_jasa ?? '-';
@@ -106,8 +106,8 @@
                 <div class="col-md-3">
                     <div class="form-group mb-3">
                         <label for="tgl_verifikasi" class="form-label">Tgl Verifikasi/Analisa Pinjaman</label>
-                        <input type="text" name="tgl_verifikasi" id="tgl_verifikasi" autocomplete="off"
-                            class="form-control date" value="{{ Tanggal::tglIndo($perguliran_i->tgl_proposal) }}">
+                        <input type="date" name="tgl_verifikasi" id="tgl_verifikasi" autocomplete="off"
+                            class="form-control date" value="{{$tgl}}">
                         <small class="text-danger" id="msg_tgl_verifikasi"></small>
                     </div>
                 </div>
