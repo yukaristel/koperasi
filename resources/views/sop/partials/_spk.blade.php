@@ -7,13 +7,13 @@
             <li>{{ strip_tags($kec->redaksi_spk) }}</li>
         </ol>
     </div>
-    
+
     {{-- <div id="editor">
         {{ strip_tags($kec->redaksi_spk) }}
     </div> --}}
-    
-    
-    
+
+
+
     <textarea name="spk" id="spk" class="d-none"></textarea>
 
 </form><br>
@@ -23,4 +23,3 @@
         Simpan Perubahan
     </button>
 </div>
-

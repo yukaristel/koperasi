@@ -29,7 +29,7 @@ class SopController extends Controller
         $title = "Personalisasi SOP";
         return view('sop.index')->with(compact('title', 'kec', 'api', 'token'));
     }
-    
+
     public function users()
     {
 
@@ -361,43 +361,46 @@ class SopController extends Controller
 
     public function logo(Request $request, Kecamatan $kec)
     {
-        $data = $request->only([
-            'logo_kec'
-        ]);
-
-        $validate = Validator::make($data, [
+        $validate = Validator::make($request->only('logo_kec'), [
             'logo_kec' => 'required|image|mimes:jpg,png,jpeg|max:4096'
         ]);
 
-        if ($request->file('logo_kec')->isValid()) {
-            $extension = $request->file('logo_kec')->getClientOriginalExtension();
+        if ($validate->fails()) {
+            return response()->json([
+                'success' => false,
+                'msg' => 'Validasi gagal: ' . $validate->errors()->first()
+            ]);
+        }
 
-            $filename = time() . '_' . $kec->id . '_' . date('Ymd') . '.' . $extension;
-            $path = $request->file('logo_kec')->storeAs('logo', $filename, 'public');
+        $file = $request->file('logo_kec');
 
-            if (Storage::exists('logo/' . $kec->logo)) {
-                if ($kec->logo != '1.png') {
-                    Storage::delete('logo/' . $kec->logo);
+        if ($file && $file->isValid()) {
+            $filename = time() . '_' . $kec->id . '_' . date('Ymd') . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('logo', $filename, 'public');
+
+            if ($kec->logo && $kec->logo !== '1.png') {
+                $oldLogoPath = 'logo/' . $kec->logo;
+                if (Storage::disk('public')->exists($oldLogoPath)) {
+                    Storage::disk('public')->delete($oldLogoPath);
                 }
             }
+            $kec->logo = $filename;
+            $kec->save();
 
-            $kecamatan = Kecamatan::where('id', $kec->id)->update([
-                'logo' => str_replace('logo/', '', $path)
-            ]);
+            Session::put('logo', $filename);
 
-            Session::put('logo', str_replace('logo/', '', $path));
             return response()->json([
                 'success' => true,
-                'msg' => 'Logo berhasil diperbarui.'
+                'msg' => 'Logo berhasil diperbarui.',
+                'filename' => $filename
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'msg' => 'Logo gagal diperbarui'
+            'msg' => 'Logo gagal diperbarui.'
         ]);
     }
-
     public function whatsapp($token)
     {
         User::where('lokasi', Session::get('lokasi'))->update([

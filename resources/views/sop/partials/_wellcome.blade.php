@@ -1,5 +1,5 @@
 <div class="tab-pane active" id="tab18">
-    <div class="alert alert-warning text-center py-4">
+    <div class="alert alert-info text-center py-4">
         <div class="container">
             <h3 class="mb-3">
                 <i class="fas fa-file-alt me-2"></i>

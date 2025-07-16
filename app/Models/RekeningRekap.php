@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use \Awobaz\Compoships\Compoships;
 use Session;
 
-class Rekening extends Model
+class RekeningRekap extends Model
 {
     use HasFactory, Compoships;
     protected $table;

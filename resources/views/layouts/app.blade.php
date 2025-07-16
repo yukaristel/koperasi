@@ -244,6 +244,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
     <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
 
+    @if (session('pesan'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: @json(session('pesan')),
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+            });
+        </script>
+    @endif
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Inisialisasi TinyMCE

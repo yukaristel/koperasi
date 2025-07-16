@@ -1,18 +1,18 @@
 @php
-use Carbon\Carbon;
+    use Carbon\Carbon;
 
-$bulanIni = Carbon::now()->month; 
-$surplus = $saldo['surplus'];
+    $bulanIni = Carbon::now()->month;
+    $surplus = $saldo['surplus'];
 
-$surplus_saat_ini = $surplus[$bulanIni] ?? 0;
-$surplus_bulan_lalu = $surplus[$bulanIni - 1] ?? 0;
+    $surplus_saat_ini = $surplus[$bulanIni] ?? 0;
+    $surplus_bulan_lalu = $surplus[$bulanIni - 1] ?? 0;
 
-// Hindari pembagian nol
-if ($surplus_bulan_lalu > 0) {
-    $peningkatan_surplus = round((($surplus_saat_ini - $surplus_bulan_lalu) / $surplus_bulan_lalu) * 100, 2);
-} else {
-    $peningkatan_surplus = 0;
-}
+    // Hindari pembagian nol
+    if ($surplus_bulan_lalu > 0) {
+        $peningkatan_surplus = round((($surplus_saat_ini - $surplus_bulan_lalu) / $surplus_bulan_lalu) * 100, 2);
+    } else {
+        $peningkatan_surplus = 0;
+    }
 @endphp
 
 @extends('layouts.app')
@@ -45,6 +45,7 @@ if ($surplus_bulan_lalu > 0) {
         .btn-pulse-outer span.pulse-ring.delay {
             animation-delay: 1s;
         }
+
         .btn-pulse-outer span.pulse-ring.delay2 {
             animation-delay: 2s;
         }
@@ -54,10 +55,12 @@ if ($surplus_bulan_lalu > 0) {
                 transform: scale(1);
                 opacity: 0.4;
             }
+
             70% {
                 transform: scale(2.5);
                 opacity: 0;
             }
+
             100% {
                 transform: scale(2.5);
                 opacity: 0;
@@ -71,7 +74,6 @@ if ($surplus_bulan_lalu > 0) {
             font-size: 24px;
         }
     </style>
-
 @endsection
 
 @section('content')
@@ -107,18 +109,21 @@ if ($surplus_bulan_lalu > 0) {
                                 </div>
                             </div>
                             <div class="d-sm-flex align-items-center">
-                                <h3 class="mb-0 font-weight-semibold">Rp.  {{ number_format($surplus_saat_ini, 0, ',', '.') }}</h3>
+                                <h3 class="mb-0 font-weight-semibold">Rp.
+                                    {{ number_format($surplus_saat_ini, 0, ',', '.') }}</h3>
 
                                 @php
                                     $warna = $peningkatan_surplus < 0 ? 'danger' : 'success';
                                     $ikonNaik = $peningkatan_surplus >= 0;
                                 @endphp
 
-                                <span class="badge badge-sm border border-{{ $warna }} text-{{ $warna }} bg-{{ $warna }} border-radius-sm ms-sm-3 px-2 d-inline-flex align-items-center gap-1">
+                                <span
+                                    class="badge badge-sm border border-{{ $warna }} text-{{ $warna }} bg-{{ $warna }} border-radius-sm ms-sm-3 px-2 d-inline-flex align-items-center gap-1">
                                     <svg width="9" height="9" viewBox="0 0 10 9" fill="none"
                                         xmlns="http://www.w3.org/2000/svg"
                                         style="{{ $ikonNaik ? '' : 'transform: rotate(180deg);' }}">
-                                        <path d="M0.47 4.47C0.18 4.76 0.18 5.24 0.47 5.53C0.76 5.82 1.24 5.82 1.53 5.53L0.47 4.47ZM5.53 1.53C5.82 1.24 5.82 0.76 5.53 0.47C5.24 0.18 4.76 0.18 4.47 0.47L5.53 1.53ZM5.53 0.47C5.24 0.18 4.76 0.18 4.47 0.47C4.18 0.76 4.18 1.24 4.47 1.53L5.53 0.47ZM8.47 5.53C8.76 5.82 9.24 5.82 9.53 5.53C9.82 5.24 9.82 4.76 9.53 4.47L8.47 5.53ZM1.53 5.53L5.53 1.53L4.47 0.47L0.47 4.47L1.53 5.53ZM4.47 1.53L8.47 5.53L9.53 4.47L5.53 0.47L4.47 1.53Z"
+                                        <path
+                                            d="M0.47 4.47C0.18 4.76 0.18 5.24 0.47 5.53C0.76 5.82 1.24 5.82 1.53 5.53L0.47 4.47ZM5.53 1.53C5.82 1.24 5.82 0.76 5.53 0.47C5.24 0.18 4.76 0.18 4.47 0.47L5.53 1.53ZM5.53 0.47C5.24 0.18 4.76 0.18 4.47 0.47C4.18 0.76 4.18 1.24 4.47 1.53L5.53 0.47ZM8.47 5.53C8.76 5.82 9.24 5.82 9.53 5.53C9.82 5.24 9.82 4.76 9.53 4.47L8.47 5.53ZM1.53 5.53L5.53 1.53L4.47 0.47L0.47 4.47L1.53 5.53ZM4.47 1.53L8.47 5.53L9.53 4.47L5.53 0.47L4.47 1.53Z"
                                             fill="currentColor" />
                                     </svg>
                                     {{ $peningkatan_surplus }}%
@@ -153,8 +158,8 @@ if ($surplus_bulan_lalu > 0) {
                         <div class="card-body text-start p-3 w-100">
                             <div
                                 class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24" fill="currentColor">
+                                <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor">
                                     <path d="M4.5 3.75a3 3 0 00-3 3v.75h21v-.75a3 3 0 00-3-3h-15z" />
                                     <path fill-rule="evenodd"
                                         d="M22.5 9.75h-21v7.5a3 3 0 003 3h15a3 3 0 003-3v-7.5zm-18 3.75a.75.75 0 01.75-.75h6a.75.75 0 010 1.5h-6a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5h3a.75.75 0 000-1.5h-3z"
@@ -183,8 +188,8 @@ if ($surplus_bulan_lalu > 0) {
                         <div class="card-body text-start p-3 w-100">
                             <div
                                 class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24" fill="currentColor">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M7.5 5.25a3 3 0 013-3h3a3 3 0 013 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0112 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 017.5 5.455V5.25zm7.5 0v.09a49.488 49.488 0 00-6 0v-.09a1.5 1.5 0 011.5-1.5h3a1.5 1.5 0 011.5 1.5zm-3 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z"
                                         clip-rule="evenodd" />
@@ -214,8 +219,8 @@ if ($surplus_bulan_lalu > 0) {
                         <div class="card-body text-start p-3 w-100">
                             <div
                                 class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24" fill="currentColor">
+                                <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor">
                                     <path fill-rule="evenodd"
                                         d="M3 6a3 3 0 013-3h12a3 3 0 013 3v12a3 3 0 01-3 3H6a3 3 0 01-3-3V6zm4.5 7.5a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0v-2.25a.75.75 0 01.75-.75zm3.75-1.5a.75.75 0 00-1.5 0v4.5a.75.75 0 001.5 0V12zm2.25-3a.75.75 0 01.75.75v6.75a.75.75 0 01-1.5 0V9.75A.75.75 0 0113.5 9zm3.75-1.5a.75.75 0 00-1.5 0v9a.75.75 0 001.5 0v-9z"
                                         clip-rule="evenodd" />
@@ -240,45 +245,46 @@ if ($surplus_bulan_lalu > 0) {
                 </div>
 
 
-<div class="col-xl-3 col-sm-6">
-    <div class="card border shadow-xs mb-4">
-        <div class="card-body text-start p-3 w-100 d-flex justify-content-between align-items-center">
-            <div>
-                <div class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
-                    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.122-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
-                            clip-rule="evenodd" />
-                    </svg>
+                <div class="col-xl-3 col-sm-6">
+                    <div class="card border shadow-xs mb-4">
+                        <div class="card-body text-start p-3 w-100 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div
+                                    class="icon icon-shape icon-sm bg-primary text-white text-center border-radius-sm d-flex align-items-center justify-content-center mb-3">
+                                    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                            d="M5.25 2.25a3 3 0 00-3 3v4.318a3 3 0 00.879 2.121l9.58 9.581c.92.92 2.39 1.186 3.548.428a18.849 18.849 0 005.441-5.44c.758-1.16.492-2.629-.428-3.548l-9.58-9.581a3 3 0 00-2.122-.879H5.25zM6.375 7.5a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <p class="text-sm text-secondary mb-1">Jumlah Anggota</p>
+                                <h4 class="mb-2 font-weight-bold">1.235</h4>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-sm text-success font-weight-bolder">
+                                        <i class="fa fa-chevron-up text-xs me-1"></i>18%
+                                    </span>
+                                    <span class="text-sm ms-1">dari 1.047</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center"
+                                style="flex: 0 0 90px; height: 100%;">
+                                <a href="/data/anggota" class="btn-pulse-outer">
+                                    <span class="pulse-ring"></span>
+                                    <span class="pulse-ring delay"></span>
+                                    <span class="pulse-ring delay2"></span>
+                                    <i class="fas fa-play"></i>
+                                </a>
+
+
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-                <p class="text-sm text-secondary mb-1">Jumlah Anggota</p>
-                <h4 class="mb-2 font-weight-bold">1.235</h4>
-                <div class="d-flex align-items-center">
-                    <span class="text-sm text-success font-weight-bolder">
-                        <i class="fa fa-chevron-up text-xs me-1"></i>18%
-                    </span>
-                    <span class="text-sm ms-1">dari 1.047</span>
-                </div>
-            </div>
-            <div class="d-flex align-items-center justify-content-center" style="flex: 0 0 90px; height: 100%;">
-<a href="/data/anggota" class="btn-pulse-outer">
-    <span class="pulse-ring"></span>
-    <span class="pulse-ring delay"></span>
-    <span class="pulse-ring delay2"></span>
-    <i class="fas fa-play"></i>
-</a>
-
-
-            </div>
-
-        </div>
-    </div>
-</div>
             </div>
         </div>
     </main>
-
 @endsection
 @section('script')
     <script>
@@ -375,12 +381,12 @@ if ($surplus_bulan_lalu > 0) {
                 datasets: [{
                     data: @json($pinjaman_data),
                     backgroundColor: [
-                        "#2ca8ff", 
-                        "#7c3aed", 
-                        "#ed3a7c", 
-                        "#4adf83", 
-                        "#0f0b06", 
-                        "#a855f7" 
+                        "#2ca8ff",
+                        "#7c3aed",
+                        "#ed3a7c",
+                        "#4adf83",
+                        "#0f0b06",
+                        "#a855f7"
                     ],
                     borderWidth: 0
                 }]
@@ -421,8 +427,7 @@ if ($surplus_bulan_lalu > 0) {
         gradientStroke2.addColorStop(0, 'rgba(119,77,211,0)');
 
         new Chart(ctx2, {
-            plugins: [
-                {
+            plugins: [{
                     beforeInit(chart) {
                         const originalFit = chart.legend.fit;
                         chart.legend.fit = function fit() {
@@ -464,8 +469,7 @@ if ($surplus_bulan_lalu > 0) {
             ],
             data: {
                 labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
-                datasets: [
-                    {
+                datasets: [{
                         label: "Pendapatan",
                         type: "bar",
                         tension: 0.4,

@@ -49,7 +49,7 @@
                     </a>
                 </li>
                 <li class="nav-item px-3 d-flex align-items-center">
-                    <a href="javascript:;" class="nav-link text-body p-0">
+                    <a href="#" class="nav-link text-body p-0">
                         <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"
                             class="fixed-plugin-button-nav cursor-pointer" viewBox="0 0 24 24" fill="currentColor">
                             <path fill-rule="evenodd"
@@ -74,25 +74,67 @@
                                 <span class="fw-bold">My Profile</span>
                             </a>
                         </li>
+                        <li class="mb-1">
+                            <a class="dropdown-item d-flex align-items-center text-sm text-nowrap"
+                                href="/pengaturan/sop">
+                                <span class="fw-bold">Settings</span>
+                            </a>
+                        </li>
                         <li>
-                            <a class="dropdown-item d-flex align-items-center text-sm text-nowrap" href="#">
+                            <a class="dropdown-item d-flex align-items-center text-sm text-nowrap" href="#"
+                                data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                 <span class="fw-bold">TS / Invoice</span>
                             </a>
                         </li>
                     </ul>
                 </li>
-
                 <li class="nav-item ps-2 d-flex align-items-center">
                     <a href="javascript:;" class="nav-link text-body p-0">
-                        <img src="../assets/img/team-2.jpg" class="avatar avatar-sm" alt="avatar" />
+                        <img src="{{ asset('storage/logo/' . $kec->logo) }}" class="PreviewLogo avatar avatar-sm"
+                            alt="Logo Navbar" />
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 800px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Ts dan Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4 text-center">
+                        <img src="../../assets/img/user.png" alt="Preview" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-8">
+                        <h3 class="fw-bold text-center mb-2" style="font-size: 28px;">TECHNICAL SUPPORT</h3>
+                        <h4 class="fw-bold text-center mb-4" style="font-size: 22px;">0882-0066-44656</h4>
+                        <ul class="text-muted" style="font-size: 14px;">
+                            <li>Jika terdapat kendala teknis, silahkan menghubungi Technical Support kami melalui
+                                WhatsApps ke nomor diatas. Dimohon menggunakan bahasa yang mudah dipahami dan tidak
+                                menyulitkan.</li>
+                            <li>Regristasikan terlebih dahulu Nomor Bapak/Ibu dengan cara ketik Lokasi Beserta Nama
+                                Aplikasinya</li>
+                            <li>Jika permasalahan berkaitan dengan transaksi, sertakan Loan ID Transaksi yang
+                                dimaksud.</li>
+                        </ul>
+                        <p class="text-end fw-bold mt-4">Team Technical Support</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!-- SweetAlert Script -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.getElementById('btn-logout').addEventListener('click', function() {
