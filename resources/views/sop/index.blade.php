@@ -187,8 +187,16 @@
     <script src="/vendor/ckeditor/ckeditor.js"></script>
     <script>
         let editor;
-        CKEDITOR.replace('editor_spk');
-
+        // CKEDITOR.replace('editor_spk');
+        CKEDITOR.replace('editor_spk', {
+            on: {
+                instanceReady: function(evt) {
+                    setTimeout(function() {
+                        $('.cke_notification_warning').hide();
+                    }, 100);
+                }
+            }
+        });
         const toast = Swal.mixin({
             toast: true,
             icon: 'success',
