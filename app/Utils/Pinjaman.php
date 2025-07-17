@@ -123,7 +123,7 @@ class Pinjaman
                 '{sebutan_kades}' => $desa->sebutan_desa->sebutan_kades,
                 '{penjamin}' => $kel->penjamin,
                 '{peminjam}' => $kel->namadepan,
-                '{hubungan}' => $hub->kekeluargaan,
+                // '{hubungan}' => $hub->kekeluargaan,
                 '1' => '1',
                 '0' => '0'
             ]);

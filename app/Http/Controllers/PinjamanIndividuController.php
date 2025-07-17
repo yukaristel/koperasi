@@ -38,14 +38,14 @@ class PinjamanIndividuController extends Controller
         }
 
         $status = strtolower($status);
-        
+
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $tambahan = $kec->tahapan_perguliran;
 
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
-                $query->where('lokasi', '0')
-                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
-            })
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
             ->orWhere(function ($query) {
                 $query->where('lokasi', session('lokasi'))
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -53,9 +53,9 @@ class PinjamanIndividuController extends Controller
             ->orderBy('kode', 'asc')
             ->get();
 
-        
+
         $title = 'Tahapan Perguliran Individu';
-        return view('perguliran_i.index')->with(compact('title','tambahan', 'status', 'jenis_pp'));
+        return view('perguliran_i.index')->with(compact('title', 'tambahan', 'status', 'jenis_pp'));
     }
 
     public function peraktif()
@@ -66,13 +66,13 @@ class PinjamanIndividuController extends Controller
         }
 
         $status = strtolower($status);
-        
+
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        
+
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
-                $query->where('lokasi', '0')
-                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
-            })
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
             ->orWhere(function ($query) {
                 $query->where('lokasi', session('lokasi'))
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -92,13 +92,13 @@ class PinjamanIndividuController extends Controller
         }
 
         $status = strtolower($status);
-        
+
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        
+
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
-                $query->where('lokasi', '0')
-                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
-            })
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
             ->orWhere(function ($query) {
                 $query->where('lokasi', session('lokasi'))
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -106,7 +106,7 @@ class PinjamanIndividuController extends Controller
             ->orderBy('kode', 'asc')
             ->get();
 
-        
+
         $title = 'Tahapan Perguliran Individu';
         return view('perguliran_i.lunas')->with(compact('title', 'status', 'jenis_pp'));
     }
@@ -202,7 +202,7 @@ class PinjamanIndividuController extends Controller
                 ->make(true);
         }
     }
-    
+
     public function verified1()
     {
         if (request()->ajax()) {
@@ -506,11 +506,11 @@ class PinjamanIndividuController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
         $sistem_angsuran = SistemAngsuran::all();
-        
+
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
-                $query->where('lokasi', '0')
-                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
-            })
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
             ->orWhere(function ($query) {
                 $query->where('lokasi', session('lokasi'))
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -692,7 +692,7 @@ class PinjamanIndividuController extends Controller
         ];
 
         $pinjaman_anggota = PinjamanIndividu::create($insert);
-        
+
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $anggota = Anggota::where('id', $request->nia)->first();
         $nik = $anggota->nik;
@@ -702,7 +702,7 @@ class PinjamanIndividuController extends Controller
         $simpanan = null;
         $pinjaman = null;
         $status = 'N'; // default
-        $disabled = ''; 
+        $disabled = '';
 
         if ($anggota) {
             $simpanan_anggota = Simpanan::where('nia', $anggota->id)
@@ -712,7 +712,7 @@ class PinjamanIndividuController extends Controller
 
             $simpanan = Simpanan::where('nia', $anggota->id)
                 ->whereNotIn('jenis_simpanan', [1, 2])
-                ->with(['realSimpananTerbesar','js','sts'])
+                ->with(['realSimpananTerbesar', 'js', 'sts'])
                 ->get();
 
             $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
@@ -725,7 +725,7 @@ class PinjamanIndividuController extends Controller
 
             if ($anggota->status == 0) {
                 $status = 'B'; // Blacklist
-                $disabled = 'readonly'; 
+                $disabled = 'readonly';
             }
             if ($simpanan_anggota) {
                 $status = 'A'; // Aktif
@@ -735,8 +735,8 @@ class PinjamanIndividuController extends Controller
         return response()->json([
             'success' => true,
             'msg' => 'Data pinjaman berhasil disimpan.',
-            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
-            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
+            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota', 'disabled', 'desa', 'jenis_kegiatan', 'nik'))->render(),
+            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled', 'desa'))->render(),
         ]);
     }
 
@@ -765,9 +765,9 @@ class PinjamanIndividuController extends Controller
             ['lev1', '1'],
             ['lev2', '1'],
             ['lev3', '1']
-                ])
-        ->where('kode_akun', 'like', '%' . ($perguliran_i->jpp->kode + 1))
-        ->orderBy('kode_akun', 'asc')->get();
+        ])
+            ->where('kode_akun', 'like', '%' . ($perguliran_i->jpp->kode + 1))
+            ->orderBy('kode_akun', 'asc')->get();
         $debet = Rekening::where([
             ['lev1', '1'],
             ['lev2', '1'],
@@ -803,7 +803,7 @@ class PinjamanIndividuController extends Controller
 
             $pinj_aktif = $pinj_i_aktif;
         }
-        return view('perguliran_i.partials/' . $view)->with(compact('perguliran_i', 'jenis_jasa', 'sistem_angsuran', 'sumber_bayar', 'debet', 'pinj_aktif','v1','v2','v3','v4'));
+        return view('perguliran_i.partials/' . $view)->with(compact('perguliran_i', 'jenis_jasa', 'sistem_angsuran', 'sumber_bayar', 'debet', 'pinj_aktif', 'v1', 'v2', 'v3', 'v4'));
     }
 
     public function detail(PinjamanIndividu $perguliran_i)
@@ -870,11 +870,11 @@ class PinjamanIndividuController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
         $jenis_jasa = JenisJasa::all();
         $sistem_angsuran = SistemAngsuran::all();
-        
+
         $jenis_pp = JenisProdukPinjaman::where(function ($query) {
-                $query->where('lokasi', '0')
-                    ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
-            })
+            $query->where('lokasi', '0')
+                ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
+        })
             ->orWhere(function ($query) {
                 $query->where('lokasi', session('lokasi'))
                     ->where('kecuali', 'NOT LIKE', '%#' . session('lokasi') . '#%');
@@ -897,7 +897,7 @@ class PinjamanIndividuController extends Controller
     public function update(Request $request, PinjamanIndividu $perguliran_i)
     {
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        
+
         if ($request->status == 'P') {
             $tgl = 'tgl_proposal';
             $alokasi = 'proposal';
@@ -919,18 +919,18 @@ class PinjamanIndividuController extends Controller
                 'tgl_verifikasi' => 'required',
                 'verifikasi' => 'required'
             ]);
-            
+
             if ($validate->fails()) {
                 return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
             }
 
-            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#". auth()->id();
+            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#" . auth()->id();
             $update = [
                 'data_verifikasi' => $data_verifikasi,
                 'status' => $data['status']
             ];
             $msg = 'Rekom Verifikator/Analis berhasil disimpan';
-        } elseif ($request->status == 'V1') {/////////////V1
+        } elseif ($request->status == 'V1') { /////////////V1
             $data = $request->only([
                 '_id',
                 'status',
@@ -948,18 +948,18 @@ class PinjamanIndividuController extends Controller
                 'tgl_verifikasi' => 'required',
                 'verifikasi' => 'required'
             ]);
-            
+
             if ($validate->fails()) {
                 return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
             }
 
-            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#". auth()->id();
+            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#" . auth()->id();
             $update = [
                 'data_verifikasi1' => $data_verifikasi,
                 'status' => $data['status']
             ];
             $msg = 'data berhasil disimpan';
-        } elseif ($request->status == 'V2') {/////////////V2
+        } elseif ($request->status == 'V2') { /////////////V2
             $data = $request->only([
                 '_id',
                 'status',
@@ -977,18 +977,18 @@ class PinjamanIndividuController extends Controller
                 'tgl_verifikasi' => 'required',
                 'verifikasi' => 'required'
             ]);
-            
+
             if ($validate->fails()) {
                 return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
             }
 
-            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#". auth()->id();
+            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#" . auth()->id();
             $update = [
                 'data_verifikasi2' => $data_verifikasi,
                 'status' => $data['status']
             ];
             $msg = 'data berhasil disimpan';
-        } elseif ($request->status == 'V3') {/////////////V3
+        } elseif ($request->status == 'V3') { /////////////V3
             $data = $request->only([
                 '_id',
                 'status',
@@ -1006,12 +1006,12 @@ class PinjamanIndividuController extends Controller
                 'tgl_verifikasi' => 'required',
                 'verifikasi' => 'required'
             ]);
-            
+
             if ($validate->fails()) {
                 return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
             }
 
-            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#". auth()->id();
+            $data_verifikasi = "$data[tgl_verifikasi]#$data[verifikasi]#$data[jangka]#$data[pros_jasa]#$data[jenis_jasa]#$data[sistem_angsuran_pokok]#$data[sistem_angsuran_jasa]#$data[catatan_verifikasi]#" . auth()->id();
             $update = [
                 'data_verifikasi3' => $data_verifikasi,
                 'status' => $data['status']
@@ -1890,16 +1890,16 @@ class PinjamanIndividuController extends Controller
         ])->first();
 
         $data['keuangan'] = $keuangan;
-        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk_i, $data, true);
+        $data['ttd'] = Pinjaman::keyword($data['kec']->ttd->tanda_tangan_spk, $data, true);
 
-        $data['dir'] = User::Where([
-            ['lokasi', Session::get('lokasi')],
-            ['level', '1'],
-            ['jabatan', '1']
-        ])->first();
+        $data['judul'] = 'Surat Perjanjian Kredit (Umum) (' . $data['pinkel']->anggota->namadepan . ' - Loan ID. ' . $data['pinkel']->id . ')';
+        if (Session::get('lokasi') == '15' || Session::get('lokasi') == '1') {
+            $data['redaksi_spk'] = Pinjaman::spk($data['kec']->redaksi_spk, $data);
+            $view = view('perguliran_i.dokumen.spk_15', $data)->render();
+        } else {
+            $view = view('perguliran_i.dokumen.spk', $data)->render();
+        }
 
-        $data['judul'] = 'Surat Perjanjian Kredit (' . $data['pinkel']->anggota->namadepan . ' - Loan ID. ' . $data['pinkel']->id . ')';
-        $view = view('perguliran_i.dokumen.spk', $data)->render();
         if ($data['type'] == 'pdf') {
             $pdf = PDF::loadHTML($view);
             return $pdf->stream();
