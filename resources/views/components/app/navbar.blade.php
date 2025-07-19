@@ -12,20 +12,29 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    @php $segments = request()->segments(); @endphp
+                    @php
+                        $segments = request()->segments();
+                        $customPath = implode('/', $segments);
+                    @endphp
                     <div class="page-title ms-xl-0 ms-5">
-                        @foreach ($segments as $i => $s)
-                            @php $text = ucwords(str_replace(['-', '_'], ' ', $s)); @endphp
-                            @if ($i === 0)
-                                <h5 class="fw-bold d-inline">{{ $text }}</h5>
-                            @elseif ($i === 1)
-                                <span class="text-muted mx-1">/</span>
-                                <span class="h6 d-inline">{{ $text }}</span>
-                            @else
-                                <span class="text-muted mx-1">/</span>
-                                <small class="text-muted">{{ $text }}</small>
-                            @endif
-                        @endforeach
+                        @if ($customPath === 'transaksi/tutup_buku')
+                            <h5 class="fw-bold d-inline">Transaksi</h5>
+                            <span class="text-muted mx-1">/</span>
+                            <span class="h6 d-inline">Pembagian SHU</span>
+                        @else
+                            @foreach ($segments as $i => $s)
+                                @php $text = ucwords(str_replace(['-', '_'], ' ', $s)); @endphp
+                                @if ($i === 0)
+                                    <h5 class="fw-bold d-inline">{{ $text }}</h5>
+                                @elseif ($i === 1)
+                                    <span class="text-muted mx-1">/</span>
+                                    <span class="h6 d-inline">{{ $text }}</span>
+                                @else
+                                    <span class="text-muted mx-1">/</span>
+                                    <small class="text-muted">{{ $text }}</small>
+                                @endif
+                            @endforeach
+                        @endif
                     </div>
                 </li>
             </ol>

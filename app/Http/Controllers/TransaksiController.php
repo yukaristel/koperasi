@@ -105,8 +105,8 @@ class TransaksiController extends Controller
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
 
         $success = false;
-        $title = 'Tutup Buku';
-        return view('transaksi.tutup_buku.index')->with(compact('title', 'kec', 'success'));
+        $nav = 'Tutup Budku';
+        return view('transaksi.tutup_buku.index')->with(compact('nav', 'kec', 'success'));
     }
 
     // Inactive
