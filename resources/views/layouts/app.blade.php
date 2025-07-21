@@ -130,7 +130,7 @@
 
         .badge-github {
             background-color: #e0e0e0;
-            color: #000;
+            color: #fff;
         }
 
         .sidenav {

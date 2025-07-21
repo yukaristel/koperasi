@@ -4,85 +4,12 @@
     <div class="card mb-3">
         <div class="card-body">
             <div class="row mt-0">
+                @include('perguliran_i.partials.proses')
+                
                 @php
-                    $semua_tahapan = [
-                        'data_proposal' => ['label' => 'PENGAJUAN PEMOHON', 'class' => 'bg-secondary'],
-                        'data_verifikasi' => ['label' => 'REKOMENDASI ANALIS', 'class' => 'bg-info'],
-                        'data_verifikasi1' => ['label' => 'APPROVED KEPALA', 'class' => 'bg-primary'],
-                        'data_verifikasi2' => ['label' => 'APPROVED BAWAS', 'class' => 'bg-dark'],
-                        'data_verifikasi3' => ['label' => 'VERIFIKASI LAINNYA', 'class' => 'bg-warning'],
-                        'data_waiting' => ['label' => 'WAITING', 'class' => 'bg-success'],
-                    ];
-
-                    // Filter tahapan sesuai status
-                    $status = $perguliran_i->status;
-                    $tahapan = [];
-
-                    if ($status === 'P') {
-                        $tahapan = ['data_proposal'];
-                    } elseif ($status === 'V') {
-                        $tahapan = ['data_proposal', 'data_verifikasi'];
-                    } elseif ($status === 'V1') {
-                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1'];
-                    } elseif ($status === 'V2') {
-                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2'];
-                    } elseif ($status === 'V3') {
-                        $tahapan = ['data_proposal', 'data_verifikasi', 'data_verifikasi1', 'data_verifikasi2', 'data_verifikasi3'];
-                    } else {
-                        $tahapan = array_keys($semua_tahapan); // tampilkan semua
-                    }
+                    $tgl="";
+                    $alokasi ="";
                 @endphp
-
-                <table class="table table-bordered table-striped w-100 small">
-                    <thead class="text-center">
-                        <tr>
-                            <th>Sumber Data/Status</th>
-                            <th>Tanggal</th>
-                            <th>Alokasi</th>
-                            <th>Jangka</th>
-                            <th>%</th>
-                            <th>Bunga</th>
-                            <th>SA. Pokok</th>
-                            <th>SA. Bunga</th>
-                            <th>Tujuan Kredit</th>
-                            <th>CEV</th>
-                            <th><i class="fas fa-user"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($tahapan as $key)
-                            @php
-                                $data = $perguliran_i->$key;
-                                $parts = explode('#', $data);
-                                $tgl = isset($parts[0]) ? $parts[0] : '0000-00-00';
-                                $alokasi = isset($parts[1]) ? number_format((float)$parts[1]) : 0;
-                                $jangka = $perguliran_i->jangka ?? '-';
-                                $jasa = $perguliran_i->pros_jasa ?? '-';
-                                $jj = ucfirst($perguliran_i->jenis_jasa->nama_jj ?? 'Flat');
-                                $sa_pokok = ucfirst($perguliran_i->sis_pokok->nama_sistem ?? '-');
-                                $sa_jasa = ucfirst($perguliran_i->sis_jasa->nama_sistem ?? '-');
-                                $alokasi_tujuan = $perguliran_i->alokasi_tujuan ?? 'Modal Kerja';
-                                $cev = 0;
-                                $ikon = $loop->index == 0 ? 'WJ' : 'SW'; // bebas kamu sesuaikan
-                                $label = $semua_tahapan[$key]['label'];
-                                $class = $semua_tahapan[$key]['class'];
-                            @endphp
-                            <tr>
-                                <td><span class="badge {{ $class }} text-dark fs-6">{{ $label }}</span></td>
-                                <td>{{ $tgl }}</td>
-                                <td>{{ $alokasi }}</td>
-                                <td>{{ $jangka }} bulan</td>
-                                <td>{{ $jasa }} %</td>
-                                <td>{{ $jj }}</td>
-                                <td>{{ $sa_pokok }}</td>
-                                <td>{{ $sa_jasa }}</td>
-                                <td>{{ $alokasi_tujuan }}</td>
-                                <td>{{ $cev }}</td>
-                                <td>{{ $ikon }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

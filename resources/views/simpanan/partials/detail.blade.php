@@ -125,7 +125,7 @@
                                 }
                             </style>
                             <form class="forminline">
-                                <select id="bulants" name="bulants" class="js-example-basic-single formcontrol">
+                                <select id="bulants" name="bulants" class="select2T form-control">
                                     <option value="0">
                                         Semua Bulan
                                     </option>
@@ -135,7 +135,7 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <select id="tahunts" name="tahunts" class="js-example-basic-single formcontrol">
+                                <select id="tahunts" name="tahunts" class="select2T form-control">
                                     <option value="0">
                                         Semua Tahun
                                     </option>
@@ -151,6 +151,14 @@
                         <div class="card-body pb-2">
                             <div id="transaksi-container">
                                 <!-- Tabel transaksi akan dimuat di sini -->
+                                <div class="card mb-3">
+                                    <div class="card-body p-2 pb-0 d-flex align-items-center">
+                                        <div class="spinner-border text-primary me-2" role="status" style="width: 1rem; height: 1rem;">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <span>Please wait . . .</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,18 +172,6 @@
 
 @section('script')
 <script>
-    $('.js-example-basic-single').select2({
-      theme: 'bootstrap-5'
-    });
-
-    $("#jumlah").maskMoney({
-            allowNegative: true
-        });
-
-    $('.date').datepicker({
-        dateFormat: 'dd/mm/yy'
-    });
-
 $(document).ready(function() {
     var currentDate = new Date();
     var currentMonth = currentDate.getMonth() + 1;

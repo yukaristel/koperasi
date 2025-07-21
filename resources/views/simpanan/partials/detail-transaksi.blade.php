@@ -15,9 +15,9 @@ $sum = DB::table('real_simpanan_' . session('lokasi'))
     ->value('sum') ?? 0;
 @endphp
 <div class="table-responsive">
-    <table class="table table-striped align-items-center mb-0" width="97%" style="table-layout: fixed; border-collapse: collapse;">
+                <table class="table table-hover table-sm small">
         <thead>
-            <tr style="background-color: #404040; color: #ffffff; align:"center";">
+            <tr style="background-color: #e9ecef; color: #ffffff; align:'center';">
                 <th width="3%">#</th>
                 <th width="10%">Tgl transaksi</th>
                 <th width="35%">Keterangan</th>
@@ -71,10 +71,10 @@ $sum = DB::table('real_simpanan_' . session('lokasi'))
                     <td>{{ $index + 1 }}</td>
                     <td>{{ \Carbon\Carbon::parse($trx->tgl_transaksi)->format('d/m/Y') }}</td>
                     <td style="word-wrap: break-word; word-break: break-word; white-space: normal;">{{ $trx->keterangan_transaksi ?? '-' }}</td>
-                    <td>{{ $idt ?? '-' }}</td>
-                    <td>{{ number_format($real_d, 0, ',', '.') }}</td>
-                    <td>{{ number_format($real_k, 0, ',', '.') }}</td>
-                    <td>{{ number_format($sum, 0, ',', '.') }}</td>
+                    <td class="text-center">{{ $idt ?? '-' }}</td>
+                    <td class="text-end">{{ number_format($real_d, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($real_k, 0, ',', '.') }}</td>
+                    <td class="text-end">{{ number_format($sum, 0, ',', '.') }}</td>
                     <td>{{ $trx->ins ?? '-' }}</td>
                     <td style="padding:5px; align:"center";">
 <a class="btn btn-sm" data-toggle='tooltip' 

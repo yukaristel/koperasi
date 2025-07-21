@@ -85,7 +85,7 @@
 
             <div class="d-grid gap-2 mt-3">
                 <button id="simpan_data" name="simpan_data" class="btn btn-primary btn-sm btn-simpan-angg" data-target="#FormPenduduk">SIMPAN DATA</button>
-                <a href="/a" 
+                <a href="/anggota/cetak_kartu/{{$anggota->id}}" 
                    class="btn btn-outline-secondary btn-sm" 
                    target="_blank" 
                    {{ !$anggota ? 'disabled' : '' }}>

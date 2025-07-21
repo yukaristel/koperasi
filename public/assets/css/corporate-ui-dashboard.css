@@ -20254,39 +20254,47 @@ fieldset:disabled .btn {
 }
 
 .badge.bg-primary {
-  background: rgba(119, 77, 211, 0.1) !important;
+  background: rgba(119, 77, 211, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-secondary {
-  background: rgba(100, 116, 139, 0.1) !important;
+  background: rgba(100, 116, 139, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-success {
-  background: rgba(103, 194, 58, 0.1) !important;
+  background: rgba(103, 194, 58, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-info {
-  background: rgba(85, 166, 248, 0.1) !important;
+  background: rgba(85, 166, 248, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-warning {
-  background: rgba(241, 153, 55, 0.1) !important;
+  background: rgba(241, 153, 55, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-danger {
-  background: rgba(234, 78, 61, 0.1) !important;
+  background: rgba(234, 78, 61, 0.9) !important;
 }
 
 .badge.bg-light {
-  background: rgba(203, 213, 225, 0.1) !important;
+  background: rgba(203, 213, 225, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-dark {
-  background: rgba(30, 41, 59, 0.1) !important;
+  background: rgba(30, 41, 59, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge.bg-white {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #ffffff !important;
 }
 
 .badge {
