@@ -660,14 +660,14 @@ class Keuangan
             $wajib_pokok = 0;
             $wajib_jasa = 0;
             $angsuran_ke = 0;
-                    $jatuh_tempo = 0;
+            $jatuh_tempo = 0;
             if ($pinkel->target) {
                 $target_pokok = $pinkel->target->target_pokok;
                 $target_jasa = $pinkel->target->target_jasa;
                 $wajib_pokok = $pinkel->target->wajib_pokok;
                 $wajib_jasa = $pinkel->target->wajib_jasa;
                 $angsuran_ke = $pinkel->target->angsuran_ke;
-                        $jatuh_tempo = $pinkel->target->jatuh_tempo;
+                $jatuh_tempo = $pinkel->target->jatuh_tempo;
             }
 
             $tunggakan_pokok = $target_pokok - $sum_pokok;
@@ -705,17 +705,17 @@ class Keuangan
             $selisih_bulan = $data['bulan'] - $bl_cair;
 
             $selisih = $selisih_bulan + $selisih_tahun;
-            $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
+            $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok / $wajib_pokok);
 
+            $kolek = 0;
+            if ($tunggakan_pokok <= 0) {
+                $kolek = 0;
+            } elseif ($jatuh_tempo != 0) {
+                $kolek = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24)) + (($jum_nunggak - 1) * 30);
+                if ($kolek < 0) {
                     $kolek = 0;
-                    if ($tunggakan_pokok <= 0) {
-                        $kolek = 0;
-                    } elseif ($jatuh_tempo != 0) {
-                        $kolek = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
-                        if ($kolek < 0) {
-                            $kolek = 0;
-                        }
-                    }
+                }
+            }
             $kolek1 = $kolek2 = $kolek3 = $kolek4 = $kolek5 = 0;
 
             if ($kolek < 10) {

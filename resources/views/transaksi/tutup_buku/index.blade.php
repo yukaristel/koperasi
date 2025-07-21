@@ -52,7 +52,7 @@
                         <button type="button" id="TutupBuku" {{ date('m') <= 10 ? 'disabled' : '' }}
                             class="btn btn-sm btn-dark mb-0 ms-3 ">1. Tutup Buku</button>
                         <button type="button" id="PembagianLaba" class="btn btn-sm btn-success mb-0 ms-3">
-                            2. Simpan Alokasi Laba
+                            2. Pembagian SHU
                         </button>
                     </div>
                 </div>

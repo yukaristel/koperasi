@@ -55,8 +55,6 @@
             color: #000000 !important;
         }
     </style>
-
-
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -185,15 +183,20 @@
     </form>
 @endsection
 @section('script')
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/vendor/ckeditor/ckeditor.js"></script>
     <script>
         let editor;
-
-        ClassicEditor.create(document.querySelector('#editor'))
-            .then(e => editor = e)
-            .catch(error => console.error(error));
-
+        // CKEDITOR.replace('editor_spk');
+        CKEDITOR.replace('editor_spk', {
+            on: {
+                instanceReady: function(evt) {
+                    setTimeout(function() {
+                        $('.cke_notification_warning').hide();
+                    }, 100);
+                }
+            }
+        });
         const toast = Swal.mixin({
             toast: true,
             icon: 'success',
@@ -211,7 +214,7 @@
             const action = form.attr('action');
             const method = form.find('input[name="_method"]').val() || 'POST';
 
-            $('#spk').val(editor.getData());
+            $('textarea#spk').val(CKEDITOR.instances.editor_spk.getData());
 
             $.ajax({
                 url: action,
@@ -247,6 +250,7 @@
             });
         });
     </script>
+
     <script>
         $.ajaxSetup({
             headers: {

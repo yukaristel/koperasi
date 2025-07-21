@@ -25,9 +25,11 @@ class SopController extends Controller
 
         $kec = Kecamatan::where('id', Session::get('lokasi'))->with('ttd')->first();
         $token = "Koperasi-" . str_replace('.', '', $kec->kd_kec) . '-' . str_pad($kec->id, 4, '0', STR_PAD_LEFT);
+        $keywordSPK = Pinjaman::spk();
+        $fungsiSPK = Pinjaman::fungsi();
 
         $title = "Personalisasi SOP";
-        return view('sop.index')->with(compact('title', 'kec', 'api', 'token'));
+        return view('sop.index')->with(compact('title', 'keywordSPK', 'fungsiSPK', 'kec', 'api', 'token'));
     }
 
     public function users()
@@ -340,15 +342,11 @@ class SopController extends Controller
         $validate = Validator::make($data, [
             'spk' => 'required'
         ]);
-
         if ($validate->fails()) {
             return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $data['spk'] = str_replace('<ol>', '', $data['spk']);
-        $data['spk'] = str_replace('</ol>', '', $data['spk']);
         $spk = json_encode($data['spk']);
-
         $kecamatan = Kecamatan::where('id', $kec->id)->update([
             'redaksi_spk' => $spk
         ]);

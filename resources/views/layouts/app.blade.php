@@ -136,9 +136,15 @@
         .sidenav {
             z-index: 1040 !important;
         }
+
+        .dataTables_length select {
+            height: 38px;
+            padding: 6px 20px;
+            font-size: 14px;
+            width: 80px;
+            margin: 0 5px;
+        }
     </style>
-
-
 
     @yield('style')
 </head>
