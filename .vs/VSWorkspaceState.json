@@ -1,11 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\resources",
-    "\\resources\\views",
-    "\\resources\\views\\components",
-    "\\resources\\views\\components\\app"
+    ""
   ],
-  "SelectedNode": "\\resources\\views\\components\\app\\navbar.blade.php",
+  "SelectedNode": "\\C:\\laragon\\www\\koperasi",
   "PreviewInSolutionExplorer": false
 }
