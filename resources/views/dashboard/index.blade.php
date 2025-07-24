@@ -386,7 +386,7 @@
                         borderSkipped: false,
                         backgroundColor: "#4adf83",
                         data: @json(array_values($saldo[4])),
-                        maxBarThickness: 6
+                        maxBarThickness: 24
                     },
                     {
                         label: "Beban",
@@ -397,12 +397,12 @@
                         borderSkipped: false,
                         backgroundColor: "#ed3a7c",
                         data: @json(array_map(fn($v) =>  $v, array_values($saldo[5]))),
-                        maxBarThickness: 6
+                        maxBarThickness: 24
                     },
                     {
                         label: "Surplus",
                         type: "line",
-                        tension: 0,
+                        tension: 0.3,
                         borderWidth: 2,
                         pointRadius: 3,
                         borderColor: "#2ca8ff",
@@ -411,7 +411,7 @@
                         backgroundColor: gradientStroke2,
                         fill: true,
                         data: @json(array_values($saldo['surplus'])),
-                        maxBarThickness: 6
+                        maxBarThickness: 4
                     }
                 ]
             },

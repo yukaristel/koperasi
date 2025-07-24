@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\resources",
+    "\\resources\\views",
+    "\\resources\\views\\dashboard"
   ],
-  "SelectedNode": "\\C:\\laragon\\www\\koperasi",
+  "SelectedNode": "\\resources\\views\\dashboard\\bc.php",
   "PreviewInSolutionExplorer": false
 }
