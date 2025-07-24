@@ -185,7 +185,56 @@
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/vendor/ckeditor/ckeditor.js"></script>
+    
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnTambah = document.getElementById('btnTambahTahapan');
+            const daftar = document.getElementById('daftar-tahapan');
+            const placeholder = daftar.querySelector('.tombol-tambah-placeholder');
+            const max = 3;
+            const sisaSlot = document.getElementById('sisaSlot');
+
+            btnTambah.addEventListener('click', () => {
+                const inputs = daftar.querySelectorAll('input[name="tahapan_baru[]"]');
+                if (inputs.length >= max) return;
+
+                const panah = document.createElement('div');
+                panah.className = "text-center mb-1 panah";
+                panah.innerHTML = `<i class="fas fa-arrow-down"></i>`;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = "mb-3 d-flex gap-2 align-items-center";
+                wrapper.innerHTML = `
+                    <input type="text" name="tahapan_baru[]" class="form-control" placeholder="Tahapan Baru">
+                    <button type="button" class="btn btn-danger btn-hapus-tahapan">-</button>
+                `;
+
+                daftar.insertBefore(panah, placeholder);
+                daftar.insertBefore(wrapper, placeholder);
+
+                updateSisa();
+            });
+
+            daftar.addEventListener('click', (e) => {
+                if (e.target.classList.contains('btn-hapus-tahapan')) {
+                    const wrapper = e.target.closest('.mb-3');
+                    const panah = wrapper.previousElementSibling;
+
+                    if (panah && panah.classList.contains('panah')) {
+                        panah.remove();
+                    }
+
+                    wrapper.remove();
+                    updateSisa();
+                }
+            });
+
+            function updateSisa() {
+                const jumlah = daftar.querySelectorAll('input[name="tahapan_baru[]"]').length;
+                sisaSlot.textContent = max - jumlah;
+            }
+        });
+
         let editor;
         // CKEDITOR.replace('editor_spk');
         CKEDITOR.replace('editor_spk', {
