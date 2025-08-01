@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use DateTime;
 use DateTimeZone;
+use App\Models\JenisJasa;
 
 class Pinjaman
 {
@@ -425,5 +426,16 @@ class Pinjaman
         ];
 
         return $fungsi;
+    }
+
+    public static function namaJJ($id)
+    {
+        static $jenisJasa = null;
+
+        if ($jenisJasa === null) {
+            $jenisJasa = JenisJasa::pluck('nama_jj', 'id')->toArray();
+        }
+
+        return $jenisJasa[$id] ?? '-';
     }
 }

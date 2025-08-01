@@ -52,25 +52,40 @@
             <input type="hidden" name="status" id="status" value="A">
             <input type="hidden" name="debet" id="debet" value="{{ $debet->kode_akun ?? '' }}">
                 <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-6">
                     <div class="mb-3">
                       <label for="tgl_cair" class="form-label">Tgl Cair</label>
-                      <input autocomplete="off" type="text" name="tgl_cair" id="tgl_cair"
-                        class="form-control date" value="{{ Tanggal::tglIndo($perguliran_i->tgl_cair) }}">
+                      <input autocomplete="off" type="date" name="tgl_cair" id="tgl_cair"
+                        class="form-control date" value="{{$perguliran_i->tgl_cair }}">
                       <small class="text-danger" id="msg_tgl_cair"></small>
+                    </div>
+                    <div class="mb-3">
+                      <label for="materai" class="form-label">Biaya Materai</label>
+                      <input autocomplete="off" type="text" name="materai" id="materai"
+                        class="form-control date" value="0">
+                      <small class="text-danger" id="msg_materai"></small>
+                    </div>
+                    <div class="mb-3">
+                      <label for="admin" class="form-label">Biaya Administrasi</label>
+                      <input autocomplete="off" type="text" name="admin" id="admin"
+                        class="form-control date" value="0">
+                      <small class="text-danger" id="msg_admin"></small>
+                    </div>
+                    <div class="mb-3">
+                      <label for="lainnya" class="form-label">Biaya Lainnya</label>
+                      <input autocomplete="off" type="text" name="lainnya" id="lainnya"
+                        class="form-control date" value="0">
+                      <small class="text-danger" id="msg_lainnya"></small>
                     </div>
                   </div>
 
-                  <div class="col-md-4">
+                  <div class="col-md-6">
                     <div class="mb-3">
                       <label for="alokasi" class="form-label">Alokasi Rp.</label>
                       <input autocomplete="off" readonly type="text" name="alokasi" id="alokasi"
                         class="form-control money" value="{{ number_format($perguliran_i->alokasi, 2) }}">
                       <small class="text-danger" id="msg_alokasi"></small>
                     </div>
-                  </div>
-
-                  <div class="col-md-4">
                     <div class="mb-3">
                       <label class="form-label" for="sumber_pembayaran">Sumber Pembayaran (Kredit)</label>
                       <select class="form-control" name="sumber_pembayaran" id="sumber_pembayaran">
@@ -82,6 +97,10 @@
                       </select>
                       <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
                     </div>
+                  </div>
+
+                  <div class="col-md-4">
+
                   </div>
                 </div>
 

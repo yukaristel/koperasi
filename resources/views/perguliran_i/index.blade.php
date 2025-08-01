@@ -391,7 +391,7 @@
             searchable: false
         }])
 
-        var tbVerified1 = CreateTable('#TbVerified3', '/perguliran_i/verified3', [{
+        var tbVerified3 = CreateTable('#TbVerified3', '/perguliran_i/verified3', [{
             data: 'id',
             name: 'id'
         },{
@@ -463,6 +463,24 @@
 
         $('#TbVerified').on('click', 'tbody tr', function(e) {
             var data = tbVerified.row(this).data();
+
+            window.location.href = '/detail_i/' + data.id
+        })
+        
+        $('#TbVerified1').on('click', 'tbody tr', function(e) {
+            var data = tbVerified1.row(this).data();
+
+            window.location.href = '/detail_i/' + data.id
+        })
+
+        $('#TbVerified2').on('click', 'tbody tr', function(e) {
+            var data = tbVerified2.row(this).data();
+
+            window.location.href = '/detail_i/' + data.id
+        })
+
+        $('#TbVerified3').on('click', 'tbody tr', function(e) {
+            var data = tbVerified3.row(this).data();
 
             window.location.href = '/detail_i/' + data.id
         })

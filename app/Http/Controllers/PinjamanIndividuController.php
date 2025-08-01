@@ -1017,9 +1017,28 @@ class PinjamanIndividuController extends Controller
                 'status' => $data['status']
             ];
             $msg = 'data berhasil disimpan';
-        } elseif ($request->status == 'W') {
-            $tgl = 'tgl_tunggu';
-            $alokasi = 'alokasi';
+        } elseif ($request->status == 'W') { 
+            $data = $request->only([
+                '_id',
+                'status',
+                'tgl_tunggu',
+                'nomor_spk'
+            ]);
+
+            $validate = Validator::make($data, [
+                'tgl_tunggu' => 'required'
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
+            }
+
+            $data_tunggu = "$data[tgl_tunggu]#" . auth()->id();
+            $update = [
+                'data_waiting' => $data_tunggu,
+                'status' => $data['status']
+            ];
+            $msg = 'data berhasil disimpan';
         } elseif ($request->status == 'A') {
             $tgl = 'tgl_cair';
             $alokasi = 'alokasi';
