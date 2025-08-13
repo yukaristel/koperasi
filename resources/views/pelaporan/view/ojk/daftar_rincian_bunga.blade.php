@@ -98,7 +98,7 @@ $nomor = 1;
     </tr>
 
     <tr>
-        <td height="20" colspan="6" class="style6 bottom align-center"><br>DAFTAR RINCIAN TABUNGAN <br><br>
+        <td height="20" colspan="6" class="style6 bottom align-center"><br>DAFTAR RINCIAN BUNGA <br><br>
         </td>
     </tr>
 </table>
@@ -114,18 +114,13 @@ $nomor = 1;
 </table>
 <table width="90%" border="0" align="center" cellpadding="3" cellspacing="0">
     <tr align="center" height="30px" class="style9 ">
-        <th width="6%" rowspan="2" class="left bottom">No</th>
-        <th width="10%" rowspan="2" colspan="2" class="left bottom">Nama Penyimpan - CIF</a></th>
-        <th width="20%" colspan="2" class="left bottom">Suku Bunga</a></th>
-        <th width="20%" rowspan="2" class="left bottom right">Jumlah </a></th>
-
+        <th width="10%"  class="left bottom">No</th>
+        <th width="30%" class="left bottom">Nama Penyimpan - CIF</a></th>
+        <th width="30%" class="left bottom">Nomor Rekening</a></th>
+        <th width="30%" class="left bottom right">Jumlah </a></th>
     </tr>
 
-    <tr align="center" height="30px" class="style9">
-        <th width="5%" class="left bottom">%</th>
-        <th width="10%" class="left bottom">Keterangan</th>
-
-    </tr>
+    
     @php
     $total_saldo = 0; // Variabel untuk menyimpan total saldo
     @endphp
@@ -142,29 +137,28 @@ $nomor = 1;
     $tgl1 = Tanggal::tglIndo($simp->tgl_tutup);
     $tgl2 = Tanggal::tglIndo($simp->tgl_buka);
     $y12 = date('Y')-1;
-    $sum_saldo = $simp->realSimpananTerbesar->pluck('sum')->first() ?? 0;
+    $sum_saldo = $simp->realSimpananTerbesar->sum ??0;
 
     // Tambahkan saldo ke total saldo
     $total_saldo += $sum_saldo;
     @endphp
     <tr align="right" height="15px" class="style9">
         <td class="left top" align="center">{{ $nomor++ }}</td>
-        <td colspan="2" class="left top" align="left">
+        <td class="left top" align="left">
             {{ $simp->namadepan }} - {{ $simp->id }}
         </td>
-        <td class="left top" align="center">{{ $simp ? $simp->bunga : '0' }}</td>
         <td width="20%" class="left top" align="left">Per Bulan</td>
         <td class="left top" align="right" style="border: 1px solid;">{{ number_format($sum_saldo, 2) }}</td>
     </tr>
     @endforeach
 
     <tr class="style9">
-        <th colspan="5" class="left bottom top" align="center" style="background:rgba(0,0,0, 0.3);">JUMLAH SALDO</th>
+        <th colspan="3" class="left bottom top" align="center" style="background:rgba(0,0,0, 0.3);">JUMLAH SALDO</th>
         <th class="left right bottom top" align="center">{{ number_format($total_saldo, 2) }}</th>
     </tr>
 
     <tr class="style9">
-        <th colspan="5" class="bottom" align="center">&nbsp;</th>
+        <th colspan="3" class="bottom" align="center">&nbsp;</th>
         <th class="bottom" align="right">&nbsp;</th>
     </tr>
     <tr>

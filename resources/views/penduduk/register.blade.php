@@ -532,7 +532,7 @@
               <div class="col-md-6">
                 <div class="position-relative mb-3">
                   <label for="sistem_angsuran_pokok" class="form-label">Sistem Angs. Pokok</label>
-                  <select class="js-example-basic-single form-control" name="sistem_angsuran_pokok" id="sistem_angsuran_pokok" style="width: 100%;">
+                  <select class="select2 form-control" name="sistem_angsuran_pokok" id="sistem_angsuran_pokok" style="width: 100%;">
                     @foreach ($sistem_angsuran as $sa)
                     <option value="{{ $sa->id }}">
                       {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
@@ -543,40 +543,40 @@
                 </div>
               </div>
 
-                                <div class="col-md-3">
-                                    <div class="position-relative mb-3">
-                                        <label for="jangka" class="form-label">Jangka</label>
-                                        <input autocomplete="off" type="number" name="jangka" id="jangka"
-                                            class="form-control" value="{{ $kec->def_jangka }}">
-                                        <small class="text-danger" id="msg_jangka"></small>
-                                    </div>
-                                </div>
+                <div class="col-md-3">
+                    <div class="position-relative mb-3">
+                        <label for="jangka" class="form-label">Jangka</label>
+                        <input autocomplete="off" type="number" name="jangka" id="jangka"
+                            class="form-control" value="{{ $kec->def_jangka }}">
+                        <small class="text-danger" id="msg_jangka"></small>
+                    </div>
+                </div>
 
-                                <div class="col-md-3">
-                                    <div class="position-relative mb-3">
-                                        <label for="pros_jasa" class="form-label">Prosentase Jasa (%)</label>
-                                        <input autocomplete="off" type="number" name="pros_jasa" id="pros_jasa"
-                                            class="form-control" value="{{ $kec->def_jasa }}">
-                                        <small class="text-danger" id="msg_pros_jasa"></small>
-                                    </div>
-                                </div>
+                <div class="col-md-3">
+                    <div class="position-relative mb-3">
+                        <label for="pros_jasa" class="form-label">Prosentase Jasa (%)</label>
+                        <input autocomplete="off" type="number" name="pros_jasa" id="pros_jasa"
+                            class="form-control" value="{{ $kec->def_jasa }}">
+                        <small class="text-danger" id="msg_pros_jasa"></small>
+                    </div>
+                </div>
 
-                                <div class="col-md-6">
-                                    <div class="position-relative mb-3">
-                                        <label for="sistem_angsuran_jasa" class="form-label">Sistem Angs. Jasa</label>
-                                        <select class="select2 form-control" name="sistem_angsuran_jasa"
-                                            id="sistem_angsuran_jasa" style="width: 100%;">
-                                            @foreach ($sistem_angsuran as $sa)
-                                                <option value="{{ $sa->id }}">
-                                                    {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-md-6">
+                    <div class="position-relative mb-3">
+                        <label for="sistem_angsuran_jasa" class="form-label">Sistem Angs. Jasa</label>
+                        <select class="select2 form-control" name="sistem_angsuran_jasa"
+                            id="sistem_angsuran_jasa" style="width: 100%;">
+                            @foreach ($sistem_angsuran as $sa)
+                                <option value="{{ $sa->id }}">
+                                    {{ $sa->nama_sistem }} ({{ $sa->deskripsi_sistem }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="msg_sistem_angsuran_jasa"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
 
                         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="tab2-tab">
                             <div class="row">
