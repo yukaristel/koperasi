@@ -148,7 +148,7 @@
                 <i class="fa fa-money-bill"></i> Pinjaman
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <button type="button" class="btn btn-sm btn-white" data-bs-toggle="modal" data-bs-target="#ModalPinj">
+                <button type="button" class="btn btn-sm btn-white" data-bs-toggle="modal" data-bs-target="#ModalPinj" data-id="{{ $anggota->id ?? '' }}">
                     Tambah Pinjaman
                 </button>
 
