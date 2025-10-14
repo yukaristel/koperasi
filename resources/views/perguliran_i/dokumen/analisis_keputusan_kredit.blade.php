@@ -16,21 +16,21 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <br>
         <br>
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>ANALISA DAN KEPUTUSAN KREDIT</b>
                 </div>
-                <div style="font-size: 12px;">
-                    <b>Pinjaman Perorangan {{ $kec->nama_lembaga_sort }}</b>
+                <div style="font-size: 11pt;">
+                    <b>Pengajuan Perorangan {{ $kec->nama_lembaga_sort }}</b>
                 </div>
-                <div style="font-size: 13px;">
-                    <b>Nomor : 53 /VIII/2018</b>
+                <div style="font-size: 13pt;">
+                    <b>Nomor :_________________</b>
                 </div>
-                <div style="font-size: 13px;">
+                <div style="font-size: 13pt;">
                     <b>KREDIT BARU</b>
                 </div>
             </td>
@@ -41,7 +41,7 @@
     </table>
 
     <h3><b> I. DATA POKOK PEMINJAM</b></h3>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center"width="5%">1.</td>
             <td width="45%">Nama</td>
@@ -55,7 +55,8 @@
             <td width="45%">Tempat & tgl lahir</td>
             <td align="center"width="5%">:</td>
             <td>
-                <b>{{ $pinkel->anggota->tempat_lahir }} {{ $pinkel->anggota->tgl_lahir }}</b>
+                <b>{{ $pinkel->anggota->tempat_lahir }} 
+                  {{ \Carbon\Carbon::parse($pinkel->anggota->tgl_lahir)->translatedFormat('d F Y') }}</b>
             </td>
         </tr>
         <tr>
@@ -133,8 +134,8 @@
         </tr>
     </table>
 
-    <h3><b>II. PERMOHONAN PINJAMAN</b></h3>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <h3><b>II. PERMOHONAN PIUTANG</b></h3>
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center"width="5%">1.</td>
             <td width="45%">Plafond diajukan</td>
@@ -186,7 +187,7 @@
         </tr>
     </table>
     <h3><b>III. PERHITUGAN KREDIT/RATE YANG DIGUNAKAN</b></h3>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center"width="5%">1.</td>
             <td width="45%">Suku Bangun Flat Rate</td>
@@ -205,7 +206,7 @@
         </tr>
         <tr>
             <td align="center"width="5%">3.</td>
-            <td width="45%">Maks Pemberian Pinjaman Sesuai Dinas</td>
+            <td width="45%">Maks Pemberian Piutang Sesuai Dinas</td>
             <td align="center"width="5%">:</td>
             <td>
                 {{-- <b>{{ $pinkel->anggota->jk }}</b> --}}
@@ -216,7 +217,7 @@
     <p>Berdasarkan hasil perhitungan tersebut diatas, kami simpulkan bahwa yang bersangkutan dapat dipertimbangkan
         permohonan kreditnya dengan syarat-syarat berikut :
     </p>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center"width="5%">1.</td>
             <td colspan="2"width="45%">Jenis Kredit</td>
@@ -286,7 +287,7 @@
             <td width="40%">a. Provisi Kredit</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
         </tr>
         <tr>
@@ -295,7 +296,7 @@
             <td width="40%">b. Premi Angsuran</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
         </tr>
         <tr>
@@ -304,7 +305,7 @@
             <td width="40%">c. Biaya</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
         </tr>
         <tr>
@@ -313,11 +314,11 @@
             <td width="40%">d. Pelunasan kredit Lama</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
-        </tr>
+        </tr><br><br>
         <tr>
-            <td align="center"width="5%">8.</td>
+            <td align="center"width="5%">9.</td>
             <td colspan="2"width="45%">Lain-lainya :</td>
             <td align="center"width="5%"></td>
             <td></td>
@@ -328,7 +329,7 @@
             <td width="40%">a. Nilai Pertangungan Asuransi</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
         </tr>
         <tr>
@@ -337,13 +338,13 @@
             <td width="40%">b. Rencana Realisasi Hari/Tanggal</td>
             <td align="center"width="5%">:</td>
             <td>
-                {{-- <b>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</b> --}}
+                {{-- <b>{{ $pinkel->anggota->u->nama_usaha }}</b> --}}
             </td>
         </tr>
     </table>
     </div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="50%">&nbsp;</td>
             <td width="25%">&nbsp;</td>
@@ -362,13 +363,32 @@
             <td colspan="2" align="center">Peminjam</td>
         </tr>
         <tr>
-            <td colspan="3" height="40">&nbsp;</td>
+            <td align="center">
+                @php
+                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($logoPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
+            <td colspan="2" align="center">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </td>
         </tr>
         <tr>
             <td align="center" style="font-weight: bold;">
                 {{ $dir->namadepan }} {{ $dir->namabelakang }}
             </td>
-            <td colspan="2" align="center" style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
+            <td colspan="2" align="center" style="font-weight: bold;">
+                {{ $pinkel->anggota->namadepan }}
+            </td>
         </tr>
     </table>
 @endsection

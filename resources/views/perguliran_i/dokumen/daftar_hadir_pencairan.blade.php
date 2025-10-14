@@ -18,11 +18,11 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td align="center">
-                <div style="font-size: 18px;">
-                    <b>DAFTAR HADIR PENCAIRAN {{ $pinkel->jpp->nama_jpp }}</b>
+                <div style="font-size: 18pt;">
+                    <b>DAFTAR HADIR PENCAIRAN KREDIT</b>
                 </div>
             </td>
         </tr>
@@ -30,7 +30,7 @@
             <td height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="70">Tempat</td>
             <td align="center" width="5">:</td>
@@ -55,7 +55,7 @@
             <td colspan="6">&nbsp;</td>
         </tr>
     </table>
-    <table border="1" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="1" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <th width="10" height="20" align="center">No</th>
             <th width="130" align="center">Nama Lengkap</th>
@@ -86,7 +86,7 @@
             </tr>
         @endfor
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="2">&nbsp;</td>
         </tr>
@@ -96,7 +96,7 @@
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td align="center">Ketua Kelompok {{ $pinkel->anggota->nama_kelompok }}</td>
+            <td align="center">___________________</td>
         </tr>
         <tr>
             <td colspan="2" height="40">&nbsp;</td>
@@ -105,7 +105,7 @@
             <td>&nbsp;</td>
             <td align="center">
                 <u>
-                    <b>{{ $pinkel->anggota->ketua }}</b>
+                    <b>____________________</b>
                 </u>
             </td>
         </tr>

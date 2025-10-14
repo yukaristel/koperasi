@@ -16,15 +16,15 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>BERITA ACARA PENCAIRAN</b>
                 </div>
-                <div style="font-size: 16px;">
+                {{-- <div style="font-size: 16pt;">
                     <b>PINJAMAN INDIVIDU {{ $pinkel->jpp->nama_jpp }}</b>
-                </div>
+                </div> --}}
             </td>
         </tr>
         <tr>
@@ -34,22 +34,22 @@
 
 
     <p style="text-align: justify;">
-        Sesuai Surat Perjanjian Kredit (SPK) nomor : {{ $pinkel->spk_no }}. Pada hari ini
+        Sesuai Surat Pengajuan Kredit (SPK) nomor : {{ $pinkel->spk_no }}. Pada hari ini
         {{ Tanggal::namaHari($pinkel->tgl_cair) }}
         tanggal
         {{ $keuangan->terbilang(Tanggal::hari($pinkel->tgl_cair)) }} bulan {{ Tanggal::namaBulan($pinkel->tgl_cair) }}
         tahun
         {{ $keuangan->terbilang(Tanggal::tahun($pinkel->tgl_cair)) }}, telah diadakan pencairan dana
         perguliran {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
-        {{ $pinkel->anggota->kd_kelompok }} dengan detail identitas pemanfaat dan detail pinjaman sebagai
+        {{ $pinkel->anggota->kd_kelompok }} dengan detail identitas Nasabah dan detail pengajuan sebagai
         berikut :
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
 
 
 
         <tr>
             <td align="center">1.</td>
-            <td>Nama Pemanfaat</td>
+            <td>Nama Nasabah</td>
             <td align="center">:</td>
             <td>
                 <b> {{ $pinkel->anggota->namadepan }}</b>
@@ -86,7 +86,7 @@
             </td>
 
             <td align="center">11.</td>
-            <td>Jenis Pinjaman</td>
+            <td>Jenis Piutang</td>
             <td align="center">:</td>
             <td>
                 <b>{{ $pinkel->jpp->nama_jpp }}</b>
@@ -102,7 +102,7 @@
             </td>
 
             <td align="center">12.</td>
-            <td>Alokasi Pinjaman</td>
+            <td>Alokasi Piutang</td>
             <td align="center">:</td>
             <td>
                 <b>Rp. {{ number_format($pinkel->alokasi) }},-</b>
@@ -141,7 +141,7 @@
         </tr>
         <tr>
             <td align="center">7.</td>
-            <td>Contact Person</td>
+            <td>No Hp</td>
             <td align="center">:</td>
             <td>
                 <b>{{ $pinkel->anggota->hp }} </b>
@@ -157,10 +157,16 @@
         </tr>
         <tr>
             <td align="center">8.</td>
-            <td>Jenis Usaha</td>
+            <td>Pekerjaan</td>
             <td align="center">:</td>
             <td>
-                <b>{{ $pinkel->anggota->usaha }}</b>
+                <b>
+                    @if (is_numeric($pinkel->anggota->usaha))
+                        {{ $pinkel->anggota->u->nama_usaha }}
+                    @else
+                        {{ $pinkel->anggota->usaha }}
+                    @endif
+                </b>
             </td>
 
 
@@ -175,11 +181,11 @@
     </table>
 
     <p>
-        Demikian, berita acara ini dibuat sekaligus sebagai bukti pencairan dana pinjaman di atas.
+        Demikian, berita acara ini dibuat sekaligus sebagai bukti pencairan dana pengajuan di atas.
     </p>
     </div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="50%">&nbsp;</td>
             <td width="25%">&nbsp;</td>
@@ -198,13 +204,32 @@
             <td colspan="2" align="center">Peminjam</td>
         </tr>
         <tr>
-            <td colspan="3" height="40">&nbsp;</td>
+            <td align="center">
+                @php
+                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($logoPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
+            <td colspan="2" align="center">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </td>
         </tr>
         <tr>
             <td align="center" style="font-weight: bold;">
                 {{ $dir->namadepan }} {{ $dir->namabelakang }}
             </td>
-            <td colspan="2" align="center" style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
+            <td colspan="2" align="center" style="font-weight: bold;">
+                {{ $pinkel->anggota->namadepan }}
+            </td>
         </tr>
     </table>
 @endsection

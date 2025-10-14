@@ -36,12 +36,12 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td width="50">Nomor</td>
             <td width="10" align="center">:</td>
             <td colspan="2">
-                __________/{{ Tanggal::tglRomawi(date('Y-m-d')) }}
+                ______/______/{{ Tanggal::tglRomawi(date('Y-m-d')) }}
             </td>
         </tr>
         <tr>
@@ -91,13 +91,13 @@
                     antara {{ $PL }} {{ $pinkel->anggota->namadepan }}
                     {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }} {{ $pinkel->anggota->d->nama_desa }}
                     dengan
-                    {{ $kec->nama_lembaga_sort }} Tanggal {{ Tanggal::tglLatin($pinkel->tgl_cair) }} dengan rincian pinjaman
+                    {{ $kec->nama_lembaga_sort }} Tanggal {{ Tanggal::tglLatin($pinkel->tgl_cair) }} dengan rincian kredit
                     sebagai berikut ;
                 </div>
                 <table>
                     <tr>
                         <td width="10">1.</td>
-                        <td width="140">Alokasi Pinjaman</td>
+                        <td width="140">Nilai perincian kredit</td>
                         <td width="5">:</td>
                         <td>
                             <b>Rp. {{ number_format($pinkel->alokasi) }}</b>
@@ -173,19 +173,23 @@
 
                 <p style="text-align: justify;">
                     Demikian surat ini kami sampaikan, apabila terjadi perbedaan hasil perhitungan angsuran/ tunggakan
-                    mohon untuk melakukan klarifikasi dengan {{ $kec->nama_lembaga_sort }}. Pembayaran dimohon untuk dapat dilakukan paling lambat tanggal .................... . Terima kasih atas perhatian dan kerjasamanya.
+                    mohon untuk melakukan klarifikasi dengan {{ $kec->nama_lembaga_sort }} dan terima kasih untuk
+                    segera melakukan pelunasan tunggakan pinjamannya
+
                 </p>
             </td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td colspan="2" height="24">&nbsp;</td>
         </tr>
         <tr>
             <td width="50%">&nbsp;</td>
             <td width="50%" align="center">
-                {{ $kec->nama_kec }}, {{ Tanggal::tglLatin(date('Y-m-d')) }}
+                {{ $kec->nama_kec }}, {{ Tanggal::tglLatin(now()->toDateString()) }}
+
+
             </td>
         </tr>
         <tr>
@@ -193,11 +197,25 @@
             <td align="center">{{ $kec->sebutan_level_1 }}</td>
         </tr>
         <tr>
-            <td colspan="2" height="40">&nbsp;</td>
+            <td>&nbsp;</td>
+            <td align="center">
+                @php
+                    $qrPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($qrPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
         </tr>
         <tr>
             <td>&nbsp;</td>
             <td align="center">{{ $dir->namadepan }} {{ $dir->namabelakang }}</td>
         </tr>
     </table>
+
 @endsection

@@ -1,14 +1,14 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>FC KTP PEMANFAAT DAN PENJAMIN</b>
                 </div>
-                <div style="font-size: 16px;">
-                    <b>KELOMPOK {{ strtoupper($pinkel->kelompok->nama_kelompok) }}</b>
+                <div style="font-size: 16pt;">
+                    <b>NASABAH {{ strtoupper($pinkel->anggota->namadepan) }}</b>
                 </div>
             </td>
         </tr>

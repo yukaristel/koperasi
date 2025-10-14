@@ -59,13 +59,13 @@
 </style>
 
 <title>{{ $judul }}</title>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
     <tr>
         <td width="30">&nbsp;</td>
         <td width="30">Nomor</td>
         <td width="5" align="right">:</td>
         <td width="500">
-            ______/{{ $pinkel->jpp->nama_jpp }}/{{ Tanggal::tglRomawi($pinkel->tgl_proposal) }}
+            ______/ ______/{{ Tanggal::tglRomawi($pinkel->tgl_proposal) }}
         </td>
     </tr>
 
@@ -74,11 +74,11 @@
         <td width="30">Perihal</td>
         <td width="5" align="right">:</td>
         <td width="500">
-            <b>Pengajuan Pinjaman {{ $pinkel->jpp->nama_jpp }}</b>
+            <b>Pengajuan Kredit</b>
         </td>
     </tr>
 </table>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
     <tr>
         <td width="175">&nbsp;</td>
         <td width="100">
@@ -93,7 +93,7 @@
         <td colspan="2">&nbsp;</td>
     </tr>
 </table>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
     <tr>
         <td colspan="3" align="center">
             <div style="font-size: 50px;">
@@ -105,7 +105,7 @@
         <td colspan="3" height="5"></td>
     </tr>
 </table>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
     <tr>
         <td width="30">&nbsp;</td>
         <td colspan="3">Yang bertanda tangan di bawah ini :</td>
@@ -150,13 +150,15 @@
     </tr>
     <tr>
         <td width="30">&nbsp;</td>
-        <td>Jenis Usaha</td>
+        <td>Pekerjaan</td>
         <td width="5" align="right">:</td>
         <td style="font-weight:">
-            {{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }}</td>
-    </tr>
-    <tr>
-        <td>&nbsp;</td>
+            @if (is_numeric($pinkel->anggota->usaha))
+                {{ $pinkel->anggota->u->nama_usaha }}
+            @else
+                {{ $pinkel->anggota->usaha }}
+            @endif
+        </td>
     </tr>
 
     <td width="30">&nbsp;</td>
@@ -164,7 +166,7 @@
         <div>
             Dalam hal ini bertindak untuk dan atas nama diri sendiri, dengan ini bermaksud mengajukan
             permohonan kredit sebesar Rp. {{ number_format($pinkel->proposal) }}
-            ({{ $keuangan->terbilang($pinkel->proposal) }}) untuk memenuhi kebutuhan tambahan modal usaha.
+            ({{ $keuangan->terbilang($pinkel->proposal) }}).
             {{ $pinkel->pinjaman_anggota_count }}Kredit atau pinjaman tersebut di atas, akan kami
             kembalikan dalam jangka waktu {{ $pinkel->jangka }} bulan, dengan sistem angsuran
             {{ $pinkel->sis_pokok->nama_sistem }} ({{ $pinkel->sis_pokok->deskripsi_sistem }}).
@@ -176,43 +178,57 @@
             <li>Fotokopi KTP dan KK;</li>
             <li>Surat Rekomendasi dari Kepala Desa/Lurah;</li>
             <li>Surat Kesanggupan Penyerahan Jaminan;</li>
-            <li>Surat Pernyataan Peminjam;</li>
+            <li>Surat Pernyataan Piutang;</li>
             <li>Tabel Rencana Angsuran;</li>
+
+                @if(session('lokasi') == 318)
+            <li>Surat Keterangan Usaha (SKU)/ NIB OSS;</li>
+            <li>Foto Tempat Usaha Tampak Depan, Samping Kanan dan Kiri;</li>
+                @endif
+
             <!-- <li>Surat Keterangan Gaji/Surat Keterangan Usaha.</li> -->
         </ol>
         <div>Demikian permohonan kami, atas perhatiannya kami ucapkan terima kasih.</div>
     </td>
     </tr>
 </table>
-<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; margin-top: 40px;">
+<table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; margin-top: 40px;">
+
     <tr>
         <td width="30%" class="style9 align-justify">&nbsp;</td>
-        <td align="center"></td>
+        <td width="20%" class="style9 align-justify">&nbsp;</td>
         <td width="30%" class="style9 align-justify">
             <div align="center">{{ $kec->nama_kec }}, {{ Tanggal::tglLatin($pinkel->tgl_proposal) }}<br>
             </div>
         </td>
-    </tr>
     <tr>
-        <td align="center">&nbsp;<br>&nbsp;<br>Penjamin</td>
-        <td width="20%" align="center" class="style9 align-justify">Mengetahui,</td>
-        <td align="center">&nbsp;<br>&nbsp;<br>Pemohon</td>
-    </tr>
-    <tr>
-        <td colspan="3" height="40">&nbsp;</td>
-    </tr>
-    <tr>
-        <td align="center">
-            <b>{{ $pinkel->anggota->penjamin }}</b>
+        <td width="32%" height="36" colspan="1" class="style26">
+            <div align="center" class="style9">
+                <p>Mengetahui,<br>Penjamin</p>
+            </div>
         </td>
-        <td align="center">
-            <b> </b>
-        </td>
-        <td align="center">
-            <b>{{ $pinkel->anggota->namadepan }}</b>
+        <td>&nbsp;</td>
+        <td class="style26">
+            <div align="center" class="style9">
+                <p>Pemohon <br>&nbsp;</p>
+            </div>
         </td>
     </tr>
     <tr>
-        <td colspan="3" height="30"></td>
+        <td align="center" height="24" colspan="-1" class="style9">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>{{ $pinkel->anggota->penjamin }}<br></th>
+        </td>
+        <td>&nbsp;</td>
+        <td align="center" width="32%" class="style9">
+            <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <p>{{ $pinkel->anggota->namadepan }}<br> </p>
+        </td>
     </tr>
+    <tr>
+        <td colspan="2" height="30"></td>
+    </tr>
+
 </table>

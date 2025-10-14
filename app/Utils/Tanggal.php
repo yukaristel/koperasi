@@ -45,22 +45,32 @@ class Tanggal
     public static function tglRomawi($tanggal)
     {
         $keuangan = new Keuangan;
-        $array_tgl = explode('-', $tanggal);
-        $tahun = $array_tgl[0];
-        $bulan = $array_tgl[1];
-        $hari = $array_tgl[2];
 
-        $bulan_rom = $keuangan->romawi($bulan);
-        $hari_rom = $keuangan->romawi($hari);
+        if (strpos($tanggal, '-') !== false) {
+            $array_tgl = explode('-', $tanggal);
 
-        return $bulan_rom . '/' . $tahun;
+            $tahun = $array_tgl[0] ?? null;
+            $bulan = $array_tgl[1] ?? null;
+
+            if ($tahun && $bulan) {
+                $bulan_rom = $keuangan->romawi((int)$bulan);
+                return $bulan_rom . '/' . $tahun;
+            }
+        }
+
+        // fallback: kalau input cuma angka bulan
+        return $keuangan->romawi((int)$tanggal);
     }
+
 
     public static function tglLatin($tanggal)
     {
-        $tgl = explode('-', $tanggal);
-
-        return $tgl[2] . ' ' . self::namaBulan($tanggal) . ' ' . $tgl[0];
+        try {
+            $date = new DateTime($tanggal);
+            return $date->format('d') . ' ' . self::namaBulan($date->format('m')) . ' ' . $date->format('Y');
+        } catch (Exception $e) {
+            return $tanggal; // fallback kalau format salah
+        }
     }
 
     public static function tahun($tanggal)
@@ -81,8 +91,13 @@ class Tanggal
 
     public static function namaBulan($tanggal)
     {
-        $tgl = explode('-', $tanggal);
-        $bln = $tgl[1];
+        $tgl = [];
+        $bln = $tanggal;
+
+        if (strpos($tanggal, '-') !== false) {
+            $tgl = explode('-', $tanggal);
+            $bln = $tgl[1];
+        }
 
         switch ($bln) {
             case '01':

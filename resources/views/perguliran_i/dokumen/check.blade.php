@@ -5,13 +5,13 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 20px;">
+                <div style="font-size: 20pt;">
                     <b>CHECK LIST</b>
                 </div>
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     KELENGKAPAN PROPOSAL {{ strtoupper($pinkel->jpp->nama_jpp) }}
                 </div>
             </td>
@@ -22,9 +22,9 @@
 
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
-            <td width="100">Kode Kelompok</td>
+            <td width="100">Kode Nasabah</td>
             <td width="5">:</td>
             <td style="font-weight: bold;">{{ $pinkel->anggota->nik }}</td>
 
@@ -36,13 +36,13 @@
         </tr>
 
         <tr>
-            <td>Nama Kelompok</td>
+            <td>Nama Nasabah</td>
             <td width="5">:</td>
             <td style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
 
             <td>&nbsp;</td>
 
-            <td>Ketua</td>
+            <td>Panggilan Nasabah</td>
             <td width="5">:</td>
             <td style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
         </tr>
@@ -60,7 +60,7 @@
         </tr>
     </table>
 
-    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; margin-top: 12px;">
+    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; margin-top: 11pt;">
         <tr style="background: rgb(232,232,232);">
             <th rowspan="2" width="10">No</th>
             <th rowspan="2">Nama Dokumen</th>
@@ -94,9 +94,9 @@
             </td>
         </tr>
     </table>
-    <div style="font-size: 8px; margin-bottom: 16px;">Keterangan: C = Cukup | K = Kurang | TA = Tidak Ada</div>
+    <div style="font-size: 8pt; margin-bottom: 16pt;">Keterangan: C = Cukup | K = Kurang | TA = Tidak Ada</div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; margin-top: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; margin-top: 11pt;">
         <tr>
             <td width="60%"></td>
             <td width="40%" align="center">Diperika tanggal, ___________________</td>

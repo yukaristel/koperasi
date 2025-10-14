@@ -12,15 +12,15 @@
     </style>
 
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="4">&nbsp;</td>
         </tr>
         <tr class="b">
             <td colspan="4" align="center">
-                <div style="font-size: 16px;">
+                <div style="font-size: 16pt;">
                     SURAT PERNYATAAN
-                    PENGIKAT DIRI SEBAGAI PENJAMIN*)
+                    PENGIKAT DIRI SEBAGAI PENJAMIN
                 </div>
             </td>
         </tr>
@@ -29,7 +29,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="4">
                 Yang bertanda tangan dibawah ini,
@@ -41,7 +41,7 @@
             <td width="70%">{{ $pinkel->anggota->penjamin }}</td>
         </tr>
         <tr>
-            <td colspan="2">Nik/No KK.</td>
+            <td colspan="2">NIK/No KK</td>
             <td align="center">:</td>
             <td>{{ $pinkel->anggota->nik_penjamin }} / {{ $pinkel->anggota->kk }}</td>
         </tr>
@@ -54,7 +54,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">Hubungan dengan Peminjam</td>
+            <td colspan="2">Hubungan dengan Piutang</td>
             <td align="center">:</td>
             <td>
                 @if ($pinkel->anggota->keluarga)
@@ -70,7 +70,7 @@
         <tr>
             <td width="5%" align="center">1.</td>
             <td colspan="3">
-                Saya <b>menyetujui dan menjamin</b> sepenuhnya peminjam sebagai berikut :
+                Saya <b>menyetujui dan menjamin</b> sepenuhnya nasabah sebagai berikut :
             </td>
         </tr>
         <tr>
@@ -89,7 +89,7 @@
         </tr>
         <tr>
             <td width="5%">&nbsp;</td>
-            <td>No KTP/SIM.</td>
+            <td>NIK</td>
             <td align="center">:</td>
             <td>{{ $pinkel->anggota->nik }}</td>
         </tr>
@@ -116,44 +116,65 @@
             <td colspan="3" align="justify">
                 <p>
                     untuk melakukan pinjaman dana di {{ $kec->nama_lembaga_sort }}, yang akan <b>dicairkan pada tanggal
-                        {{ \Carbon\Carbon::parse($pinkel->anggota->tgl_cair)->format('d F Y') }} </b> sesuai kartu rencana
+                        {{ \Carbon\Carbon::parse($pinkel->tgl_cair)->format('d F Y') }} </b> sesuai kartu rencana
                     angsuran
                     terlampir sebagai bagian yang tidak terpisahkan dari surat perjanjian kredit (SPK).
                 </p>
             </td>
         </tr>
         <tr>
-		<td width="5%" style="text-align: center; vertical-align: top;">2.</td>
+            <td width="5%" align="center" style="vertical-align: top;">2.</td>
             <td colspan="3">
                 Apabila orang tersebut diatas tidak memenuhi kewajibannya (membayar angsuran dan kewajiban lainnya)
                 sesuai ketentuan dalam surat perjanjian kredit (SPK) maka dengan ini saya mengikatkan diri dan mejamin untuk
-                membayar seluruh tagihan yang menjadi kewajiban peminjam tersebut diatas sesuai hasil perhitungan saldo
-                pinjaman dan tagihan jasa serta kewajiban lainnya di {{ $kec->nama_lembaga_sort }}.
+                membayar seluruh tagihan yang menjadi kewajiban Piutang tersebut diatas sesuai hasil perhitungan saldo
+                utang dan tagihan jasa serta kewajiban lainnya di {{ $kec->nama_lembaga_sort }}.
             </td>
         </tr>
     </table>
     <p>Demikian pernyataan penjaminan ini saya buat dengan sebenar-benarnya dan merupakan bagian tidak terpisahkan dari
         Surat Perjanjian Kredit, dalam kondisi sehat lahir dan batin serta tanpa paksan dari pihak manapun serta bersedia
-        dituntut dimuka hukum apabila dikemudian hari saya mengingkari pernyataan ini.
+        dituntut dimuka hukum apabila dikemudian hari saya mengkingkari pernyataan ini.
 
 
     </p>
     <br>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center" width="50%">&nbsp;</td>
             <td align="center" width="50%">{{ $kec->nama_kec }}, {{ Tanggal::tglLatin($pinkel->tgl_cair) }}</td>
         </tr>
         <tr>
-            <td align="center">&nbsp;</td>
-            <td align="center">Nama Penjamin</td>
+            <td align="center">{{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}</td>
+            <td align="center">Penjamin</td>
         </tr>
         <tr>
-            <td align="center" colspan="2" height="30">&nbsp;</td>
+            <td align="center">
+                @php
+                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($logoPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
+            <td colspan="2" align="center">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </td>
         </tr>
-        <tr style="font-weight: bold;">
-            <td align="center">&nbsp;</td>
-            <td align="center">{{ $pinkel->anggota->penjamin }}</td>
+        <tr>
+            <td align="center" style="font-weight: bold;">
+                {{ $dir->namadepan }} {{ $dir->namabelakang }}
+            </td>
+            <td colspan="2" align="center" style="font-weight: bold;">
+                {{ $pinkel->anggota->penjamin }}
+            </td>
         </tr>
     </table>
 @endsection

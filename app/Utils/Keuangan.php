@@ -83,32 +83,37 @@ class Keuangan
     public function penyebut($nilai)
     {
         $nilai = str_replace(',', '', $nilai);
+        $nilai = (int) $nilai; // ubah jadi integer (bisa juga (float) kalau perlu desimal)
         $nilai = abs($nilai);
-        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+
+        $huruf = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
         $temp = "";
+
         if ($nilai < 12) {
             $temp = " " . $huruf[$nilai];
         } else if ($nilai < 20) {
             $temp = $this->penyebut($nilai - 10) . " belas";
         } else if ($nilai < 100) {
-            $temp = $this->penyebut($nilai / 10) . " puluh" . $this->penyebut($nilai % 10);
+            $temp = $this->penyebut(intval($nilai / 10)) . " puluh" . $this->penyebut($nilai % 10);
         } else if ($nilai < 200) {
             $temp = " seratus" . $this->penyebut($nilai - 100);
         } else if ($nilai < 1000) {
-            $temp = $this->penyebut($nilai / 100) . " ratus" . $this->penyebut($nilai % 100);
+            $temp = $this->penyebut(intval($nilai / 100)) . " ratus" . $this->penyebut($nilai % 100);
         } else if ($nilai < 2000) {
             $temp = " seribu" . $this->penyebut($nilai - 1000);
         } else if ($nilai < 1000000) {
-            $temp = $this->penyebut($nilai / 1000) . " ribu" . $this->penyebut($nilai % 1000);
+            $temp = $this->penyebut(intval($nilai / 1000)) . " ribu" . $this->penyebut($nilai % 1000);
         } else if ($nilai < 1000000000) {
-            $temp = $this->penyebut($nilai / 1000000) . " juta" . $this->penyebut($nilai % 1000000);
+            $temp = $this->penyebut(intval($nilai / 1000000)) . " juta" . $this->penyebut($nilai % 1000000);
         } else if ($nilai < 1000000000000) {
-            $temp = $this->penyebut($nilai / 1000000000) . " milyar" . $this->penyebut(fmod($nilai, 1000000000));
+            $temp = $this->penyebut(intval($nilai / 1000000000)) . " milyar" . $this->penyebut(fmod($nilai, 1000000000));
         } else if ($nilai < 1000000000000000) {
-            $temp = $this->penyebut($nilai / 1000000000000) . " trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
+            $temp = $this->penyebut(intval($nilai / 1000000000000)) . " trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
         }
+
         return $temp;
     }
+
 
     public function terbilang($nilai)
     {
@@ -816,16 +821,17 @@ class Keuangan
         return $modalawal;
     }
 
-    public function romawi(int $angka)
+    public function romawi($angka)
     {
+        $angka = (int) $angka;
+
         if ($angka < 1) {
             return '';
         }
 
-        $angka = intval($angka);
         $result = '';
 
-        $lookup = array(
+        $lookup = [
             'M' => 1000,
             'CM' => 900,
             'D' => 500,
@@ -838,17 +844,18 @@ class Keuangan
             'IX' => 9,
             'V' => 5,
             'IV' => 4,
-            'I' => 1
-        );
+            'I' => 1,
+        ];
 
         foreach ($lookup as $roman => $value) {
             $matches = intval($angka / $value);
             $result .= str_repeat($roman, $matches);
-            $angka = $angka % $value;
+            $angka %= $value;
         }
 
         return $result;
     }
+
 
     public function arus_kas($kode, $tgl_kondisi, $jenis = 'Bulanan')
     {

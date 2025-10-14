@@ -2,20 +2,11 @@
 
 @section('content')
     @php
-        $saldoA = 0; // A = Operasional
-        $saldoA_lalu = 0;
+        $total_saldo1 = 0;
+        $total_saldo_bulan_lalu1 = 0;
 
-        $saldoB = 0; // B = Non Operasional
-        $saldoB_lalu = 0;
-
-        $taksiran = 0;
-        $taksiran_lalu = 0;
-
-        $saldo1 = 0;
-        $saldo_bln_lalu1 = 0;
-
-        $saldo2 = 0;
-        $saldo_bln_lalu2 = 0;
+        $total_saldo2 = 0;
+        $total_saldo_bulan_lalu2 = 0;
     @endphp
 
     <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
@@ -38,142 +29,355 @@
             <td align="center" width="15%">{{ $header_sekarang }}</td>
             <td align="center" width="15%">s.d. {{ $header_sekarang }}</td>
         </tr>
-        @php
-            $kelompok_judul = [
-                '4.1' => '4. Pendapatan',
-                '5.1' => '5. Beban',
-                '5.2' => '5. Beban',
-                '4.2' => '4. Pendapatan Non Operasional',
-                '4.3' => '4. Pendapatan Non Operasional',
-                '5.3' => '5. Beban Non Operasional',
-            ];
+        <tr style="background: rgb(200, 200, 200); font-weight: bold; text-transform: uppercase;">
+            <td colspan="4" height="14">4. Pendapatan</td>
+        </tr>
 
-            $kelompok_urutan = [
-                '4.1' => '4. Pendapatan',
-                '5.1' => '5. Beban',
-                '4.2' => '4. Pendapatan Non Operasional',
-                '5.3' => '5. Beban Non Operasional',
-            ];
-
-            $sudah_tampil = []; // untuk memastikan judul kelompok tidak muncul 2x
-        @endphp
-
-        @foreach ($rekap as $kode => $p)
-            @php
-                $judul = $kelompok_judul[$kode] ?? '';
-            @endphp
-            @if ($judul && !in_array($judul, $sudah_tampil))
-                <tr style="background: rgb(200, 200, 200); font-weight: bold; text-transform: uppercase;">
-                    <td colspan="4" height="14">{{ $judul }}</td>
-                </tr>
-                @php
-                    $sudah_tampil[] = $judul;
-                @endphp
-            @endif
+        @foreach ($laba_rugi[0]['pendapatan'] as $key_pendapatan => $p)
             <tr style="background: rgb(150, 150, 150); font-weight: bold;">
-                <td colspan="4" height="14">{{$kode}}. {{ $p['nama'] }}</td>
+                <td colspan="4" height="14">{{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
             </tr>
+
             @php
-                $jum_bulan_lalu = 0;
-                $jum_saldo = 0;
+                $jumlah_bulan_lalu = 0;
+                $jumlah_saldo = 0;
             @endphp
-                
-                @foreach ($p['akun3'] as $kode1 => $p1)
-                    @foreach ($p1['rekap'] as $kode2 => $p2)
-                    @php
-                $total_bln_lalu = 0;
-                $total_saldo = 0;
-                        $a = 1;
-                    @endphp
-                        <tr style="background: rgb(200, 200, 200); font-weight: bold;">
-                            <td colspan="4" height="14">{{$kode2}}. {{ $p2['nama'] }}</td>
-                        </tr>
-                            @foreach ($p2['lokasi'] as $p3)
+            @foreach ($p['rek'] as $key_rek => $rek)
                 @php
-                    $a+=1;
-                    $bg = 'rgb(230, 230, 230)';
-                    if ($a % 2 == 0) {
-                        $bg = 'rgb(255, 255, 255)';
+                    $sum_bulan_lalu = 0;
+                    $sum_saldo = 0;
+                    $pendapatan_lokasi = [];
+                    foreach ($kecamatan as $kec) {
+                        $pendapatan = $laba_rugi[$kec->id]['pendapatan'][$key_pendapatan]['rek'][$key_rek];
+                        $sum_bulan_lalu += $pendapatan['saldo_bln_lalu'];
+                        $sum_saldo += $pendapatan['saldo'];
+
+                        $pendapatan_lokasi[] = [
+                            'nama_akun' => $rek['nama_akun'] . ' ' . $kec->nama_kec,
+                            'saldo_bulan_lalu' => $pendapatan['saldo_bln_lalu'],
+                            'saldo' => $pendapatan['saldo'],
+                        ];
                     }
-                            $total_bln_lalu += $p3['saldo_bln_lalu'];
-                            $total_saldo += $p3['saldo'];
-                        @endphp
-                        <tr style="background: {{ $bg }};">
-                            <td height="14">&nbsp;&nbsp;&nbsp; {{ $p2['nama'] }} di {{ $p3['nama_kec'] }}</td>
-                            <td align="right">{{ number_format($p3['saldo_bln_lalu'], 2) }}</td>
-                            <td align="right">{{ number_format($p3['saldo'] - $p3['saldo_bln_lalu'], 2) }}</td>
-                            <td align="right">{{ number_format($p3['saldo'], 2) }}</td>
-                        </tr>
-                    @endforeach
+
+                    $jumlah_bulan_lalu += $sum_bulan_lalu;
+                    $jumlah_saldo += $sum_saldo;
+
+                    $total_saldo_bulan_lalu1 += $sum_bulan_lalu;
+                    $total_saldo1 += $sum_saldo;
+                @endphp
+
+                <tr style="background: rgb(230, 230, 230)">
+                    <td align="left">{{ $rek['kode_akun'] }}. {{ $rek['nama_akun'] }}</td>
+                    <td align="right">{{ number_format($sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo - $sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo, 2) }}</td>
+                </tr>
+
+                @foreach ($pendapatan_lokasi as $lokasi)
+                    <tr>
+                        <td align="left" style="padding-left: 24px !important;">{{ $lokasi['nama_akun'] }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'] - $lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'], 2) }}</td>
+                    </tr>
                 @endforeach
             @endforeach
 
-            {{-- Jumlah per $kode --}}
             <tr style="background: rgb(150, 150, 150); font-weight: bold;">
-                <td align="left" height="14">Jumlah {{ $kode }}. {{ $p['nama'] }}</td>
-                <td align="right">{{ number_format($total_bln_lalu, 2) }}</td>
-                <td align="right">{{ number_format($total_saldo - $total_bln_lalu, 2) }}</td>
-                <td align="right">{{ number_format($total_saldo, 2) }}</td>
+                <td align="left" height="14">Jumlah {{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+                <td align="right">{{ number_format($jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo - $jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo, 2) }}</td>
             </tr>
-
-            {{-- Akumulasi A/B --}}
-            @php
-                if (in_array($kode, ['4.1', '5.1', '5.2'])) {
-                    $saldoA += $total_saldo;
-                    $saldoA_lalu += $total_bln_lalu;
-                } elseif (in_array($kode, ['4.2', '4.3', '5.3'])) {
-                    $saldoB += $total_saldo;
-                    $saldoB_lalu += $total_bln_lalu;
-                } elseif (in_array($kode, ['5.4'])) {
-                    $taksiran += $total_saldo;
-                    $taksiran_lalu += $total_bln_lalu;
-                }
-            @endphp
         @endforeach
 
-        {{-- Laba Rugi Operasional (A) --}}
-        <tr style="background: rgb(225, 225, 225); font-weight: bold;">
-            <td align="left" height="16">A. Laba Rugi Operasional</td>
-            <td align="right">{{ number_format($saldoA_lalu, 2) }}</td>
-            <td align="right">{{ number_format($saldoA - $saldoA_lalu, 2) }}</td>
-            <td align="right">{{ number_format($saldoA, 2) }}</td>
+        <tr>
+            <td colspan="4" height="2"></td>
+        </tr>
+        <tr style="background: rgb(200, 200, 200); font-weight: bold; text-transform: uppercase;">
+            <td colspan="4" height="14">5. Beban</td>
         </tr>
 
-        {{-- Laba Rugi Non Operasional (B) --}}
+        @foreach ($laba_rugi[0]['beban'] as $key_beban => $p)
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td colspan="4" height="14">{{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+            </tr>
+
+            @php
+                $jumlah_bulan_lalu = 0;
+                $jumlah_saldo = 0;
+            @endphp
+            @foreach ($p['rek'] as $key_rek => $rek)
+                @php
+                    $bg = 'rgb(230, 230, 230)';
+                    if ($loop->iteration % 2 == 0) {
+                        $bg = 'rgb(255, 255, 255)';
+                    }
+
+                    $sum_bulan_lalu = 0;
+                    $sum_saldo = 0;
+                    $beban_lokasi = [];
+                    foreach ($kecamatan as $kec) {
+                        $beban = $laba_rugi[$kec->id]['beban'][$key_beban]['rek'][$key_rek];
+                        $sum_bulan_lalu += $beban['saldo_bln_lalu'];
+                        $sum_saldo += $beban['saldo'];
+
+                        $beban_lokasi[] = [
+                            'nama_akun' => $rek['nama_akun'] . ' ' . $kec->nama_kec,
+                            'saldo_bulan_lalu' => $beban['saldo_bln_lalu'],
+                            'saldo' => $beban['saldo'],
+                        ];
+                    }
+
+                    $jumlah_bulan_lalu += $sum_bulan_lalu;
+                    $jumlah_saldo += $sum_saldo;
+
+                    $total_saldo_bulan_lalu1 -= $sum_bulan_lalu;
+                    $total_saldo1 -= $sum_saldo;
+                @endphp
+
+                <tr style="background: {{ $bg }}">
+                    <td align="left">{{ $rek['kode_akun'] }}. {{ $rek['nama_akun'] }}</td>
+                    <td align="right">{{ number_format($sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo - $sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo, 2) }}</td>
+                </tr>
+
+                @foreach ($beban_lokasi as $lokasi)
+                    <tr>
+                        <td align="left" style="padding-left: 24px !important;">{{ $lokasi['nama_akun'] }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'] - $lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'], 2) }}</td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td align="left" height="14">Jumlah {{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+                <td align="right">{{ number_format($jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo - $jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo, 2) }}</td>
+            </tr>
+        @endforeach
+
         <tr style="background: rgb(200, 200, 200); font-weight: bold;">
-            <td align="left" height="16">B. Laba Rugi Non Operasional</td>
-            <td align="right">{{ number_format($saldoB_lalu, 2) }}</td>
-            <td align="right">{{ number_format($saldoB - $saldoB_lalu, 2) }}</td>
-            <td align="right">{{ number_format($saldoB, 2) }}</td>
+            <td align="left">A. Laba Rugi OPERASIONAL (Kode Akun 4.1 - 5.1 - 5.2) </td>
+            <td align="right">{{ number_format($total_saldo_bulan_lalu1, 2) }}</td>
+            <td align="right">{{ number_format($total_saldo1 - $total_saldo_bulan_lalu1, 2) }}</td>
+            <td align="right">{{ number_format($total_saldo1, 2) }}</td>
         </tr>
 
-        {{-- Laba Sebelum Pajak (C = A + B) --}}
+        @foreach ($laba_rugi[0]['pendapatan_non_ops'] as $key_pendapatan_non_ops => $p)
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td colspan="4" height="14">{{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+            </tr>
+
+            @php
+                $jumlah_bulan_lalu = 0;
+                $jumlah_saldo = 0;
+            @endphp
+            @foreach ($p['rek'] as $key_rek => $rek)
+                @php
+                    $bg = 'rgb(230, 230, 230)';
+                    if ($loop->iteration % 2 == 0) {
+                        $bg = 'rgb(255, 255, 255)';
+                    }
+
+                    $sum_bulan_lalu = 0;
+                    $sum_saldo = 0;
+                    $pendapatan_non_ops_lokasi = [];
+                    foreach ($kecamatan as $kec) {
+                        $pendapatan_non_ops =
+                            $laba_rugi[$kec->id]['pendapatan_non_ops'][$key_pendapatan_non_ops]['rek'][$key_rek];
+                        $sum_bulan_lalu += $pendapatan_non_ops['saldo_bln_lalu'];
+                        $sum_saldo += $pendapatan_non_ops['saldo'];
+
+                        $pendapatan_non_ops_lokasi[] = [
+                            'nama_akun' => $rek['nama_akun'] . ' ' . $kec->nama_kec,
+                            'saldo_bulan_lalu' => $pendapatan_non_ops['saldo_bln_lalu'],
+                            'saldo' => $pendapatan_non_ops['saldo'],
+                        ];
+                    }
+
+                    $jumlah_bulan_lalu += $sum_bulan_lalu;
+                    $jumlah_saldo += $sum_saldo;
+
+                    $total_saldo_bulan_lalu2 += $sum_bulan_lalu;
+                    $total_saldo2 += $sum_saldo;
+                @endphp
+
+                <tr style="background: {{ $bg }}">
+                    <td align="left">{{ $rek['kode_akun'] }}. {{ $rek['nama_akun'] }}</td>
+                    <td align="right">{{ number_format($sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo - $sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo, 2) }}</td>
+                </tr>
+
+                @foreach ($pendapatan_non_ops_lokasi as $lokasi)
+                    <tr>
+                        <td align="left" style="padding-left: 24px !important;">{{ $lokasi['nama_akun'] }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'] - $lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'], 2) }}</td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td align="left" height="14">Jumlah {{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+                <td align="right">{{ number_format($jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo - $jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo, 2) }}</td>
+            </tr>
+        @endforeach
+
+        @foreach ($laba_rugi[0]['beban_non_ops'] as $key_beban_non_ops => $p)
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td colspan="4" height="14">{{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+            </tr>
+
+            @php
+                $jumlah_bulan_lalu = 0;
+                $jumlah_saldo = 0;
+            @endphp
+            @foreach ($p['rek'] as $key_rek => $rek)
+                @php
+                    $bg = 'rgb(230, 230, 230)';
+                    if ($loop->iteration % 2 == 0) {
+                        $bg = 'rgb(255, 255, 255)';
+                    }
+
+                    $sum_bulan_lalu = 0;
+                    $sum_saldo = 0;
+                    $beban_non_ops_lokasi = [];
+                    foreach ($kecamatan as $kec) {
+                        $beban_non_ops = $laba_rugi[$kec->id]['beban_non_ops'][$key_beban_non_ops]['rek'][$key_rek];
+                        $sum_bulan_lalu += $beban_non_ops['saldo_bln_lalu'];
+                        $sum_saldo += $beban_non_ops['saldo'];
+
+                        $beban_non_ops_lokasi[] = [
+                            'nama_akun' => $rek['nama_akun'] . ' ' . $kec->nama_kec,
+                            'saldo_bulan_lalu' => $beban_non_ops['saldo_bln_lalu'],
+                            'saldo' => $beban_non_ops['saldo'],
+                        ];
+                    }
+
+                    $jumlah_bulan_lalu += $sum_bulan_lalu;
+                    $jumlah_saldo += $sum_saldo;
+
+                    $total_saldo_bulan_lalu2 -= $sum_bulan_lalu;
+                    $total_saldo2 -= $sum_saldo;
+                @endphp
+
+                <tr style="background: {{ $bg }}">
+                    <td align="left">{{ $rek['kode_akun'] }}. {{ $rek['nama_akun'] }}</td>
+                    <td align="right">{{ number_format($sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo - $sum_bulan_lalu, 2) }}</td>
+                    <td align="right">{{ number_format($sum_saldo, 2) }}</td>
+                </tr>
+
+                @foreach ($beban_non_ops_lokasi as $lokasi)
+                    <tr>
+                        <td align="left" style="padding-left: 24px !important;">{{ $lokasi['nama_akun'] }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'] - $lokasi['saldo_bulan_lalu'], 2) }}</td>
+                        <td align="right">{{ number_format($lokasi['saldo'], 2) }}</td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+            <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+                <td align="left" height="14">Jumlah {{ $p['kode_akun'] }}. {{ $p['nama_akun'] }}</td>
+                <td align="right">{{ number_format($jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo - $jumlah_bulan_lalu, 2) }}</td>
+                <td align="right">{{ number_format($jumlah_saldo, 2) }}</td>
+            </tr>
+        @endforeach
+
+        <tr style="background: rgb(200, 200, 200); font-weight: bold;">
+            <td align="left">B. Laba Rugi OPERASIONAL (Kode Akun 4.2 - 5.3) </td>
+            <td align="right">{{ number_format($total_saldo_bulan_lalu2, 2) }}</td>
+            <td align="right">{{ number_format($total_saldo2 - $total_saldo_bulan_lalu2, 2) }}</td>
+            <td align="right">{{ number_format($total_saldo2, 2) }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="4" height="2"></td>
+        </tr>
+
+        <tr style="background: rgb(200, 200, 200); font-weight: bold;">
+            <td align="left">C. Laba Rugi Sebelum Taksiran Pajak (A + B) </td>
+            <td align="right">{{ number_format($total_saldo_bulan_lalu1 + $total_saldo_bulan_lalu2, 2) }}</td>
+            <td align="right">
+                {{ number_format($total_saldo1 - $total_saldo_bulan_lalu1 + ($total_saldo2 - $total_saldo_bulan_lalu2), 2) }}
+            </td>
+            <td align="right">{{ number_format($total_saldo1 + $total_saldo2, 2) }}</td>
+        </tr>
+
+        <tr>
+            <td colspan="4" height="2"></td>
+        </tr>
+
+        <tr style="background: rgb(150, 150, 150); font-weight: bold;">
+            <td colspan="4" height="14">5.4 Beban Pajak</td>
+        </tr>
+
         @php
-            $totalC = $saldoA + $saldoB;
-            $totalC_lalu = $saldoA_lalu + $saldoB_lalu;
+            $sum_pph_bulan_lalu = 0;
+            $sum_pph = 0;
+            $saldo_pph_lokasi = [];
+            foreach ($kecamatan as $kec) {
+                $saldo_pph = $pph[$kec->id];
+                $sum_pph_bulan_lalu += $saldo_pph['bulan_lalu'];
+                $sum_pph += $saldo_pph['sekarang'];
+
+                $saldo_pph_lokasi[] = [
+                    'nama_akun' => 'Taksiran PPh (0.5%) ' . $kec->nama_kec,
+                    'saldo_bulan_lalu' => $saldo_pph['bulan_lalu'],
+                    'saldo' => $saldo_pph['sekarang'],
+                ];
+            }
         @endphp
-        <tr style="background: rgb(250, 250, 250); font-weight: bold;">
-            <td align="left" height="16">C. Laba Rugi Sebelum Taksiran Pajak (A + B)</td>
-            <td align="right">{{ number_format($totalC_lalu, 2) }}</td>
-            <td align="right">{{ number_format($totalC - $totalC_lalu, 2) }}</td>
-            <td align="right">{{ number_format($totalC, 2) }}</td>
+
+        <tr style="background: rgb(230, 230, 230)">
+            <td align="left">5.5.01.01. Taksiran PPh (0.5%) </td>
+            <td align="right">{{ number_format($sum_pph_bulan_lalu, 2) }}</td>
+            <td align="right">{{ number_format($sum_pph - $sum_pph_bulan_lalu, 2) }}</td>
+            <td align="right">{{ number_format($sum_pph, 2) }}</td>
         </tr>
 
-        {{-- Laba Setelah Pajak (sama dengan C) --}}
-        <tr style="background: rgb(175, 175, 175); font-weight: bold;">
-            <td align="left" height="16">C. Laba Rugi Setelah Taksiran Pajak (A + B)</td>
-            <td align="right">{{ number_format($totalC_lalu-$taksiran_lalu, 2) }}</td>
-            <td align="right">{{ number_format(($totalC - $taksiran) - ($totalC_lalu-$taksiran_lalu), 2) }}</td>
-            <td align="right">{{ number_format($totalC - $taksiran, 2) }}</td>
+        @foreach ($saldo_pph_lokasi as $lokasi)
+            <tr>
+                <td align="left" style="padding-left: 24px !important;">{{ $lokasi['nama_akun'] }}</td>
+                <td align="right">{{ number_format($lokasi['saldo_bulan_lalu'], 2) }}</td>
+                <td align="right">{{ number_format($lokasi['saldo'] - $lokasi['saldo_bulan_lalu'], 2) }}</td>
+                <td align="right">{{ number_format($lokasi['saldo'], 2) }}</td>
+            </tr>
+        @endforeach
+
+        <tr>
+            <td colspan="4" height="2"></td>
         </tr>
-    </table>
-                <div style="margin-top: 16px;"></div>
                 
-                <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px;">
+        <tr>
+            <td colspan="4" style="padding: 0px !important;">
+        <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+            <tr style="background: rgb(200, 200, 200); font-weight: bold;">
+                <td width="55%" align="left">C. Laba Rugi Setelah Taksiran Pajak (A + B) </td>
+                <td width="15%" align="right">
+                    {{ number_format($total_saldo_bulan_lalu1 + $total_saldo_bulan_lalu2 - $sum_pph_bulan_lalu, 2) }}</td>
+                <td width="15%" align="right">
+                    {{ number_format($total_saldo1 - $total_saldo_bulan_lalu1 + ($total_saldo2 - $total_saldo_bulan_lalu2) - ($sum_pph - $sum_pph_bulan_lalu), 2) }}
+                </td>
+                <td width="15%" align="right">{{ number_format($total_saldo1 + $total_saldo2 - $sum_pph, 2) }}
+                </td>
+            </tr>
+        </table><br><br><br>
+                <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
                     <tr>
                         <td width="50%" align="center">
-                            <strong>Diperiksa Oleh : </strong>
+                            <strong>Diperiksa Oleh:</strong>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
@@ -182,7 +386,7 @@
                             Ketua Dewan Pengawas
                         </td>
                         <td width="50%" align="center">
-                            <strong>Dilaporkan Oleh : </strong>
+                            <strong>Dilaporkan Oleh:</strong>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
@@ -194,7 +398,7 @@
                     <tr>
                         <td colspan="2" align="center">
                             <p>&nbsp;</p>
-                            <strong>Mengetahui/Menyetujui : </strong>
+                            <strong>Mengetahui/Menyetujui:</strong>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
                             <p>&nbsp;</p>
@@ -204,4 +408,17 @@
                         </td>
                     </tr>
                 </table>
+
+
+
+
+
+            </td>
+        </tr>
+        
+    </table>
+
+
+
+
 @endsection

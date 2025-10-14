@@ -23,31 +23,31 @@
         }
 
         html {
-            /* margin-left: 90px; */
-            /* margin-right: 0px; */
-            margin-bottom: 100px;
+            /* margin-left: 90pt; */
+            /* margin-right: 0pt; */
+            margin-bottom: 100pt;
         }
 
         ul,
         ol {
-            margin-left: -10px;
+            margin-left: -10pt;
             page-break-inside: auto !important;
         }
 
         header {
             position: fixed;
-            top: -10px;
-            left: 0px;
-            right: 0px;
+            top: -10pt;
+            left: 0pt;
+            right: 0pt;
         }
 
         table tr th,
         table tr td {
-            padding: 2px 4px;
+            padding: 2pt 4pt;
         }
 
         table tr th {
-            font-size: 12px;
+            font-size: 11pt;
         }
 
         .break {
@@ -59,19 +59,19 @@
         }
 
         .l {
-            border-left: 1px solid #000;
+            border-left: 1pt solid #000;
         }
 
         .t {
-            border-top: 1px solid #000;
+            border-top: 1pt solid #000;
         }
 
         .r {
-            border-right: 1px solid #000;
+            border-right: 1pt solid #000;
         }
 
         .b {
-            border-bottom: 1px solid #000;
+            border-bottom: 1pt solid #000;
         }
     </style>
 </head>
@@ -92,11 +92,11 @@
         @if ($no > 1)
             <div class="break"></div>
         @endif
-        <main style="position: relative; font-size: 12px;">
-            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px; opacity: 0;">
+        <main style="position: relative; font-size: 11pt;">
+            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; opacity: 0;">
                 <tr>
                     <td rowspan="7" align="center" width="400">
-                        <div style="font-size: 14px; font-weight: bold;">
+                        <div style="font-size: 12pt; font-weight: bold;">
                             {{ $kec->nama_lembaga_sort }} {{ $kec->nama_kec }}
                         </div>
                         <div>
@@ -105,13 +105,13 @@
                         <div>
                             Telp. {{ $kec->telpon_kec }}
                         </div>
-                        <div style="margin-top: 8px;">
+                        <div style="margin-top: 8pt;">
                             <img width="150" src="data:image/png;base64,{{ $barcode }}"
-                                alt="{{ $pinkel->kelompok->kd_kelompok }}">
+                                alt="{{ $pinkel->anggota->id }}">
                         </div>
-                        <div style="font-size: 14px;">{{ $pinkel->kelompok->kd_kelompok }}</div>
+                        <div style="font-size: 12pt;">{{ $pinkel->anggota->id }}</div>
                     </td>
-                    <td width="150">Jenis Pinjaman</td>
+                    <td width="150">Jenis Piutang</td>
                     <td width="5" align="center">:</td>
                     <td width="200">{{ $pinkel->jpp->nama_jpp }}</td>
                     <td width="150">Loan Id.</td>
@@ -119,20 +119,20 @@
                     <td width="200">{{ $pinkel->id }}</td>
                 </tr>
                 <tr>
-                    <td>Nama Kelompok</td>
+                    <td>Nama Nasabah</td>
                     <td align="center">:</td>
-                    <td style="font-weight: bold;" colspan="4">{{ $pinkel->kelompok->nama_kelompok }}</td>
+                    <td style="font-weight: bold;" colspan="4">{{ $pinkel->anggota->namadepan }}</td>
                 </tr>
                 <tr>
                     <td>Alamat</td>
                     <td align="center">:</td>
-                    <td colspan="4">{{ $pinkel->kelompok->alamat_kelompok }}</td>
+                    <td colspan="4">{{ $pinkel->anggota->alamat}}</td>
                 </tr>
                 <tr>
                     <td>Telpon/SMS</td>
                     <td align="center">:</td>
                     <td>{{ $pinj->anggota->hp }}</td>
-                    <td>Pemanfaat</td>
+                    <td>Nasabah</td>
                     <td align="center">:</td>
                     <td style="font-weight: bold;">{{ $pinj->anggota->namadepan }}</td>
                 </tr>
@@ -174,7 +174,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="7" class="b t" style="font-weight: bold; font-size: 24px;" align="center">
+                    <td colspan="7" class="b t" style="font-weight: bold; font-size: 24pt;" align="center">
                         KARTU ANGSURAN ANGGOTA
                     </td>
                 </tr>
@@ -184,7 +184,7 @@
                 $baris_angsuran = ceil(count($rencana[$pinj->id]) / 2);
             @endphp
 
-            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; opacity: 0;">
+            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; opacity: 0;">
                 <tr>
                     <td width="40">&nbsp;</td>
                     <td colspan="9" style="font-weight: bold;" height="30">TABEL KEWAJIBAN PEMBAYARAN ANGSURAN
@@ -271,7 +271,7 @@
 
             </table>
 
-            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
                 <tr style="opacity: 0;">
                     <td width="40" rowspan="{{ $rowspan }}">&nbsp;</td>
                     <td colspan="9" style="font-weight: bold;" height="30">REALISASI PEMBAYARAN ANGSURAN</td>
@@ -417,7 +417,7 @@
             </table>
 
             <table border="0" width="100%" cellspacing="0" cellpadding="0"
-                style="font-size: 11px; opacity: 0;">
+                style="font-size: 10pt; opacity: 0;">
                 <tr>
                     <td width="40" rowspan="5">&nbsp;</td>
                     <td colspan="3" style="font-weight: bold;" height="30">&nbsp;</td>
@@ -425,20 +425,20 @@
                 </tr>
                 <tr>
                     <td width="350" rowspan="3">
-                        <div>Lembar 1 : Untuk Kelompok</div>
+                        <div>Lembar 1 : Untuk Nasabah</div>
                         <div>Lembar 2 : Arsip Lembaga</div>
                     </td>
-                    <td style="font-weight: bold; font-size: 12px;" width="350" align="center">Ketua Kelompok</td>
-                    <td style="font-weight: bold; font-size: 12px;" width="350" align="center">
-                        <div>Anggota Pemanfaat</div>
+                    {{-- <td style="font-weight: bold; font-size: 11pt;" width="350" align="center">Nasabah</td> --}}
+                    <td style="font-weight: bold; font-size: 11pt;" width="350" align="center">
+                        <div>Anggota Nasabah</div>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="2" height="50"></td>
                 </tr>
-                <tr style="font-weight: bold; font-size: 12px; text-transform: uppercase;">
+                <tr style="font-weight: bold; font-size: 11pt; text-transform: uppercase;">
                     <td width="350" align="center">
-                        {{ $pinkel->kelompok->ketua }}
+                        {{ $pinkel->anggota->namadepan }}
                     </td>
                     <td width="350" align="center">
                         <div>{{ $pinj->anggota->namadepan }}</div>

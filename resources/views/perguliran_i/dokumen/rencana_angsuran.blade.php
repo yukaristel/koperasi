@@ -32,20 +32,21 @@
 
     $sum_pokok = 0;
     $sum_jasa = 0;
+
+    $jenisAngsuran = 'Bulan';
+    if (in_array($pinkel->sistem_angsuran, ['12', '25'])) {
+        $jenisAngsuran = 'Minggu';
+    }
 @endphp
 
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
-                    <b>RENCANA ANGSURAN PINJAMAN INDIVIDU {{ $pinkel->jpp->nama_jpp }} </b>
-                </div>
-                <div style="font-size: 16px;">
-                    <b>&nbsp;
-                    </b>
+                <div style="font-size: 18pt;">
+                    <b>RENCANA ANGSURAN</b>
                 </div>
             </td>
         </tr>
@@ -53,21 +54,21 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
-            <td width="90">Nama calon pemanfaat</td>
+            <td width="90">Nama Calon Nasabah</td>
             <td width="5" align="center">:</td>
             <td>
                 <b>{{ $pinkel->anggota->namadepan }} </b>
             </td>
-            <td width="90">Jangka waktu</td>
+            <td width="90">Jangka Waktu</td>
             <td width="5" align="center">:</td>
             <td>
-                <b>{{ $pinkel->jangka }} Bulan</b>
+                <b>{{ $pinkel->jangka }} {{ $jenisAngsuran }}</b>
             </td>
         </tr>
         <tr>
-            <td>No register</td>
+            <td>No Register</td>
             <td align="center">:</td>
             <td>
                 <b>{{ $pinkel->id }}</b>
@@ -91,7 +92,7 @@
             </td>
         </tr>
         <tr>
-            <td>Alokasi Pinjaman</td>
+            <td>Nilai Kredit</td>
             <td align="center">:</td>
             <td>
                 <b>Rp. {{ number_format($alokasi_pinjaman) }}</b>
@@ -99,7 +100,7 @@
             <td>Prosentase Jasa</td>
             <td align="center">:</td>
             <td>
-                <b>{{ round($pinkel->pros_jasa / $pinkel->jangka, 2) }}% per bulan</b>
+                <b>{{ round($pinkel->pros_jasa / $pinkel->jangka, 2) }}% per {{ $jenisAngsuran }}</b>
             </td>
         </tr>
         <tr>
@@ -108,7 +109,7 @@
     </table>
 
     <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0"
-        style="font-size: 11px; table-layout: fixed;">
+        style="font-size: 10pt; table-layout: fixed;">
         <tr style="background: rgb(232, 232, 232)">
             <th class="l t b" height="20" width="5%" align="center">Ke</th>
             <th class="l t b" width="13%" align="center">Tanggal</th>
@@ -130,14 +131,6 @@
                     $saldo_jasa = ($saldo_pokok * $pinkel->pros_jasa) / 100;
                 }
 
-                $sa_pokok = $pinkel->sistem_angsuran;
-                $sa_jasa = $pinkel->sa_jasa;
-
-                $jangka = $pinkel->jangka;
-                if ($sa_pokok == 11 || $sa_jasa == 11) {
-                    $jangka += 24;
-                }
-
                 $sum_pokok += $ra->wajib_pokok;
                 $sum_jasa += $ra->wajib_jasa;
             @endphp
@@ -154,9 +147,9 @@
         @endforeach
 
         <tr>
-            <td colspan="8" style="padding: 0px !important;">
+            <td colspan="8" style="padding: 0pt !important;">
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px; table-layout: fixed;">
+                    style="font-size: 10pt; table-layout: fixed;">
                     <tr style="font-weight: bold;">
                         <td class="l t b" width="18%" height="15" align="center" colspan="2">Jumlah</td>
                         <td class="l t b" width="13%" align="right">{{ number_format($sum_pokok) }}</td>
@@ -168,36 +161,43 @@
                         <td class="l t b" width="13%" align="right">{{ number_format($saldo_pokok) }}</td>
                         <td class="l t b r" width="13%" align="right">{{ number_format($saldo_jasa) }}</td>
                     </tr>
-                </table><br>
-
+                </table>
+                <br><br>
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px;">
+                    style="font-size: 10pt;">
 
                     <tr>
-                        <td align="center" colspan="4">&nbsp;</td>
-                        <td align="center" colspan="4">
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">
                             {{ $kec->nama_kec }}, {{ Tanggal::tglLatin($tgl) }}
                         </td>
                     </tr>
+
                     <tr>
-                        <td align="center" colspan="4">
-                            {{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }} <br><br><br><br>
-                        </td>
-                        <td align="center" colspan="4">
-                            Pemanfaat <br><br><br><br>
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">
+                            Nasabah
                         </td>
 
                     </tr>
                     <tr>
-                        <td align="center" colspan="4">
-                            <b> {{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
-                        </td>
-                        <td align="center" colspan="4">
-                            <b> {{ $pinkel->anggota->namadepan }}</b>
-                        </td>
-
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">&nbsp;</td>
                     </tr>
-
+                    <tr>
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td width="55%">&nbsp;</td>
+                        <td align="center">
+                            <b>{{ $pinkel->anggota->namadepan }}</b>
+                        </td>
+                    </tr>
                 </table>
             </td>
         </tr>

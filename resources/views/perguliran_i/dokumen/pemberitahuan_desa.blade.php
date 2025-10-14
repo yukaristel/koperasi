@@ -17,12 +17,12 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td width="50">Nomor</td>
             <td width="10" align="center">:</td>
             <td colspan="2">
-                &nbsp; </td>
+                ______ /______/{{ Tanggal::tglRomawi($pinkel->tgl_cair) }} </td>
         </tr>
         <tr>
             <td>Sifat</td>
@@ -65,10 +65,10 @@
                     Tanggal {{ Tanggal::tglLatin($pinkel->tgl_dana) }} dengan ini memberitahukan bahwa akan dilakukan
                     pencairan kredit kepada ;
                 </div>
-                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
                     <tr>
                         <td width="10">1.</td>
-                        <td width="120">Nama Pemanfaat</td>
+                        <td width="120">Nama Nasabah</td>
                         <td width="5">:</td>
                         <td>{{ $pinkel->anggota->namadepan }}</td>
                     </tr>
@@ -100,11 +100,11 @@
         </tr>
         <tr>
             <td colspan="4">
-                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;"
+                <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;"
                     class="padding">
                     <tr>
                         <td width="50">&nbsp;</td>
-                        <td style="padding: 0px;" align="justify">
+                        <td style="padding: 0pt;" align="justify">
                             <p>
                                 Demikian surat pemberitahuan ini kami sampaikan, atas perhatian dan kerjasamanya kami
                                 ucapkan
@@ -114,7 +114,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+                            <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
                                 <tr>
                                     <td width="33%" height="10">&nbsp;</td>
                                     <td width="33%">&nbsp;</td>
@@ -132,10 +132,21 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" height="40">&nbsp;</td>
+                                    <td colspan="3" >
+										@php
+											$logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+										@endphp
+
+										@if (file_exists($logoPath))
+											<img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+										@else
+											<p>&nbsp;</p>
+											<p>&nbsp;</p>
+											<p>&nbsp;</p>
+										@endif
+									</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="2">&nbsp;</td>
                                     <td align="center">
                                         <u>
                                             <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>

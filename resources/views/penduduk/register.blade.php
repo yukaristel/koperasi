@@ -783,7 +783,14 @@
                                         <label for="jaminan" class="form-label">JAMINAN</label>
                                     </div>
                                     <div class="position-relative mb-3">
-                                        <label for="jaminan" class="form-label">Dari Permohonan Pinjaman ini, Dijaminkan Harta/Benda Berupa :</label>
+                                        <label for="jaminan" class="form-label">Dari Permohonan Pinjaman ini, Dijaminkan Harta/Benda Berupa :</label><br>
+                                        <label for="jaminan" class="form-label">Jaminan 1 :</label>
+                                        <textarea name="jaminan" id="jaminan" class="form-control" rows="4" autocomplete="off" 
+                                            placeholder="Tuliskan deskripsi jaminan selengkap mungkin, misalnya : nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya"></textarea>
+                                        <small class="text-danger" id="msg_jaminan"></small>
+                                    </div>
+                                    <div class="position-relative mb-3">
+                                        <label for="jaminan" class="form-label">Jaminan 2 :</label>
                                         <textarea name="jaminan" id="jaminan" class="form-control" rows="4" autocomplete="off" 
                                             placeholder="Tuliskan deskripsi jaminan selengkap mungkin, misalnya : nomor sertifikat, type, merk, nomor rangka, nomor kepemilikan dan yang lainnya"></textarea>
                                         <small class="text-danger" id="msg_jaminan"></small>

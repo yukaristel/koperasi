@@ -13,10 +13,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>DAFTAR PENERIMA IPTW</b>
                 </div>
             </td>
@@ -25,9 +25,9 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
-            <td width="100">Kode Kelompok/Loan ID</td>
+            <td width="100">Kode Nasabah/Loan ID</td>
             <td align="center" width="5">:</td>
             <td>
                 <b>{{ $pinkel->anggota->kd_kelompok }} / {{ $pinkel->id }}</b>
@@ -64,7 +64,7 @@
         </tr>
     </table>
     <table border="1" width="100%" align="center"cellspacing="0" cellpadding="0"
-        style="font-size: 11px; margin-top: 12px;">
+        style="font-size: 10pt; margin-top: 11pt;">
         <tr style="background: rgb(232,232,232)">
             <th height="20" width="10" align="center">No</th>
             <th align="center">Nama Anggota</th>
@@ -111,7 +111,7 @@
             <td align="right">&nbsp;</td>
         </tr>
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="50%">&nbsp;</td>
             <td width="50%">&nbsp;</td>

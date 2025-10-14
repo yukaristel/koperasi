@@ -61,7 +61,7 @@
         </table>
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 8px; table-layout: fixed;">
             <tr style="background: rgb(230, 230, 230); font-weight: bold;">
-                <th class="t l b" rowspan="2" width="17%">Nasabah - Loan ID</th>
+                <th class="t l b" rowspan="2" width="17%">Desa</th>
                 <th class="t l b" rowspan="2" width="2%">Kel</th>
                 <th class="t l b" rowspan="2" width="7%">Alokasi</th>
                 <th class="t l b" colspan="2" width="12%">Target</th>
@@ -153,7 +153,7 @@
                         $j_tunggakan_pokok = 0;
                         $j_tunggakan_jasa = 0;
                         $section = $pinkel->kd_desa;
-                        $nama_desa = $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
+                        $nama_desa = $pinkel->kode_desa . ' ' . $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
                     @endphp
                 @endif
 

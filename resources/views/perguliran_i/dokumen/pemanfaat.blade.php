@@ -5,13 +5,13 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>DAFTAR PENERIMA</b>
                 </div>
-                <div style="font-size: 16px;">
+                <div style="font-size: 16pt;">
                     <b>PINJAMAN/PEMANFAAT {{ $pinkel->jpp->nama_jpp }}</b>
                 </div>
             </td>
@@ -20,7 +20,7 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="70">Nama Kelompok</td>
             <td width="5" align="right">:</td>
@@ -54,7 +54,7 @@
             <td>0</td>
         </tr>
     </table>
-    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr style="background: rgb(232, 232, 232)">
             <th height="20" width="10">No</th>
             <th width="60">Nik</th>
@@ -91,7 +91,7 @@
             <td>&nbsp;</td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="4">&nbsp;</td>
         </tr>
@@ -108,7 +108,7 @@
             <td>{{ Tanggal::tglLatin($pinkel->tgl_proposal) }}</td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="2" height="20">&nbsp;</td>
         </tr>

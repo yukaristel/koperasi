@@ -22,31 +22,31 @@
         }
 
         html {
-            /* margin-left: 90px; */
-            /* margin-right: 0px; */
-            margin-bottom: 100px;
+            /* margin-left: 90pt; */
+            /* margin-right: 0pt; */
+            margin-bottom: 100pt;
         }
 
         ul,
         ol {
-            margin-left: -10px;
+            margin-left: -10pt;
             page-break-inside: auto !important;
         }
 
         header {
             position: fixed;
-            top: -10px;
-            left: 0px;
-            right: 0px;
+            top: -10pt;
+            left: 0pt;
+            right: 0pt;
         }
 
         table tr th,
         table tr td {
-            padding: 2px 4px;
+            padding: 2pt 4pt;
         }
 
         table tr th {
-            font-size: 12px;
+            font-size: 11pt;
         }
 
         .break {
@@ -58,30 +58,30 @@
         }
 
         .l {
-            border-left: 1px solid #000;
+            border-left: 1pt solid #000;
         }
 
         .t {
-            border-top: 1px solid #000;
+            border-top: 1pt solid #000;
         }
 
         .r {
-            border-right: 1px solid #000;
+            border-right: 1pt solid #000;
         }
 
         .b {
-            border-bottom: 1px solid #000;
+            border-bottom: 1pt solid #000;
         }
     </style>
 </head>
 
 <body onload="window.print()">
-    <main style="position: relative; font-size: 12px;">
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <main style="position: relative; font-size: 11pt;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr>
                 <td rowspan="7" align="center" width="400">
-                    <div style="font-size: 14px; font-weight: bold;">
-                        {{ $kec->nama_lembaga_sort }}
+                    <div style="font-size: 12pt; font-weight: bold;">
+                        {{ $kec->nama_lembaga_sort }} {{ $kec->nama_kec }}
                     </div>
                     <div>
                         {{ $kec->alamat_kec }}
@@ -89,33 +89,31 @@
                     <div>
                         Telp. {{ $kec->telpon_kec }}
                     </div>
-                    <div style="margin-top: 8px;">
+                    <div style="margin-top: 8pt;">
                         <img width="150" src="data:image/png;base64,{{ $barcode }}"
                             alt="{{ $nia->anggota->nik }}">
                     </div>
-                    <div style="font-size: 14px;">{{ $nia->anggota->nik }}</div>
+                    <div style="font-size: 12pt;">{{ $nia->anggota->nik }}</div>
                 </td>
                 <td width="150">Jenis Pinjaman</td>
                 <td width="5" align="center">:</td>
-                <td width="200">{{ $nia->jpp->nama_jpp }}</td>
-                <td width="150">Loan Id.</td>
+                <td width="200">{{ $nia->jpp->nama_jpp }} ( {{ $nia->id }} )</td>
+                <td width="150">Alamat</td>
                 <td width="5" align="center">:</td>
-                <td width="200">{{ $nia->id }}</td>
+                <td width="200">{{ $nia->anggota->alamat }}</td>
             </tr>
             <tr>
-                <td>Nama Peminjam</td>
+                <td>Nama Nasabah</td>
                 <td align="center">:</td>
-                <td style="font-weight: bold;" colspan="4">{{ $nia->anggota->namadepan }}</td>
-            </tr>
-            <tr>
-                <td>Alamat</td>
-                <td align="center">:</td>
-                <td colspan="4">{{ $nia->anggota->alamat }}</td>
-            </tr>
-            <tr>
+                <td style="font-weight: bold;">{{ $nia->anggota->namadepan }}</td>
                 <td>Telpon/SMS</td>
                 <td align="center">:</td>
-                <td>{{ $nia->anggota->hp }}</td>
+                <td style="font-weight: bold;">{{ $nia->anggota->hp }}</td>
+            </tr>
+            <tr>
+                <td>Tgl Cair</td>
+                <td align="center">:</td>
+                <td>{{ Tanggal::tglLatin($nia->tgl_cair) }}</td>
                 <td>Jumlah Angsuran</td>
                 <td align="center">:</td>
 
@@ -134,9 +132,9 @@
                     {{ $nia->sis_pokok->nama_sistem }}</td>
             </tr>
             <tr>
-                <td>Tgl Cair</td>
+                <td>Nilai Barang</td>
                 <td align="center">:</td>
-                <td>{{ Tanggal::tglLatin($nia->tgl_cair) }}</td>
+                <td>{{ number_format($nia->harga) }}</td>
                 <td>Jangka</td>
                 <td align="center">:</td>
                 <td>{{ $nia->jangka }} {{ $nia->sis_pokok->id == '12' ? 'Minggu' : 'Bulan' }}</td>
@@ -150,24 +148,38 @@
                 <td>{{ $nia->pros_jasa / $nia->jangka . '%' }}</td>
             </tr>
             <tr>
-                <td>&nbsp</td>
-                <td align="center">&nbsp</td>
-                <td>&nbsp</td>
-                <td>&nbsp</td>
-                <td align="center">&nbsp</td>
-                <td>&nbsp</td>
+                <td>Depe</td>
+                <td align="center">:</td>
+                <td>{{ number_format($nia->depe) }}</td>
+                <td>Nama Barang</td>
+                <td align="center">:</td>
+                <td>{{$nia->nama_barang }}</td>
             </tr>
             <tr>
-                <td colspan="7" class="b t" style="font-weight: bold; font-size: 24px;" align="center">
+                <td>&nbsp;</td>
+                <td align="center">&nbsp;</td>
+                <td style="font-weight: bold;">&nbsp;</td>
+                <td>&nbsp;</td>
+                <td align="center">&nbsp;</td>
+                <td style="font-weight: bold;">&nbsp;</td>
+            </tr>
+            <tr>
+                <td colspan="7" class="b t" style="font-weight: bold; font-size: 24pt;" align="center">
                     KARTU ANGSURAN
                 </td>
             </tr>
         </table>
+        
         @php
-            $baris_angsuran = ceil($nia->rencana_count / 2);
+            $index = 1;
+            $baris_angsuran = ceil($nia->rencana_count / 2) + 1;
+            if ($kec->jdwl_angsuran == '1') { // angsuran diawal
+                $index = 0;
+                $baris_angsuran = ceil($nia->rencana_count / 2);
+            }
         @endphp
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr>
                 <td width="40">&nbsp;</td>
                 <td colspan="9" style="font-weight: bold;" height="30">TABEL KEWAJIBAN PEMBAYARAN ANGSURAN</td>
@@ -189,50 +201,58 @@
                 <th class="l t b r" align="center">Jasa</th>
                 <th rowspan="{{ $baris_angsuran + 1 }}">&nbsp;</th>
             </tr>
-            @for ($j = 1; $j <= $baris_angsuran; $j++)
+
+            @for ($j = $index; $j < $baris_angsuran; $j++)
                 @php
-                    $i = $j - 1;
+                    $i = $j + 1;
+
+                    $z = $j - 1;
+                    $baris = $baris_angsuran - 1;
+                    if ($index == 0) { //angsuran diawal
+                        $z = $j;
+                        $baris = $baris_angsuran;
+                    }
                 @endphp
                 <tr>
-                    <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
-                        {{ $nia->rencana[$i]->angsuran_ke }}
+                    <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
+                        {{ $z + 1 }}
                     </td>
-                    <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
-                        {{ Tanggal::tglIndo($nia->rencana[$i]->jatuh_tempo) }}
+                    <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
+                        {{ Tanggal::tglIndo($nia->rencana[$z]->jatuh_tempo) }}
                     </td>
-                    <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="right">
-                        {{ number_format($nia->rencana[$i]->wajib_pokok) }}
+                    <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="right">
+                        {{ number_format($nia->rencana[$z]->wajib_pokok) }}
                     </td>
-                    <td class="l {{ $j == $baris_angsuran ? 'b' : '' }} r" align="right">
-                        {{ number_format($nia->rencana[$i]->wajib_jasa) }}
+                    <td class="l {{ $i == $baris_angsuran ? 'b' : '' }} r" align="right">
+                        {{ number_format($nia->rencana[$z]->wajib_jasa) }}
                     </td>
 
                     <td>&nbsp;</td>
 
-                    @if (isset($nia->rencana[$i + $baris_angsuran]))
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
-                            {{ $nia->rencana[$i + $baris_angsuran]->angsuran_ke }}
+                    @if (isset($nia->rencana[$z + $baris]))
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
+                            {{ ($z + 1) + $baris }}
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
-                            {{ Tanggal::tglIndo($nia->rencana[$i + $baris_angsuran]->jatuh_tempo) }}
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
+                            {{ Tanggal::tglIndo($nia->rencana[$z + $baris]->jatuh_tempo) }}
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="right">
-                            {{ number_format($nia->rencana[$i + $baris_angsuran]->wajib_pokok) }}
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="right">
+                            {{ number_format($nia->rencana[$z + $baris]->wajib_pokok) }}
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }} r" align="right">
-                            {{ number_format($nia->rencana[$i + $baris_angsuran]->wajib_jasa) }}
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }} r" align="right">
+                            {{ number_format($nia->rencana[$z + $baris]->wajib_jasa) }}
                         </td>
                     @else
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
 
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="center">
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="center">
 
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }}" align="right">
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }}" align="right">
 
                         </td>
-                        <td class="l {{ $j == $baris_angsuran ? 'b' : '' }} r" align="right">
+                        <td class="l {{ $i == $baris_angsuran ? 'b' : '' }} r" align="right">
 
                         </td>
                     @endif
@@ -241,7 +261,7 @@
 
         </table>
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr>
                 <td width="40" rowspan="{{ $rowspan }}">&nbsp;</td>
                 <td colspan="9" style="font-weight: bold;" height="30">REALISASI PEMBAYARAN ANGSURAN</td>
@@ -310,7 +330,7 @@
             @endif
         </table>
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr>
                 <td width="40" rowspan="5">&nbsp;</td>
                 <td colspan="3" style="font-weight: bold;" height="30">&nbsp;</td>
@@ -321,22 +341,39 @@
                     <div>Lembar 1 : Untuk Peminjam</div>
                     <div>Lembar 2 : Arsip Lembaga</div>
                 </td>
-                <td style="font-weight: bold; font-size: 12px;" width="350" align="center">
+                <td style="font-weight: bold; font-size: 11pt;" width="350" align="center">
                     <div>{{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}</div>
                 </td>
-                <td style="font-weight: bold; font-size: 12px;" width="350" align="center">Peminjam</td>
+                <td style="font-weight: bold; font-size: 11pt;" width="350" align="center">Peminjam</td>
             </tr>
-            <tr>
-                <td colspan="2" height="50"></td>
-            </tr>
-            <tr style="font-weight: bold; font-size: 12px; text-transform: uppercase;">
-                <td width="350" align="center">
-                    <div>{{ $dir->namadepan }} {{ $dir->namabelakang }}</div>
-                </td>
-                <td width="350" align="center">
-                    {{ $nia->anggota->namadepan }}
-                </td>
-            </tr>
+        <tr>
+            <td align="center">
+                @php
+                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+                
+                @if (file_exists($logoPath))
+                    <img src="/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>a
+                    <p>&nbsp;</p>
+                @endif
+            </td>
+            <td colspan="2" align="center">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="font-weight: bold;">
+                {{ $dir->namadepan }} {{ $dir->namabelakang }}
+            </td>
+            <td colspan="2" align="center" style="font-weight: bold;">
+                {{ $nia->anggota->namadepan }}
+            </td>
+        </tr>
             <tr>
                 <td colspan="3" style="font-weight: bold;" height="10">&nbsp;</td>
             </tr>

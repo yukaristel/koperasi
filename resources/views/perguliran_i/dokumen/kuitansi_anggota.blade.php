@@ -13,7 +13,7 @@
     @foreach ($pinjaman as $pinj)
         @php
             $waktu = date('H:i');
-            $tempat = 'Kantor UPK';
+            $tempat = 'Kantor DBM';
 
             $wt_cair = explode('_', $pinj->pinkel->wt_cair);
             if (count($wt_cair) == 1) {
@@ -29,15 +29,15 @@
         @if ($loop->iteration > 1)
             <div class="break">&nbsp;</div>
         @endif
-        <div style="text-align: center; font-size: 18px; margin-bottom: 12px; text-transform: uppercase;">
+        <div style="text-align: center; font-size: 18pt; margin-bottom: 11pt; text-transform: uppercase;">
             <div>Bukti Transaksi</div>
             <div>Pinjaman Kelompok</div>
         </div>
 
-        <div style="padding: 60px; padding-top: 0px; border: 1px solid #000; height: 82%;">
+        <div style="padding: 60pt; padding-top: 0pt; border: 1pt solid #000; height: 82%;">
             <table border="0" width="100%" class="p">
                 <tr>
-                    <td colspan="3" height="40" align="center" style="text-transform: uppercase; font-size: 16px;">
+                    <td colspan="3" height="40" align="center" style="text-transform: uppercase; font-size: 16pt;">
                         <b>K u i t a n s i</b>
                     </td>
                 </tr>
@@ -59,7 +59,7 @@
                     <td>Untuk Pembayaran</td>
                     <td align="center">:</td>
                     <td class="b">
-                        Pencairan Pemanfaat Kelompok {{ $pinj->pinkel->kelompok->nama_kelompok }}
+                        Pencairan Nasabah Kelompok {{ $pinj->pinkel->kelompok->nama_kelompok }}
                     </td>
                 </tr>
                 <tr>
@@ -95,7 +95,7 @@
                 </tr>
             </table>
 
-            <table border="0" width="100%" style="font-size: 11px;">
+            <table border="0" width="100%" style="font-size: 10pt;">
                 <tr>
                     <td width="10%">&nbsp;</td>
                     <td width="10%">&nbsp;</td>
@@ -132,7 +132,7 @@
                         &nbsp;
                     </td>
                     <td align="center" colspan="3">
-                        Anggota Pemanfaat
+                        Anggota Nasabah
                     </td>
                 </tr>
                 <tr>

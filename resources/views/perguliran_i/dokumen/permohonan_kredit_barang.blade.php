@@ -5,10 +5,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>FORMULIR PERMOHONAN KREDIT BARANG</b>
                 </div>
             </td>
@@ -17,12 +17,12 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px; text-align: justify;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt; text-align: justify;">
         <tr>
             <td colspan="3">Yang bertanda tangan di bawah ini,</td>
         </tr>
         <tr>
-            <td width="100">Nama</td>
+            <td width="100">Nama Nasabah</td>
             <td width="5" align="right">:</td>
             <td>{{ $pinkel->anggota->namadepan }}</td>
         </tr>
@@ -30,54 +30,43 @@
             <td>Tempat, Tgl. lahir</td>
             <td align="right">:</td>
             <td>{{ $pinkel->anggota->tempat_lahir }}
-            {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }} 
+                {{ Tanggal::tglLatin($pinkel->anggota->tgl_lahir) }}
             </td>
         </tr>
         <tr>
             <td>Alamat Rumah</td>
             <td align="right">:</td>
-            <td>{{ $pinkel->anggota->alamat}} {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
-                {{ $pinkel->anggota->d->desa }} {{$kec->sebutan_kec }} {{ $kec->nama_kec }}
+            <td>{{ $pinkel->anggota->alamat }} {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
+                {{ $pinkel->anggota->d->desa }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
                 {{ $nama_kabupaten }} </td>
-        </tr>
-        <tr>
-            <td>Kewarganegaraan</td>
-            <td align="right">:</td>
-            <td></td>
         </tr>
         <tr>
             <td width="100">Status Perkawinan</td>
             <td width="5" align="right">:</td>
-            <td></td>
+            <td>{{ $pinkel->anggota->status_pernikahan }}</td>
         </tr>
         <tr>
-            <td>Nama Istri/Suami/ahli waris	</td>
+            <td>Nama Penjamin</td>
             <td align="right">:</td>
-            <td></td>
-
+            <td>{{ $pinkel->anggota->penjamin }}</td>
         </tr>
         <tr>
-            <td>Nama Tempat Bekerja	</td>
+            <td>Alamat / Tempat Bekerja </td>
             <td align="right">:</td>
-            <td></td>
+            <td>{{ $pinkel->anggota->tempat_kerja }}</td>
         </tr>
         <tr>
-            <td>Alamat Tempat Bekerja	</td>
-            <td align="right">:</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>Gaji/Penghasilan	</td>
+            <td>Gaji/Penghasilan </td>
             <td align="right">:</td>
             <td>Rp. ____________________/bulan </td>
         </tr>
         <tr>
-            <td>Biaya Hidup	</td>
+            <td>Biaya Hidup </td>
             <td align="right">:</td>
             <td>Rp. ____________________/bulan </td>
         </tr>
         <tr>
-            <td>Jenis barang kredit	</td>
+            <td>Jenis barang kredit </td>
             <td align="right">:</td>
             <td>{{ $pinkel->nama_barang }}</td>
         </tr>
@@ -87,12 +76,12 @@
             <td>{{ $pinkel->jpp->nama_jpp }} </td>
         </tr>
         <tr>
-            <td>Lama/Durasi kredit	</td>
+            <td>Lama/Durasi kredit </td>
             <td align="right">:</td>
             <td>{{ $pinkel->jangka }} bulan </td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td colspan="3" height="20">&nbsp;</td>
         </tr>

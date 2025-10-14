@@ -16,10 +16,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>SURAT PERNYATAAN KESANGGUPAN TANGGUNG RENTENG KEMATIAN</b>
                 </div>
             </td>
@@ -29,7 +29,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="100">Tanggal</td>
             <td width="5" align="center">:</td>
@@ -69,7 +69,7 @@
         <tr>
             <td colspan="3" align="justify">
                 Dalam hal ini bertindak untuk dan atas nama {{ $kec->nama_lembaga_sort }} selaku pengelola dana iuran
-                tanggung renteng kematian bagi pemanfaat {{ $pinkel->jpp->nama_jpp }}, selanjutnya disebut Pihak Pertama,
+                tanggung renteng kematian bagi Nasabah {{ $pinkel->jpp->nama_jpp }}, selanjutnya disebut Pihak Pertama,
                 dan
             </td>
         </tr>
@@ -112,7 +112,7 @@
                     {{ Tanggal::namaBulan($pinkel->tgl_cair) }} tahun
                     {{ $keuangan->terbilang(Tanggal::tahun($pinkel->tgl_cair)) }}, bertempat di {{ $tempat }} sadar
                     dan suka rela menyatakan telah membuat perjanjian iuran tanggung renteng kematian bagi anggota kelompok
-                    pemanfaat yang meninggal dunia dengan ketentuan-ketentuan yang disepakati.
+                    Nasabah yang meninggal dunia dengan ketentuan-ketentuan yang disepakati.
                 </p>
                 <p style="text-align: justify;">
                     Pihak Kedua menyatakan secara sadar dan suka rela telah menanda-tangani akad atau perjanjian iuran
@@ -123,7 +123,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="2">&nbsp;</td>
         </tr>

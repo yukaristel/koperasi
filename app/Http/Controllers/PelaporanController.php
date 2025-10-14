@@ -46,7 +46,6 @@ class PelaporanController extends Controller
         $laporan = JenisLaporan::where([['file', '!=', '0']])->orderBy('urut', 'ASC')->get();
 
         $title = 'Pelaporan';
-        dd($laporan);
         return view('pelaporan.index')->with(compact('title', 'kec', 'laporan'));
     }
 

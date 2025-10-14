@@ -1,44 +1,6 @@
 @php
     use App\Utils\Keuangan;
     $keuangan = new Keuangan();
-
-    $calk = json_decode($kec->calk, true);
-    $peraturan_desa = $calk['peraturan_desa'];
-
-    $calk = [
-        '0' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-        '1' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-        '2' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-        '3' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-        '4' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-        '5' => [
-            'th_lalu' => 0,
-            'th_ini' => 0,
-        ],
-    ];
-
-    $i = 0;
-    foreach ($saldo_calk as $_saldo) {
-        $calk["$i"]['th_lalu'] = floatval($_saldo->debit);
-        $calk["$i"]['th_ini'] = floatval($_saldo->kredit);
-
-        $i++;
-    }
 @endphp
 
 @extends('pelaporan.layout.base')
@@ -70,10 +32,77 @@
     </table>
 
     <ol style="list-style: upper-alpha;">
+    
+    @if(in_array(session('lokasi'), [2, 351, 352, 353, 354]))
+    
         <li>
             <div style="text-transform: uppercase;">Gambaran Umum</div>
             <div style="text-align: justify">
-                Lembaga Keuangan Mikro ( {{ $kec->nama_lembaga_sort }} ) adalah lembaga keuangan yang khusus didirikan untuk
+                Lembaga Koperasi Arthamari adalah lembaga ekonomi beranggotakan masyarakat desa yang dibentuk untuk meningkatkan kesejahteraan melalui prinsip gotong royong, kekeluargaan, dan partisipasi bersama.
+            </div> <br>
+            <div style="text-align: justify">
+                Regulasi atau Dasar Hukum  {{ $kec->nama_lembaga_sort }} adalah sebagai berikut : 
+            </div>
+            <ol>
+                <li>
+                    Undang-Undang Nomor 25 Tahun 1992 tentang Perkoperasian
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 4 Tahun 1994 tentang Persyaratan dan Tata cara Pengesahan Akta Pendirian dan Perubahan Anggaran Dasar Koperasi. 
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 17 Tahun 1994 tentang Pembubaran Koperasi Oleh Pemerintah.
+                </li>
+                <li>
+                    Peraturan Menteri Koperasi dan UKM Nomor 13 Tahun 2023. 
+                </li>
+                <li>
+                    Peraturan Menteri Koperasi dan UKM Nomor 8 Tahun 2023.
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 7 Tahun 2021 tentang Kemudahan, Pelindungan dan Pemberdayaan Koperasi dan Usaha Mikro, Kecil dan Menengah
+                </li>
+                
+                <li>
+                    Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah (Permenkop UKM) Nomor 72 Tahun 2017
+                    <ol style="list-style: lower-alpha">
+                        <li>
+                            Permenkop 9 Tahun 2018 adalah Peraturan Menteri Koperasi dan UKM Nomor 9 Tahun 2018
+                        </li>
+                        <li>
+                            Permenkop No. 15 Tahun 2015 adalah Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah tentang Usaha Simpan Pinjam oleh Koperasi.
+                        </li>
+                        <li>
+                            Permenkop No 19 Tahun 2015 tentang Rapat Anggota Tahunan
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 9 Tahun 2020 tentang Pengawasan Koperasi
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 8 Tahun 2023 (Permenkop 8/2023) mengatur tentang usaha simpan pinjam oleh koperasi.
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 2 Tahun 2024 tentang Kebijakan Akuntansi Koperasi
+                        </li>
+                        <li>
+                            Permenkop No. 1 Tahun 2025 tentang "Penyaluran Pinjaman atau Pembiayaan Dana Bergulir kepada Koperasi Percontohan (Mock Up) Koperasi Desa/Kelurahan Merah Putih". 
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+            <p style="text-align: justify">
+                Selanjutnya {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }}
+                {{ $kec->nama_kec }}
+                telah resmi mendaftar sebagai lembaga keuangan yang selanjutnya mendapat legalitas dari Kementerian Hukum
+                dan HAM
+                Nomor: {{ $kec->nomor_bh }}.
+            </p>
+        </li>
+    @else
+        <li>
+            <div style="text-transform: uppercase;">Gambaran Umum</div>
+            <div style="text-align: justify">
+                Lembaga Keuangan Mikro ({{ $kec->nama_lembaga_sort }}) adalah lembaga keuangan yang khusus didirikan untuk
                 memberikan jasa
                 pengembangan usaha dan pemberdayaan masyarakat, baik melalui pinjaman atau pembiayaan dalam usaha
                 skala mikro kepada masyarakat, pengelolaan simpanan, maupun
@@ -119,7 +148,7 @@
                 </li>
             </ol>
             <p style="text-align: justify">
-                Selanjutnya {{ $kec->nama_lembaga_sort }} Sebagai anak usaha BUM Desa Bersama lkd {{ $kec->sebutan_kec }}
+                Selanjutnya {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }}
                 {{ $kec->nama_kec }}
                 telah resmi mendaftar sebagai lembaga keuangan yang selanjutnya mendapat legalitas dari Kementerian Hukum
                 dan HAM
@@ -162,6 +191,7 @@
             </table>
             </p>
         </li>
+    @endif
         <li style="margin-top: 12px;">
             <div style="text-transform: uppercase;">
                 Ikhtisar Kebijakan Akutansi
@@ -171,7 +201,8 @@
                     Pernyataan Kepatuhan
                     <ol style="list-style: lower-alpha;">
                         <li>
-                            Laporan keuangan disusun menggunakan Standar Akuntansi Keuangan Usaha Jasa Keuangan Mikro.
+                            Laporan keuangan disusun menggunakan Standar Akuntansi Keuangan Perusahaan Jasa Keuangan Mikro,
+                            sesuai Permenkop No. 02 Tahun 2024.
                         </li>
                         <li>Dasar Penyusunan laporan keuangan adalah SOP penatausahaan dan SOP laporan Keuangan.</li>
                         <li>
@@ -345,7 +376,7 @@
         </li>
         <li style="margin-top: 12px;">
             <div style="text-transform: uppercase;">
-                Ketentuan Pembagian Laba :
+                Ketentuan Pembagian SHU :
             </div>
             <div>
                 Pembagian laba yang diperoleh dalam satu tahun buku dialokasikan
@@ -360,7 +391,7 @@
                     Dividen
                 </li>
                 <li>
-                    Alokasi lain yang diputuskan dalam rapat pertangung jawaban dan/atau rapat umum pemegang saham (RUPS).
+                    Alokasi lain yang diputuskan dalam rapat pertangung jawaban dan/atau Rapat Anggota Tahunan (RAT).
                 </li>
             </ol>
         </li>

@@ -62,13 +62,8 @@
 
 <body>
     <header>
-        <h1 style="margin: 0px;">{{ strtoupper($judul) }}</h1>
-        <div style="margin: 0px; font-size: 24px;">
-            {{ strtoupper('Pinjaman Individu ' . $pinkel->jpp->nama_jpp) }}
-        </div>
-        <div style="margin: 0px;">
-            Nomor SPK : {{ $pinkel->spk_no }}
-        </div>
+        <h1 style="margin: 0px;">DOKUMEN <br> PENCAIRAN KREDIT</h1>
+        
     </header>
 
     <main>
@@ -83,6 +78,12 @@
 
             <div style="font-size: 20px;">
                 {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }} {{ $pinkel->anggota->d->nama_desa }}
+            </div> <br> <br> <br> <br> <br>
+            <div style="margin: 0px; font-size: 16px;">
+                {{ strtoupper('Jenis Piutang : ' . $pinkel->jpp->nama_jpp) }}
+            </div>
+            <div style="margin: 0px;">
+                Nomor SPK : <br>{{ $pinkel->spk_no }}
             </div>
         </div>
 
@@ -101,13 +102,13 @@
                     <div>
                         <b>{{ strtoupper($nama_kecamatan) }}</b>
                     </div>
-                    <div style="font-size: 10px; color: grey;">
+                    <div style="font-size: 11px; color: grey;">
                         <i>{{ $nomor_usaha }}</i>
                     </div>
-                    <div style="font-size: 10px; color: grey;">
+                    <div style="font-size: 11px; color: grey;">
                         <i>{{ $info }}</i>
                     </div>
-                    <div style="font-size: 10px; color: grey;">
+                    <div style="font-size: 11px; color: grey;">
                         <i>{{ $email }}</i>
                     </div>
 

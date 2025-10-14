@@ -1,10 +1,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>DAFTAR PESERTA ASURANSI {{ strtoupper($kec->nama_asuransi_p) }}</b>
                 </div>
             </td>
@@ -14,12 +14,12 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
-            <td width="20%">Kelompok</td>
+            <td width="20%">Nasabah</td>
             <td align="center" width="2%">:</td>
             <td width="28%">
-                <b>{{ $pinkel->kelompok->nama_kelompok }} / {{ $pinkel->id }}</b>
+                <b>{{ $pinkel->anggota->namadepan }} / {{ $pinkel->id }}</b>
             </td>
             <td width="20%">Tanggal Cair</td>
             <td align="center" width="2%">:</td>
@@ -67,7 +67,7 @@
         </tr>
     </table>
 
-    <table border="1" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="1" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <th rowspan="2">No</th>
             <th rowspan="2">Nama Anggota</th>

@@ -37,13 +37,13 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td width="50">Nomor</td>
             <td width="10" align="center">:</td>
             <td colspan="2">
-                
-                &nbsp; </td>
+                ______/LKM/{{ Tanggal::tglRomawi(date('Y-m-d')) }}
+            </td>
         </tr>
         <tr>
             <td>Sifat</td>
@@ -56,7 +56,7 @@
             <td>Perihal</td>
             <td align="center">:</td>
             <td colspan="2">
-                <b>Surat Persetujuan Perjanjian Kredit (SP2K)</b>
+                <b>Surat Persetujuan Kredit (SP2K)</b>
             </td>
         </tr>
         <tr>
@@ -88,7 +88,8 @@
             <td colspan="3">
                 <div style="text-align: justify;">
                     Dengan ini diberitahukan bahwa sesuai dengan surat permohonan kredit saudara dan setelah diadakan
-                    verifikasi serta penilaian, maka {{ $kec->nama_lembaga_sort }} menyetujui permohonan tersebut dengan
+                    verifikasi serta penilaian Analisa dan kredit, maka {{ $kec->nama_lembaga_sort }} menyetujui permohonan
+                    tersebut dengan
                     ketentuan
                     dan syarat- syarat sebagai berikut:
                 </div>
@@ -117,7 +118,7 @@
                         <td>Jenis Kredit</td>
                         <td align="center"width="5%">:</td>
                         <td>
-                            {{$pinkel->sis_pokok->nama_sistem}}
+                            {{ $pinkel->jpp->nama_jpp }}
                         </td>
                     </tr>
                     <tr>
@@ -125,7 +126,7 @@
                         <td>Suku Jasa Kredit</td>
                         <td align="center"width="5%">:</td>
                         <td>
-                            {{ $pinkel->pros_jasa / $pinkel->jangka}} % per bulan
+                            {{ number_format($pinkel->pros_jasa) }} %
                         </td>
                     </tr>
                     <tr>
@@ -150,7 +151,7 @@
                         <td>Cara Pengikat Kredit</td>
                         <td align="center"width="5%">:</td>
                         <td>
-                            ibawah tanda tangan
+                            di bawah tanda tangan
                         </td>
                     </tr>
                     <tr>
@@ -182,7 +183,8 @@
             </td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="50%">&nbsp;</td>
             <td width="25%">&nbsp;</td>
@@ -194,21 +196,39 @@
                 {{ $kec->nama_kec }}, {{ Tanggal::tglLatin($pinkel->tgl_cair) }}
             </td>
         </tr>
-
         <tr>
             <td align="center">
-                Direktur
+                {{ $kec->sebutan_level_1 }} {{ $kec->nama_lembaga_sort }}
             </td>
             <td colspan="2" align="center">Peminjam</td>
         </tr>
         <tr>
-            <td colspan="3" height="40">&nbsp;</td>
+            <td align="center">
+                @php
+                    $logoPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($logoPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70" alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
+            <td colspan="2" align="center">
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            </td>
         </tr>
         <tr>
             <td align="center" style="font-weight: bold;">
                 {{ $dir->namadepan }} {{ $dir->namabelakang }}
             </td>
-            <td colspan="2" align="center" style="font-weight: bold;">{{ $pinkel->anggota->namadepan }}</td>
+            <td colspan="2" align="center" style="font-weight: bold;">
+                {{ $pinkel->anggota->namadepan }}
+            </td>
         </tr>
     </table>
 @endsection

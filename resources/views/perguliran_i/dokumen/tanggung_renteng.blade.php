@@ -5,10 +5,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>SURAT PERNYATAAN TANGGUNG RENTENG</b>
                 </div>
             </td>
@@ -20,7 +20,7 @@
 
 
     <div>Yang bertanda tangan di bawah ini,</div>
-    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr style="background: rgb(232,232,232)">
             <th width="10">No</th>
             <th width="60">Nik</th>
@@ -40,18 +40,18 @@
             </tr>
         @endforeach
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="2">
                 <div style="text-align: justify;">
-                    Selaku anggota pemanfaat dari Nama Kelompok {{ $pinkel->kelompok->nama_kelompok }} yang beralamatkan di
+                    Selaku Nasabah {{ $pinkel->anggota->namadepan }} yang beralamatkan di
                     {{ $pinkel->kelompok->alamat_kelompok }} {{ $pinkel->kelompok->d->sebutan_desa->sebutan_desa }}
                     {{ $pinkel->kelompok->d->nama_desa }}
                 </div>
                 <div style="text-align: justify;">
-                    Dengan ini menyatakan, apabila terjadi tunggakan angsuran pinjaman {{ $pinkel->jpp->nama_jpp }}
-                    {{ $kec->nama_lembaga_sort }} yang disebabkan adanya anggota pemanfaat yang belum mampu melunasi
-                    kewajibannya sesuai jadwal angsuran yang ditetapkan, maka masing-masing pemanfaat dalam kedudukan
+                    Dengan ini menyatakan, apabila terjadi tunggakan angsuran Piutang {{ $pinkel->jpp->nama_jpp }}
+                    {{ $kec->nama_lembaga_sort }} yang disebabkan adanya anggota Nasabah yang belum mampu melunasi
+                    kewajibannya sesuai jadwal angsuran yang ditetapkan, maka masing-masing Nasabah dalam kedudukan
                     sebagai pribadi anggota kelompok, secara sadar dan penuh tanggung jawab menyatakan :
 
                     <ol style="margin-bottom: 0; padding-bottom: 0;">
@@ -82,11 +82,11 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" style="padding: 0px !important;">
+            <td colspan="2" style="padding: 0pt !important;">
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px;">
+                    style="font-size: 10pt;">
                     <tr>
-                        <td colspan="2" style="padding-top: 0px;">
+                        <td colspan="2" style="padding-top: 0pt;">
                             <div style="text-align: justify;">
                                 Demikian surat pernyataan Kesanggupan Tanggung Renteng ini dibuat dengan penuh kesadaran dan
                                 tanpa paksaan dari pihak manapun serta untuk dipergunakan dan/atau dilaksanakan sebagaimana

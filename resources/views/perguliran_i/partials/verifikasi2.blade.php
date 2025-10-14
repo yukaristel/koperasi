@@ -29,7 +29,7 @@
                     <div class="form-group mb-3">
                         <label for="tgl_verifikasi" class="form-label">Tgl  {{$v3}}</label>
                         <input type="date" name="tgl_verifikasi" id="tgl_verifikasi" autocomplete="off"
-                            class="form-control date" value="{{$tgl}}">
+                            class="form-control date" value="">
                         <small class="text-danger" id="msg_tgl_verifikasi"></small>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                     <div class="form-group mb-3">
                         <label for="verifikasi" class="form-label"> {{$v3}} Rp.</label>
                         <input type="text" name="verifikasi" id="verifikasi" autocomplete="off"
-                            class="form-control keuangan" value="{{ $alokasi }}">
+                            class="form-control keuangan" value="">
                         <small class="text-danger" id="msg_verifikasi"></small>
                     </div>
                 </div>

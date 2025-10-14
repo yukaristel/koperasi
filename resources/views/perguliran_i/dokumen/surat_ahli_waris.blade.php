@@ -12,13 +12,13 @@
     </style>
 
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3">&nbsp;</td>
         </tr>
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 16px;">
+                <div style="font-size: 16pt;">
                     SURAT PERNYATAAN AHLI WARIS
                 </div>
             </td>
@@ -28,7 +28,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3">
                 Yang bertanda tangan dibawah ini,
@@ -53,7 +53,7 @@
             </td>
         </tr>
         <tr>
-            <td>Hubungan dengan Peminjam</td>
+            <td>Hubungan dengan Piutang</td>
             <td align="center">:</td>
             <td>
                 @if ($pinkel->anggota->keluarga)
@@ -65,8 +65,8 @@
             <td colspan="3" align="justify">
                 <p>
                     Adalah benar-benar ahli waris dari <b>{{ $pinkel->anggota->namadepan }}</b> Dengan ini menyatakan
-                    bersedia menanggung beban pinjaman {{ $pinkel->jpp->nama_jpp }} sampai lunas. Apabila terjadi
-                    hal-hal yang tidak diinginkan yang menyebabkan peminjam tidak bisa melunasi kewajibannya seperti :
+                    bersedia menanggung beban kredit {{ $pinkel->jpp->nama_jpp }} sampai lunas. Apabila terjadi
+                    hal-hal yang tidak diinginkan yang menyebabkan peminjaman tidak bisa melunasi kewajibannya seperti :
                     Meninggal Dunia, Melarikan Diri, Berpindah domisili di luar desa, gangguan kejiwaan, sakit parah,
                     dll.
                 </p>
@@ -77,20 +77,31 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="90%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td align="center" width="50%">&nbsp;</td>
             <td align="center" width="50%">{{ $kec->nama_kec }}, {{ Tanggal::tglLatin($pinkel->tgl_cair) }}</td>
         </tr>
         <tr>
-            <td align="center">&nbsp;</td>
-            <td align="center">Nama Penjamin</td>
+            <td align="right" >Mengetahui,</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td align="center">Kepala {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }} {{ $pinkel->anggota->d->nama_desa }}</td>
+            <td align="center">Penjamin</td>
         </tr>
         <tr>
             <td align="center" colspan="2" height="30">&nbsp;</td>
         </tr>
         <tr style="font-weight: bold;">
-            <td align="center">&nbsp;</td>
+            <td align="center">
+                <u>
+                    <b>Pembina Tingkat  I {{ $pinkel->anggota->d->pangkat }}</b>
+                </u>
+                @if ($pinkel->anggota->d->nip)
+                    <div><small>NIP. {{ $pinkel->anggota->d->nip }}</small></div>
+                @endif
+            </td>
             <td align="center">{{ $pinkel->anggota->penjamin }}</td>
         </tr>
     </table>

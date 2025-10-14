@@ -13,33 +13,33 @@
         }
 
         html {
-            margin: 75.59px;
-            margin-left: 94.48px;
+            margin: 75.59pt;
+            margin-left: 94.48pt;
         }
 
         ul,
         ol {
-            margin-left: -10px;
+            margin-left: -10pt;
             page-break-inside: auto !important;
         }
 
         header {
             position: fixed;
-            top: -10px;
-            left: 0px;
-            right: 0px;
+            top: -10pt;
+            left: 0pt;
+            right: 0pt;
         }
 
         footer {
             position: fixed;
-            bottom: -50px;
-            left: 0px;
-            right: 0px;
+            bottom: -50pt;
+            left: 0pt;
+            right: 0pt;
         }
 
         table tr th,
         table tr td {
-            padding: 2px 4px;
+            padding: 2pt 4pt;
         }
 
         table tr td table tr td {
@@ -55,19 +55,19 @@
         }
 
         .l {
-            border-left: 1px solid #000;
+            border-left: 1pt solid #000;
         }
 
         .t {
-            border-top: 1px solid #000;
+            border-top: 1pt solid #000;
         }
 
         .r {
-            border-right: 1px solid #000;
+            border-right: 1pt solid #000;
         }
 
         .b {
-            border-bottom: 1px solid #000;
+            border-bottom: 1pt solid #000;
         }
     </style>
 </head>
@@ -75,39 +75,36 @@
 <body>
     <main>
         <table border="0" width="100%" cellspacing="0" cellpadding="0"
-            style="font-size: 11px; position: relative; top: -20px;">
+            style="font-size: 10pt; position: relative; top: -20pt;">
             <tr class="b">
                 <td align="center">
                     <img src="../storage/app/public/logo_kab/{{ $kab->id }}.png" width="70"
-                        alt="{{ $kab->id }}.png" style="margin-bottom: 8px;">
+                        alt="{{ $kab->id }}.png" style="margin-bottom: 8pt;">
                 </td>
                 <td align="center">
-                    <div style="font-size: 18px;">
+                    <div style="font-size: 18pt;">
                         PEMERINTAH DAERAH {{ strtoupper($nama_kabupaten) }}
                     </div>
-                    <div style="font-size: 18px;">
+                    <div style="font-size: 18pt;">
                         {{ strtoupper($kec->sebutan_kec) }} {{ strtoupper($kec->nama_kec) }}
                     </div>
-                    <div style="font-size: 18px;">
+                    <div style="font-size: 18pt;">
                         <b>
                             {{ strtoupper($pinkel->anggota->d->sebutan_desa->sebutan_desa) }}
                             {{ strtoupper($pinkel->anggota->d->nama_desa) }}
                         </b>
                     </div>
-                    <div style="font-size: 10px; color: grey;">
-                        <i>{{ $pinkel->anggota->d->alamat_desa }}</i>
-                    </div>
                 </td>
             </tr>
         </table>
 
-        <table border="0" width="85%" align="center"cellspacing="0" cellpadding="0" style="font-size: 12px;">
+        <table border="0" width="85%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11pt;">
             <tr>
                 <td align="center">
-                    <div style="font-size: 18px;">
-                        <b>REKOMENDASI KREDIT {{ $pinkel->jpp->nama_jpp }}</b>
+                    <div style="font-size: 18pt;">
+                        <b>REKOMENDASI KREDIT</b>
                     </div>
-                    <div style="font-size: 12px;">
+                    <div style="font-size: 11pt;">
                         Nomor: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
                         &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -121,7 +118,7 @@
                 <td height="5"></td>
             </tr>
         </table>
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
             <tr>
                 <td colspan="3" align="justify">
                     Yang bertanda tangan di bawah ini {{ $pinkel->anggota->d->sebutan_desa->sebutan_kades }}
@@ -163,9 +160,16 @@
                 <td>{{ $pinkel->anggota->hp }} </td>
             </tr>
             <tr>
-                <td width="120" style="vertical-align: top;">Jenis Usaha </td>
+                <td width="120" style="vertical-align: top;">Pekerjaan</td>
                 <td align="center">:</td>
-                <td>{{ is_numeric($pinkel->anggota->usaha) ? $pinkel->anggota->u->nama_usaha : $pinkel->anggota->usaha }} </td>
+                <td>
+                    @if(is_numeric($pinkel->anggota->usaha))
+                        {{ $pinkel->anggota->u->nama_usaha }}
+                    @else
+                        {{ $pinkel->anggota->usaha }}
+                    @endif
+                </td>
+
             </tr>
             <tr>
                 <td>&nbsp;</td>
@@ -174,8 +178,7 @@
             <tr>
                 <td align="justify" colspan="3">
                     Benar-benar warga Desa {{ $pinkel->anggota->d->nama_desa }}
-                    yang berkepribadian baik dan kami memberikan rekomendasi atas pengajuan kredit Modal
-                    {{ $pinkel->jpp->deskripsi_jpp }} ({{ $pinkel->jpp->nama_jpp }}) pada
+                    yang berkepribadian baik dan kami memberikan rekomendasi atas pengajuan kredit kepada
                     {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }} {{ $kec->nama_kec }}
                     {{ $nama_kabupaten }}.
                 </td>
@@ -188,7 +191,7 @@
             </tr>
         </table>
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
             <tr>
                 <td width="33%" height="30">&nbsp;</td>
                 <td width="33%">&nbsp;</td>

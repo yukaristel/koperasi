@@ -3,12 +3,11 @@
     use App\Utils\Pinjaman;
     $waktu = date('H:i');
     $tempat = '';
-
+    
     $sum_pokok = 0;
     if ($real) {
         $sum_pokok = $real->sum_pokok;
     }
-
     $saldo_pokok = $perguliran_i->alokasi - $sum_pokok;
     if ($saldo_pokok < 0) {
         $saldo_pokok = 0;
@@ -17,6 +16,11 @@
         [
             'title' => 'Cover',
             'file' => 'coverProposal',
+            'withExcel' => false
+        ],
+        [
+            'title' => 'Check List',
+            'file' => 'cek_list',
             'withExcel' => false,
         ],
         [
@@ -53,11 +57,37 @@
             'withExcel' => false,
         ],
         [
-            'title' => 'Penyerahan Jaminan',
+            'title' => 'Kesanggupan Penyerahan Jaminan',
             'file' => 'tandaTerimaJaminan',
             'withExcel' => false,
         ],
+
+        [
+            'title' => 'Permohonan Kredit Barang',
+            'file' => 'PermohonanKreditBarang',
+            'withExcel' => false,
+        ],
+
+        [
+            'title' => 'Surat Pernyataan Penjamin',
+            'file' => 'suratpernyataansuami',
+            'withExcel' => false,
+        ],
+        [
+            'title' => 'Pernyataan Agungan Pihak Ketiga',
+            'file' => 'agungan',
+            'withExcel' => false,
+        ],
     ];
+
+    if (isset($_SESSION['lokasi']) && $_SESSION['lokasi'] == 279) {
+        $dokumen_proposal[] = [
+            'title' => 'Surat Persetujuan Penjamin',
+            'file' => 'SuratPernyataan',
+            'withExcel' => false,
+        ];
+    }
+
 
     $dokumen_pencairan = [
         [
@@ -66,8 +96,18 @@
             'withExcel' => false,
         ],
         [
-            'title' => 'Surat Perjanjian Kredit',
+            'title' => 'Surat Perjanjian Kredit (Umum)',
             'file' => 'spk',
+            'withExcel' => false,
+        ],
+        [
+            'title' => 'Surat Perjanjian Kredit (Barang)',
+            'file' => 'spkkreditbarang',
+            'withExcel' => false,
+        ],
+        [
+            'title' => 'Surat Perjanjian Hutang',
+            'file' => 'sph',
             'withExcel' => false,
         ],
         [
@@ -91,23 +131,18 @@
             'withExcel' => false,
         ],
         [
-            'title' => 'analisis keputusan kredit',
+            'title' => 'Analisis keputusan kredit',
             'file' => 'analisiskeputusankredit',
             'withExcel' => false,
         ],
         [
-            'title' => 'surat pemberitahuan', 
+            'title' => 'SP2K',
             'file' => 'suratpemberitahuan',
             'withExcel' => false,
         ],
         [
             'title' => 'pengikat diri sebagai penjamin',
             'file' => 'pengikatdirisebagaipenjamin',
-            'withExcel' => false,
-        ],
-        [
-            'title' => 'surat pernyataan suami',
-            'file' => 'suratpernyataansuami',
             'withExcel' => false,
         ],
         [
@@ -120,11 +155,11 @@
             'file' => 'suratKelayakan',
             'withExcel' => false,
         ],
-        [
-            'title' => 'Daftar Hadir Pencairan',
-            'file' => 'daftarHadirPencairan',
-            'withExcel' => false,
-        ],
+        // [
+        // 'title' => 'Daftar Hadir Pencairan',
+        // 'file' => 'daftarHadirPencairan',
+        // 'withExcel' => false,
+        // ],
         [
             'title' => 'Pemberitahuan Ke Desa',
             'file' => 'pemberitahuanDesa',
@@ -141,9 +176,35 @@
             'file' => 'formVerifikasi',
             'withExcel' => false,
         ],
+        [
+            'title' => 'Terima Jaminan',
+            'file' => 'terima_jaminan',
+            'withExcel' => false,
+        ],
+        [
+            'title' => 'Pengambilan Jaminan',
+            'file' => 'pengambilan_jaminan',
+            'withExcel' => false,
+        ],
     ];
-@endphp
 
+
+    if (isset($_SESSION['lokasi']) && $_SESSION['lokasi'] == 98) {
+        $dokumen_pencairan[] = [
+            'title' => 'Surat Kuasa Menjual',
+            'file' => 'suratkuasamenjual',
+            'withExcel' => false,
+        ];
+
+        $dokumen_pencairan[] = [
+            'title' => 'Perjanjian Kredit',
+            'file' => 'perjanjiankredit',
+            'withExcel' => false,
+        ];
+    }
+    $jenis_jaminan ='';
+
+@endphp
 @extends('layouts.app')
 
 @section('content')

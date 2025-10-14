@@ -5,10 +5,10 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>SURAT PERJANJIAN IURAN TANGGUNG RENTENG</b>
                 </div>
             </td>
@@ -20,7 +20,7 @@
 
     <div style="text-align: justify;">
         Yang bertanda tangan di bawah ini,
-        <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="1" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr style="background: rgb(233,233,233);">
                 <th width="10">No</th>
                 <th width="80">NIK</th>
@@ -46,14 +46,14 @@
         </table>
     </div>
     <div style="text-align: justify;">
-        Selaku anggota pemanfaat dari Nama Kelompok {{ $pinkel->anggota->nama_kelompok }} yang beralamatkan di
+        Selaku anggota Nasabah dari Nama Kelompok {{ $pinkel->anggota->nama_kelompok }} yang beralamatkan di
         {{ $pinkel->anggota->alamat_kelompok }} {{ $pinkel->anggota->d->sebutan_desa->sebutan_desa }}
         {{ $pinkel->anggota->d->nama_desa }}.
     </div>
     <div style="text-align: justify;">
         Dengan ini menyatakan, apabila terjadi tunggakan angsuran pinjaman {{ $pinkel->jpp->nama_jpp }}
-        {{ $kec->nama_lembaga_sort }} yang disebabkan adanya anggota pemanfaat yang belum mampu melunasi kewajibannya
-        sesuai jadwal angsuran yang ditetapkan, maka masing-masing pemanfaat dalam kedudukan sebagai pribadi anggota
+        {{ $kec->nama_lembaga_sort }} yang disebabkan adanya anggota Nasabah yang belum mampu melunasi kewajibannya
+        sesuai jadwal angsuran yang ditetapkan, maka masing-masing Nasabah dalam kedudukan sebagai pribadi anggota
         kelompok, secara sadar dan penuh tanggung jawab menyatakan :
 
         <ol>
@@ -86,7 +86,7 @@
         pihak manapun serta untuk dipergunakan dan/ atau dilaksanakan sebagaimana mestinya.
     </div>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="2" height="24">&nbsp;</td>
         </tr>

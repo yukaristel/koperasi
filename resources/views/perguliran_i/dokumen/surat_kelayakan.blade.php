@@ -16,12 +16,11 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td width="50">Nomor</td>
             <td width="10" align="center">:</td>
-            <td colspan="2">
-                ______ /UPK/{{ Tanggal::tglRomawi($pinkel->tgl_dana) }} </td>
+            <td colspan="2">______ /______/{{ Tanggal::tglRomawi($pinkel->tgl_dana) }} </td>
         </tr>
         <tr>
             <td>Tanggal</td>
@@ -69,14 +68,14 @@
             <td colspan="3">
                 <div>Dengan hormat,</div>
                 <div style="text-align: justify;">
-                    Dengan ini memberitahukan bahwa keputusan rapat pendanaan Perguliran {{ $kec->nama_lembaga_sort }}
+                    Dengan ini memberitahukan bahwa keputusan pendanaan {{ $kec->nama_lembaga_sort }}
                     Tanggal {{ Tanggal::tglLatin($pinkel->tgl_dana) }}. yang merupakan tindak lanjut hasil verifikasi atas
                     Proposal Permohonan Kredit dari ;
                 </div>
                 <table>
                     <tr>
                         <td width="10">1.</td>
-                        <td width="120">Nama Pemanfaat</td>
+                        <td width="120">Nama Nasabah</td>
                         <td width="5">:</td>
                         <td>{{ $pinkel->anggota->namadepan }}</td>
                     </tr>
@@ -85,21 +84,20 @@
                         <td>Alamat</td>
                         <td>:</td>
                         <td>
-                            {{ $pinkel->anggota->alamat_Anggota }}
-                            {{ $pinkel->anggota->d->sebutan_desa->sebutan_kades }} {{ $pinkel->anggota->d->nama_desa }}
+                            {{ $pinkel->anggota->alamat }}
                         </td>
                     </tr>
                     <tr>
                         <td>3.</td>
-                        <td>Tanggal Proposal</td>
+                        <td>Tanggal Permohonan</td>
                         <td>:</td>
                         <td>{{ Tanggal::tglLatin($pinkel->tgl_proposal) }}</td>
                     </tr>
                     <tr>
                         <td>4.</td>
-                        <td>Jumlah Permohonan</td>
+                        <td>Nilai Kelayakan</td>
                         <td>:</td>
-                        <td>Rp {{ number_format($pinkel->proposal) }}</td>
+                        <td>Rp {{ number_format($pinkel->alokasi) }}</td>
                     </tr>
                 </table>
 
@@ -118,7 +116,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 12px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11pt;">
         <tr>
             <td colspan="2" height="24">&nbsp;</td>
         </tr>
@@ -130,10 +128,27 @@
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td align="center">{{ $kec->sebutan_level_1 }} UPK</td>
+            <td align="center">{{ $kec->sebutan_level_1 }}</td>
         </tr>
         <tr>
             <td colspan="2" height="40">&nbsp;</td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td align="center">
+                @php
+                    $qrPath = storage_path('app/public/qr/' . session('lokasi') . '.jpeg');
+                @endphp
+
+                @if (file_exists($qrPath))
+                    <img src="../storage/app/public/qr/{{ session('lokasi') }}.jpeg" height="70"
+                        alt="{{ $kec->id }}">
+                @else
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                @endif
+            </td>
         </tr>
         <tr>
             <td>&nbsp;</td>

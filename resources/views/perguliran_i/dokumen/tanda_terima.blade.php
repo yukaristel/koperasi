@@ -5,13 +5,13 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>TANDA TERIMA</b>
                 </div>
-                <div style="font-size: 16px;">
+                <div style="font-size: 16pt;">
                     <b>PINJAMAN KELOMPOK {{ $pinkel->jpp->nama_jpp }}</b>
                 </div>
             </td>
@@ -20,7 +20,7 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="70">Nama Kelompok</td>
             <td width="5" align="right">:</td>
@@ -54,7 +54,7 @@
             <td>0</td>
         </tr>
     </table>
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; table-layout: fixed;">
         <tr style="background: rgb(232, 232, 232)">
             <th class="t l b" width="3%" height="15">No</th>
             <th class="t l b" width="18%">Nik</th>
@@ -85,9 +85,9 @@
         @endphp
 
         <tr>
-            <td colspan="7" style="padding: 0px !important;">
+            <td colspan="7" style="padding: 0pt !important;">
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px; table-layout: fixed;">
+                    style="font-size: 10pt; table-layout: fixed;">
                     <tr style="font-weight: bold;">
                         <td class="t l b" height="15" width="72%" align="center">JUMLAH</td>
                         <td class="t l b" align="right" width="14%">{{ number_format($alokasi) }}</td>
@@ -96,7 +96,7 @@
                 </table>
 
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px;">
+                    style="font-size: 10pt;">
                     <tr>
                         <td width="60%">&nbsp;</td>
                         <td width="60">Diterima Di</td>
@@ -111,7 +111,7 @@
                     </tr>
                 </table>
                 <table class="p" border="0" width="100%" cellspacing="0" cellpadding="0"
-                    style="font-size: 11px;">
+                    style="font-size: 10pt;">
                     <tr>
                         <td colspan="2" height="10">&nbsp;</td>
                     </tr>

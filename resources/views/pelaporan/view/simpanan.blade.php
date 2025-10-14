@@ -14,11 +14,6 @@
     </style>
     @foreach ($jenis_ps as $jpp)
         @php
-            if ($jpp->simpanan->isEmpty()) {
-                continue;
-            }
-        @endphp
-        @php
             $kd_desa = [];
             $t_debit = 0;
             $t_kredit = 0;
@@ -56,7 +51,7 @@
             <th class="t l b" rowspan="2">Nama Pemanfaat</th>
             <th class="t l b" rowspan="2">Alamat</th>
             <th class="t l b" colspan="2">Mutasi</th>
-            <th class="t l b" width="10%" rowspan="2">Saldo</th>
+            <th class="t l b r" width="10%" rowspan="2">Saldo</th>
         </tr>
         <tr style="background: rgb(230, 230, 230); font-weight: bold;">
             <th class="t l b" width="10%">Debit</th>
@@ -64,7 +59,7 @@
         </tr>
 
 
-            @foreach ($jpp->simpanan as $pinkel)
+            @forelse($jpp->simpanan as $pinkel)
                 @php
                     $kd_desa[] = $pinkel->kd_desa;
                     $desa = $pinkel->kd_desa;
@@ -189,7 +184,16 @@
                     $j_kredit += $pinkel->real_s_sum_real_k;
                     $j_saldo += $pinkel->realSimpananTerbesar->sum ?? 0;
                 @endphp
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="9" align="center" class="t l b r">Data tidak tersedia</td>
+                </tr>
+                @php
+                    $j_debit = 0;
+                    $j_kredit = 0;
+                    $j_saldo = 0;
+                @endphp
+            @endforelse
             @php
                     $t_debit += $j_debit;
                     $t_kredit += $j_kredit;
@@ -203,7 +207,7 @@
                     </td>
                     <td class="t l b" align="right">{{ number_format($j_debit) }}</td>
                     <td class="t l b" align="right">{{ number_format($j_kredit) }}</td>
-                    <td class="t l b" align="right">{{ number_format($j_saldo) }}</td>
+                    <td class="t l b r" align="right">{{ number_format($j_saldo) }}</td>
                 </tr>
 
                 @php
@@ -224,7 +228,7 @@
                                 </td>
 								<td class="t l b" align="right">{{ number_format($t_debit) }}</td>
 								<td class="t l b" align="right">{{ number_format($t_kredit) }}</td>
-								<td class="t l b" align="right">{{ number_format($t_saldo) }}</td>
+								<td class="t l b r" align="right">{{ number_format($t_saldo) }}</td>
                             </tr>
 
                             <tr>

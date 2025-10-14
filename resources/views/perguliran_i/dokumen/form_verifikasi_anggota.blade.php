@@ -63,17 +63,17 @@
             $penilaian = ['Ratio pendapatan keluarga (bersih) per bulan dibagi angsuran per bulan', 'Ratio tabungan di kelompok dibagi kredit yang diajukan'];
         @endphp
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
             <tr>
                 <td class="b" colspan="3" align="center">
-                    <div style="font-size: 16px;">
-                        PENILAIAN PERMOHONAN PINJAMAN ANGGOTA KELOMPOK
+                    <div style="font-size: 16pt;">
+                        PENILAIAN PERMOHONAN PIUTANG ANGGOTA KELOMPOK
                     </div>
                 </td>
             </tr>
         </table>
 
-        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px; table-layout: fixed;">
+        <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt; table-layout: fixed;">
             <tbody>
                 <tr style="font-weight: bold;">
                     <td width="3%" height="15" align="center">A.</td>
@@ -195,7 +195,7 @@
                     <td>&nbsp;</td>
                     <td colspan="2">
                         <div>
-                            Anggota/pemanfaat ini LAYAK / TIDAK LAYAK untuk diberikan pinjaman sebesar:
+                            Anggota/Nasabah ini LAYAK / TIDAK LAYAK untuk diberikan Piutang sebesar:
                         </div>
                         <div>
                             ........................................................................
@@ -213,7 +213,7 @@
                         <div>Diverifikasi pada : .....................................</div>
                         <div>Oleh: Tim Verifikasi Kecamatan</div>
                         <table border="0" width="100%" cellspacing="0" cellpadding="0"
-                            style="font-size: 11px; table-layout: fixed;">
+                            style="font-size: 10pt; table-layout: fixed;">
                             @foreach ($verifikator as $verif)
                                 <tr>
                                     <td width="60%">

@@ -531,7 +531,11 @@
                 <td align="center">Pihak Kedua,</td>
             </tr>
             <tr>
-                <td colspan="2" height="40">&nbsp;</td>
+                <td align="center" height="60">
+
+    <img src="../storage/app/public/ttd.png" alt="Tanda Tangan"
+         style="position:absolute; top:180px; left:40px; width:200px; height:auto; z-index:10;">
+                <td align="center">&nbsp;</td>
             </tr>
             <tr>
                 <td align="center">
@@ -541,7 +545,6 @@
                     <b>{{ $dir->namadepan }} {{ $dir->namabelakang }}</b>
                 </td>
             </tr>
-
             <tr>
                 <td colspan="2">&nbsp;</td>
             </tr>
@@ -549,13 +552,14 @@
                 <td colspan="2" align="center">Saksi:</td>
             </tr>
             <tr>
-                <td colspan="2" height="40">&nbsp;</td>
+                <td colspan="2" height="60">&nbsp;</td>
             </tr>
             <tr>
                 <td align="center">..................................................</td>
                 <td align="center">..................................................</td>
             </tr>
         </table>
+
     </main>
 </body>
 

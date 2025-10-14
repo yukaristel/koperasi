@@ -12,14 +12,20 @@
 @extends('perguliran_i.dokumen.layout.base')
 
 @section('content')
-    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
+        <tr>
+            <td colspan="3" height="5"></td>
+        </tr>
+        <tr>
+            <td colspan="3" height="5"></td>
+        </tr>
         <tr class="b">
             <td colspan="3" align="center">
-                <div style="font-size: 18px;">
+                <div style="font-size: 18pt;">
                     <b>REKENING KORAN</b>
                 </div>
-                <div style="font-size: 16px;">
-                    <b>PINJAMAN {{ strtoupper($pinkel->anggota->namadepan) }}</b>
+                <div style="font-size: 16pt;">
+                    <b>PIUTANG {{ strtoupper($pinkel->anggota->namadepan) }}</b>
                 </div>
             </td>
         </tr>
@@ -27,7 +33,7 @@
             <td colspan="3" height="5"></td>
         </tr>
     </table>
-    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center"cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr>
             <td width="90">Loan ID.</td>
             <td width="5" align="center">:</td>
@@ -78,7 +84,7 @@
         </tr>
     </table>
 
-    <table border="0" width="100%" align="center" cellspacing="0" cellpadding="0" style="font-size: 11px;">
+    <table border="0" width="100%" align="center" cellspacing="0" cellpadding="0" style="font-size: 10pt;">
         <tr style="background: rgb(233,233,233)">
             <th class="t l b" width="10" align="center" height="20">No</th>
             <th class="t l b" width="40" align="center">Tanggal</th>

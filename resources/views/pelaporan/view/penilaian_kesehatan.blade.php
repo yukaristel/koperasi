@@ -25,8 +25,11 @@
         </tr>
 
     </table>
-
     @php
+        function safeDiv($a, $b) {
+            return ($b == 0) ? 0 : $a / $b;
+        }
+
         $biaya = $keuangan->biaya($tgl_kondisi);
         $pendapatan = $keuangan->pendapatan($tgl_kondisi);
         $surplus = $pendapatan - $biaya;
@@ -40,20 +43,16 @@
         $ckp = $aset['cadangan_piutang'];
 
         $_risiko_kolek = $tk['sum_kolek'] == 0 ? $ckp : $tk['sum_kolek'];
-        $saldo_piutang_berisiko = round(($tk['nunggak_pokok'] / $tk['saldo_pokok']) * 100, 2);
-        $cadangan_kerugian = round(($ckp / $_risiko_kolek) * 100, 2);
-        $laba_bersih = round((($surplus - ($tk['sum_kolek'] - $ckp)) / $aset_produktif) * 100, 2);
-        if ($biaya == '0' || $pendapatan == '0') {
-            $beban_operasional = 0;
-        } else {
-            $beban_operasional = round(($biaya / $pendapatan) * 100);
-        }
+        $saldo_piutang_berisiko = round(safeDiv($tk['nunggak_pokok'], $tk['saldo_pokok']) * 100, 2);
+        $cadangan_kerugian = round(safeDiv($ckp, $_risiko_kolek) * 100, 2);
+        $laba_bersih = round(safeDiv(($surplus - ($tk['sum_kolek'] - $ckp)), $aset_produktif) * 100, 2);
+        $beban_operasional = ($biaya == 0 || $pendapatan == 0) ? 0 : round(safeDiv($biaya, $pendapatan) * 100);
 
-        $saldo_piuang = round(($tk['saldo_pokok'] / $aset_ekonomi) * 100);
+        $saldo_piuang = round(safeDiv($tk['saldo_pokok'], $aset_ekonomi) * 100);
         if ($modal_awal == 0) {
             $kekayaan_bersih = round(($aset_ekonomi - $tk['sum_kolek']) * 100);
         } else {
-            $kekayaan_bersih = round((($aset_ekonomi - $tk['sum_kolek']) / $modal_awal) * 100);
+            $kekayaan_bersih = round(safeDiv(($aset_ekonomi - $tk['sum_kolek']), $modal_awal) * 100);
         }
 
         // Skor Baris 1
@@ -332,7 +331,7 @@
 
         <tr>
             <td class="t l b" align="center" rowspan="2">3</td>
-            <td class="t l b" rowspan="2" align="center">Rasio Laba Bersih Terhadap Kekayaan Bumdesma</td>
+            <td class="t l b" rowspan="2" align="center">Rasio Laba Bersih Terhadap Kekayaan {{ ucwords(strtolower($kec->nama_lembaga_sort)) }}</td>
             <td class="t l b">
                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px;">
                     <tr>
@@ -399,8 +398,8 @@
                 </table>
             </td>
             <td class="t l b" rowspan="2">
-                <div>{{ 'R < 60% skor 10' }}</div>
-                <div>{{ 'R < 65% skor 8.75' }}</div>
+                <div>{{ 'R < 30% skor 10' }}</div>
+                <div>{{ 'R < 35% skor 8.75' }}</div>
             </td>
             <td class="t l b" rowspan="2">
                 <div>{{ 'R < 70% skor 5.75' }}</div>
@@ -430,7 +429,7 @@
 
         <tr>
             <td class="t l b" align="center" rowspan="2">5</td>
-            <td class="t l b" rowspan="2" align="center">Rasio Saldo Piutang Terhadap Kekayaan Bumdesma Non Investasi
+            <td class="t l b" rowspan="2" align="center">Rasio Saldo Piutang Terhadap Kekayaan {{ ucwords(strtolower($kec->nama_lembaga_sort)) }} Non Investasi
             </td>
             <td class="t l b">
                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px;">
@@ -475,7 +474,7 @@
 
         <tr>
             <td class="t l b" align="center" rowspan="2">6</td>
-            <td class="t l b" rowspan="2" align="center">Rasio Kekayaan Bersih Budesma</td>
+            <td class="t l b" rowspan="2" align="center">Rasio Kekayaan Bersih {{ ucwords(strtolower($kec->nama_lembaga_sort)) }}</td>
             <td class="t l b">
                 <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 10px;">
                     <tr>
@@ -487,7 +486,7 @@
                         <td align="right">{{ number_format($tk['sum_kolek']) }}</td>
                     </tr>
                     <tr>
-                        <td>c. Modal disetor bumdesma </td>
+                        <td>c. Modal disetor {{ ucwords(strtolower($kec->nama_lembaga_sort)) }} </td>
                         <td align="right">{{ number_format($modal_awal) }}</td>
                     </tr>
                 </table>
@@ -528,7 +527,12 @@
                     style="font-size: 11px;">
                     <tr style="font-weight: bold;" class="break">
                         <td class="t l b" width="50%">
-                            Komulatif skor dalam parameter Bumdesma dengan usaha utama DBM
+                            Komulatif skor dalam parameter {{ ucwords(strtolower($kec->nama_lembaga_sort)) }} dengan usaha utama
+                            @if(in_array(Session::get('lokasi'), [351, 352, 353, 354]))
+                                Koperasi
+                            @else
+                                LKM
+                            @endif
                         </td>
                         <td class="t l b" align="center" width="10%">{{ '> 87.5 - 100' }}</td>
                         <td class="t l b" align="center" width="10%">{{ '> 62.5 - 87.5' }}</td>

@@ -1,7 +1,15 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\app",
+    "\\app\\Http",
+    "\\app\\Http\\Controllers",
+    "\\resources",
+    "\\resources\\views",
+    "\\resources\\views\\auth",
+    "\\resources\\views\\perguliran_i",
+    "\\resources\\views\\perguliran_i\\partials",
+    "\\routes"
   ],
-  "SelectedNode": "\\C:\\laragon\\www\\koperasi",
   "PreviewInSolutionExplorer": false
 }
