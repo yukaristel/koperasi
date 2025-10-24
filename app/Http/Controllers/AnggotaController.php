@@ -239,8 +239,6 @@ class AnggotaController extends Controller
             'nama_penjamin'
         ]);
 
-
-
         $rules = [
             'nik' => 'required|unique:anggota_' . Session::get('lokasi') . ',nik|min:16|max:16',
             'namadepan' => 'required',
@@ -266,11 +264,13 @@ class AnggotaController extends Controller
             }
         }
 
-
         $validate = Validator::make($data, $rules);
 
         if ($validate->fails()) {
-            return response()->json($validate->errors(), Response::HTTP_MOVED_PERMANENTLY);
+            return response()->json([
+                'errors' => $validate->errors(),
+                'success' => false
+            ], 422); // Gunakan 422 untuk validation error
         }
 
         $insert = [
@@ -281,7 +281,7 @@ class AnggotaController extends Controller
             'tempat_lahir' => $request->tempat_lahir,
             'tgl_lahir' => Tanggal::tglNasional($request->tgl_lahir),
             'alamat' => $request->alamat,
-            'domisi' => $request->domisili,
+            'domisi' => $request->domisili, 
             'desa' => $request->desa,
             'lokasi' => Session::get('lokasi'),
             'hp' => $request->hp,
@@ -291,66 +291,73 @@ class AnggotaController extends Controller
             'agama' => $request->agama,
             'status_pernikahan' => $request->status_pernikahan,
             'penjamin' => $request->nama_penjamin,
-            'hubungan' => $request->hubungan,
+            'hubungan' => $request->hubungan_penjamin,
             'nama_ibu' => $request->nama_ibu,
             'tempat_kerja' => $request->tempat_kerja,
             'usaha' => $request->jenis_usaha,
+            'keterangan_usaha' => $request->keterangan_usaha,
             'foto' => '1',
             'terdaftar' => date('Y-m-d'),
             'status' => '1',
             'petugas' => auth()->user()->id,
         ];
 
-        $penduduk = Anggota::create($insert);
-        $nik = $request->nik;
-        $tgl = $kec->tgl_anggota;
-        $anggota = Anggota::where('nik', $nik)->first();
-        $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
-        $simpanan_anggota = null;
-        $simpanan = null;
-        $pinjaman = null;
-        $status = 'N'; // default
-        $disabled = ''; 
+        try {
+            $penduduk = Anggota::create($insert);
+            $nik = $request->nik;
+            $tgl = $kec->tgl_anggota;
+            $anggota = Anggota::where('nik', $nik)->first();
+            $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
+            $simpanan_anggota = null;
+            $simpanan = null;
+            $pinjaman = null;
+            $status = 'N'; // default
+            $disabled = ''; 
 
-        if ($anggota) {
-            $simpanan_anggota = Simpanan::where('nia', $anggota->id)
-                ->where('jenis_simpanan', '2')
-                ->with(['realSimpananTerbesar'])
-                ->first();
+            if ($anggota) {
+                $simpanan_anggota = Simpanan::where('nia', $anggota->id)
+                    ->where('jenis_simpanan', '2')
+                    ->with(['realSimpananTerbesar'])
+                    ->first();
 
-            $simpanan = Simpanan::where('nia', $anggota->id)
-                ->whereNotIn('jenis_simpanan', [1, 2])
-                ->with(['realSimpananTerbesar','js','sts'])
-                ->get();
+                $simpanan = Simpanan::where('nia', $anggota->id)
+                    ->whereNotIn('jenis_simpanan', [1, 2])
+                    ->with(['realSimpananTerbesar','js','sts'])
+                    ->get();
 
-            $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
-                'anggota',
-                'jpp',
-                'sis_pokok',
-                'saldo',
-                'sts',
-            ])->withCount('real_i')->get();
+                $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
+                    'anggota',
+                    'jpp',
+                    'sis_pokok',
+                    'saldo',
+                    'sts',
+                ])->withCount('real_i')->get();
 
-            if ($anggota->status == 0) {
-                $status = 'B'; // Blacklist
-                $disabled = 'readonly'; 
+                if ($anggota->status == 0) {
+                    $status = 'B'; // Blacklist
+                    $disabled = 'readonly'; 
+                }
+                if ($simpanan_anggota) {
+                    $status = 'A'; // Aktif
+                }
             }
-            if ($simpanan_anggota) {
-                $status = 'A'; // Aktif
-            }
-
-        }
         
-        $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
+            $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
 
-        return response()->json([
-            'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
-            'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
-            'success' => true,
-            'msg' => 'Penduduk dengan nama ' . $insert['namadepan'] . ' berhasil disimpan'
-        ], Response::HTTP_ACCEPTED);
+            return response()->json([
+                'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
+                'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
+                'success' => true,
+                'msg' => 'Penduduk dengan nama ' . $insert['namadepan'] . ' berhasil disimpan'
+            ], 200);
+        
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
     }
-    
     /**
      * Display the specified resource.
      */

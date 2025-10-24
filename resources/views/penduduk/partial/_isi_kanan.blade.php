@@ -51,7 +51,7 @@
 
             @else
                 <p class="text-secondary fw-bold">YBS Belum Terdaftar sebagai anggota.</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDaftarAnggota" data-id="{{ $anggota->id ?? '' }}">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalDaftarAnggota" data-id="{{ $anggota->id ?? '' }}" {{ !$anggota ? 'disabled' : '' }}>
                   Daftarkan Anggota
                 </button>
             @endif
@@ -85,7 +85,7 @@
 
             <div class="d-grid gap-2 mt-3">
                 <button id="simpan_data" name="simpan_data" class="btn btn-primary btn-sm btn-simpan-angg" data-target="#FormPenduduk">SIMPAN DATA</button>
-                <a href="/anggota/cetak_kartu/{{$anggota->id}}" 
+                <a href="/anggota/cetak_kartu/{{ $anggota?->id ?? '#' }}" 
                    class="btn btn-outline-secondary btn-sm" 
                    target="_blank" 
                    {{ !$anggota ? 'disabled' : '' }}>

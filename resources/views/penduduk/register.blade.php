@@ -244,11 +244,13 @@
 
         $(document).on('click', '.btn-simpan-angg', function(e) {
             e.preventDefault();
+    console.log('Button clicked');
             $('small.text-danger').text('');
 
             let btn = $(this);
             let originalText = btn.html();
-            var form = $('#FormPenduduk')
+    var form = $('#FormPenduduk');
+    console.log('Form data:', form.serialize());
 
             $.ajax({
                 type: 'post',
@@ -260,14 +262,22 @@
                     );
                 },
                 success: function(res) {
-                    btn.prop('disabled', false).text(originalText);
-                    if (res.success) {
+                    btn.prop('disabled', false).html(originalText);
+    
+                    console.log('Response:', res); // Untuk debug
+    
+                    if (res.success === true) {
                         toastr.success(res.msg);
                         $('#isi_kiri').html(res.html_kiri);
                         $('#isi_kanan').html(res.html_kanan);
                         $('#namadepan').focus();
+                    } else if (res.success === false) {
+                        // Eksplisit false dari server
+                        toastr.warning(res.msg || 'Proses gagal, silakan coba lagi');
                     } else {
-                        toastr.warning(res.msg || 'Proses berhasil tetapi ada peringatan');
+                        // res.success tidak ada atau undefined
+                        toastr.info('Respons tidak valid dari server');
+                        console.error('Invalid response structure:', res);
                     }
                 },
                 error: function(xhr) {
@@ -478,8 +488,7 @@
 
 @section('modal')
     <div class="modal fade" id="modalDaftarAnggota" tabindex="-1" aria-labelledby="modalDaftarAnggotaLabel"
-        <form action="/simpanan" method="post" id="formDaftarAnggota" name="formDaftarAnggota">
-            aria-hidden="true">
+        <form action="/simpanan" method="post" id="formDaftarAnggota" name="formDaftarAnggota" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                         <div class="modal-header">

@@ -27,6 +27,16 @@
     <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
     <link id="pagestyle" href="../assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
     <style>
+        #toast-container > .toast {
+            background-color: #51A351 !important; /* hijau khas toastr success */
+            color: #fff !important;
+        }
+        #toast-container > .toast .toast-close-button {
+            color: #fff !important;
+        }
+        #toast-container > .toast .toast-close-button:hover {
+            opacity: 1;
+        }
         .modal {
             z-index: 1060 !important;
         }

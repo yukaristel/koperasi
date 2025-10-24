@@ -1,9 +1,11 @@
-<form action="/database/penduduk/{{ $anggota->id ?? '' }}" method="post" id="FormPenduduk" name="FormPenduduk">
-    @csrf
-    @if ($anggota)
+@if ($anggota)
+    <form action="/database/penduduk/{{ $anggota->id }}" method="post" id="FormPenduduk" name="FormPenduduk">
+        @csrf
         @method('PUT')
-    @endif
-
+@else
+    <form action="/database/penduduk" method="post" id="FormPenduduk" name="FormPenduduk">
+        @csrf
+@endif
     <div>
         <h6 class="fw-bold">1. IDENTITAS NASABAH</h6>
         <div class="row">
