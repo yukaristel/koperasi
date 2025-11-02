@@ -5,8 +5,12 @@
         <div class="tab-content">
             <div class="row">
                 <div class="col-12" id="notif">
-
                 </div>
+                <div class="mb-3">
+                    <label for="cariAnggota" class="form-label fw-bold">Cari Anggota</label>
+                    <input type="text" id="cariAnggota" class="form-control" placeholder="Ketik nama anggota...">
+                </div>
+                <div id="loan-id" class="fw-bold mt-2"></div>
                 <div class="col-md-8 mb-3">
                     <div class="card mb-3">
                         <div class="card-body py-2">
@@ -257,6 +261,59 @@
 @endsection
 
 @section('script')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+    $('#cariAnggota').typeahead({
+        source: function (query, process) {
+            return $.get('/perguliran/cari_anggota', { query: query }, function (result) {
+                const states = result.map(item => ({
+                    id: item.id,
+                    name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - ${item.id} [${item.nik}]`,
+                    value: item.id
+                }));
+                process(states);
+            });
+        },
+    
+        afterSelect: function(item) {
+            const path = '{{ Request::path() }}';
+        
+            if (path === 'transaksi/jurnal_angsuran_individu') {
+                $.get('/transaksi/form_angsuran_individu/' + item.id, function(result) {
+                    const ch_pokok = document.getElementById('chartP').getContext("2d");
+                    const ch_jasa = document.getElementById('chartJ').getContext("2d");
+                
+                    angsuran(true, result);
+                    makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
+                    makeChart('jasa', ch_jasa, result.sisa_jasa, result.sum_jasa);
+                
+                    $('#loan-id').html(item.id);
+                });
+            } else {
+                window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.id;
+            }
+        }
+    });
+    function tampilAngsuran(data) {
+        // Di sini kamu bisa tampilkan data di tabel atau card
+        console.log('Data angsuran:', data);
+    }
+
+    function buatChart(type, ctx, sisa, total) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Sisa', 'Terbayar'],
+                datasets: [{
+                    data: [sisa, total - sisa]
+                }]
+            }
+        });
+    }
+    </script>
+
     <script>
         $("#pokok").maskMoney({
             allowNegative: true

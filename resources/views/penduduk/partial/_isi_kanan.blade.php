@@ -27,7 +27,7 @@
 
             @if ($status === 'B')
                 <p class="text-github fw-bold">YBS Terblokir oleh sistem.</p>
-                
+    
                 <button type="button" id="blokir" name="blokir" class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#ModalPinj">
                     Buka Blokir
                 </button>
@@ -37,14 +37,25 @@
                     <p class="text-success fw-bold">Anggota Aktif</p>
                 @else
                     <p class="text-warning fw-bold">
-                        Anggota Menunggak (angka kurangnya) sejak {{ $tgl_kondisi->format('d-m-Y') }}
+                        Anggota Menunggak sejak {{ $tgl_kondisi->format('d-m-Y') }}
                     </p>
-                    
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalPerpanjang">
+        
+                    <button type="button" 
+                            class="btn btn-primary btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#modalPerpanjang"
+                            data-id="{{ $anggota->id ?? '' }}"
+                            data-jumlah="{{ $simpanan_anggota->jumlah ?? 0 }}">
                         Perpanjang Keanggotaan
                     </button>
-                    
-                    <button type="button" id="riwayat_anggota" name="riwayat_anggota" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#ModalPinj">
+        
+                    <button type="button" 
+                            id="riwayat_anggota" 
+                            name="riwayat_anggota" 
+                            class="btn btn-info btn-sm" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#ModalRiwayat"
+                            data-id="{{ $anggota->id ?? '' }}">
                         Riwayat Pembayaran Keanggotaan
                     </button>
                 @endif
@@ -102,11 +113,18 @@
                 <i class="fa fa-database"></i> Simpanan
             </div>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-sm btn-white" disabled>[+] Simp. Umum</button>
+                <button type="button" 
+                        class="btn btn-sm btn-white" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalSimpananUmum" 
+                        data-id="{{ $anggota->id ?? '' }}"
+                        {{ !$anggota ? 'disabled' : '' }}>
+                    [+] Simp. Umum
+                </button>
                 <button class="btn btn-sm btn-white" disabled>[+] Simp. Deposito</button>
             </div>
         </div>
-        
+    
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover table-sm small">
@@ -124,7 +142,7 @@
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailSimpanan" id="DetailSimpanan{{$simp->id}}">
                                     <td>{{ $simp->nomor_rekening }}</td>
                                     <td>{{ $simp->js->nama_js }}</td>
-                                    <td>{{ number_format($simp->realSimpananTerbesar->sum) }}</td>
+                                    <td>{{ number_format($simp->realSimpananTerbesar->sum ?? 0) }}</td>
                                     <td><span class="badge bg-{{ $simp->sts->warna_status }} text-black">{{ $simp->sts->nama_status }}</span></td>
                                 </tr>
                             @endforeach

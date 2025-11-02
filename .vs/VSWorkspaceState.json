@@ -1,7 +1,15 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\app",
+    "\\app\\Http",
+    "\\app\\Http\\Controllers",
+    "\\resources",
+    "\\resources\\views",
+    "\\resources\\views\\transaksi",
+    "\\resources\\views\\transaksi\\jurnal_angsuran",
+    "\\resources\\views\\transaksi\\jurnal_angsuran\\individu"
   ],
-  "SelectedNode": "\\C:\\laragon\\www\\koperasi",
+  "SelectedNode": "\\resources\\views\\transaksi\\jurnal_angsuran\\individu\\index.blade.php",
   "PreviewInSolutionExplorer": false
 }

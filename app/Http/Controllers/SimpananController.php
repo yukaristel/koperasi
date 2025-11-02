@@ -396,292 +396,396 @@ class SimpananController extends Controller
 
     public function store(Request $request)
     {
-        $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        $validator = Validator::make($request->all(), [
-            'jenis_simpanan' => 'required',
-            'nia' => 'required',
-            'setoran_awal' => 'required',
-            'tgl_buka_rekening' => 'required',
-            'bunga' => 'required|numeric',
-            'pajak_bunga' => 'required|numeric',
-            'admin' => 'required|numeric'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+        $jenis_simpanan = $request->jenis_simpanan;
+    
+        // Validasi berbeda berdasarkan jenis simpanan
+        if ($jenis_simpanan == 1 || $jenis_simpanan == 2) {
+            // Validasi untuk simpanan anggota (pokok/wajib)
+            $rules = [
+                'jenis_simpanan' => 'required',
+                'nia' => 'required',
+                'tgl_buka_rekening' => 'required',
+                'setoran_awal' => 'required',
+                'simpanan_wajib' => 'required',
+                'biaya_administrasi' => 'required',
+            ];
+        } else {
+            // Validasi untuk simpanan umum
+            $rules = [
+                'jenis_simpanan' => 'required',
+                'nia' => 'required',
+                'tgl_buka_rekening' => 'required',
+                'setoran_awal' => 'required',
+            ];
         }
-        if($request->jenis_simpanan=="1"){
-            $lokasi = session('lokasi');
-            $nia = $request->nia;
 
-        // Simpanan Pokok
-            $simpanan = new Simpanan();
-            $simpanan->jenis_simpanan = 1; // 1 = Simpanan Pokok
-            $simpanan->nia = $nia;
-            $simpanan->jumlah = $request->setoran_awal;
-            $simpanan->tgl_buka = $request->tgl_buka_rekening;
-            $simpanan->tgl_up = $request->tgl_buka_rekening;
-            $simpanan->status = 'A';
-            $simpanan->jangka = 0;
-            $simpanan->pros_jasa = 0;
-            $simpanan->tgl_tutup = $request->tgl_buka_rekening;
-            $simpanan->tgl_st = $request->tgl_buka_rekening;
-            $simpanan->bunga = 0;
-            $simpanan->pajak = 0;
-            $simpanan->admin = 0;
-            $simpanan->sp = null;
-            $simpanan->lembaga = null;
-            $simpanan->jabatan = null;
-            $simpanan->pengampu = null;
-            $simpanan->hubungan = null;
-            $simpanan->catatan_simpanan = 'Simpanan Pokok';
-            $simpanan->lu = now();
-            $simpanan->user_id = auth()->id();
-            $simpanan->save();
+        $validate = Validator::make($request->all(), $rules);
 
-            $id1 = str_pad($simpanan->id, 5, '0', STR_PAD_LEFT);
-            $simpanan->nomor_rekening = "$lokasi-001.$nia-$id1";
-            $simpanan->save();
+        if ($validate->fails()) {
+            return response()->json([
+                'errors' => $validate->errors(),
+                'success' => false
+            ], 422);
+        }
 
-            $maxId = $simpanan->id;
-
-            $js = JenisSimpanan::where('id', $request->jenis_simpanan)->first();
-            $anggota = Anggota::where('id', $request->nia)->first();
-
-            //transaksi pokok
-            Transaksi::create([
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'rekening_debit' => $js->rek_kas,
-                'rekening_kredit' =>  $js->rek_simp,
-                'idtp' => '0',
-                'id_pinj' => '0',
-                'id_pinj_i' => '0',
-                'id_simp' => $maxId,
-                'keterangan_transaksi' => $js->nama_js . ' ' . $anggota->namadepan,
-                'relasi' => $anggota->namadepan . '[' . $request->nia . ']',
-                'jumlah' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
-                'urutan' => '0',
-                'id_user' => auth()->user()->id,
-            ]);
-            $maxIdt = Transaksi::max('idt');
-
-            //real setoran awalx
-            RealSimpanan::create([
-                'cif' => $maxId,
-                'idt' => $maxIdt,
-                'kode' => 1,
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'real_d' =>  '0',
-                'real_k' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
-                'sum' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
-                'lu' => date('Y-m-d H:i:s'),
-                'id_user' => auth()->user()->id,
-            ]);
-            
-            
-            //transaksi pokok
-            Transaksi::create([
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'rekening_debit' => $js->rek_kas,
-                'rekening_kredit' =>  $js->rek_adm,
-                'idtp' => '0',
-                'id_pinj' => '0',
-                'id_pinj_i' => '0',
-                'id_simp' => '0',
-                'keterangan_transaksi' => 'Pendapatan Admin Simpanan ' . $js->nama_js . ' ' . $anggota->namadepan . '',
-                'relasi' => $anggota->namadepan . '[' . $request->nia . ']',
-                'jumlah' => str_replace(',', '', str_replace('.00', '', $request->biaya_administrasi)),
-                'urutan' => '0',
-                'id_user' => auth()->user()->id,
-            ]);
+        try {
+            $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+            $anggota = Anggota::find($request->nia);
         
-        // Simpanan Wajib
-            $simpanan2 = new Simpanan();
-            $simpanan2->jenis_simpanan = 2; // 2 = Simpanan Wajib
-            $simpanan2->nia = $nia;
-            $simpanan2->jumlah = $request->simpanan_wajib;
-            $simpanan2->tgl_buka = $request->tgl_buka_rekening;
-            $simpanan2->tgl_up = $request->tgl_buka_rekening;
-            $simpanan2->status = 'A';
-            $simpanan2->jangka = 0;
-            $simpanan2->pros_jasa = 0;
-            $simpanan2->tgl_tutup = $request->tgl_buka_rekening;
-            $simpanan2->tgl_st = $request->tgl_buka_rekening;
-            $simpanan2->bunga = 0;
-            $simpanan2->pajak = 0;
-            $simpanan2->admin = 0;
-            $simpanan2->sp = null;
-            $simpanan2->lembaga = null;
-            $simpanan2->jabatan = null;
-            $simpanan2->pengampu = null;
-            $simpanan2->hubungan = null;
-            $simpanan2->catatan_simpanan = 'Simpanan Wajib';
-            $simpanan2->lu = now();
-            $simpanan2->user_id = auth()->id();
-            $simpanan2->save();
+            if (!$anggota) {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Data anggota tidak ditemukan'
+                ], 404);
+            }
 
-            $id2 = str_pad($simpanan2->id, 5, '0', STR_PAD_LEFT);
-            $simpanan2->nomor_rekening = "$lokasi-002.$nia-$id2";
-            $simpanan2->save();
-
-            
-            $maxId = $simpanan2->id;
-
-            $js = JenisSimpanan::where('id', 2)->first();
-            $anggota = Anggota::where('id', $request->nia)->first();
-
-            //transaksi wajib
-            Transaksi::create([
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'rekening_debit' => $js->rek_kas,
-                'rekening_kredit' =>  $js->rek_simp,
-                'idtp' => '0',
-                'id_pinj' => '0',
-                'id_pinj_i' => '0',
-                'id_simp' => $maxId,
-                'keterangan_transaksi' => $js->nama_js . ' ' . $anggota->namadepan,
-                'relasi' => $anggota->namadepan . '[' . $request->nia . ']',
-                'jumlah' => str_replace(',', '', str_replace('.00', '', $request->simpanan_wajib)),
-                'urutan' => '0',
-                'id_user' => auth()->user()->id,
-            ]);
-            $maxIdt = Transaksi::max('idt');
-        
-            //real Wajib
-            RealSimpanan::create([
-                'cif' => $maxId,
-                'idt' => $maxIdt,
-                'kode' => 1,
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'real_d' =>  '0',
-                'real_k' => str_replace(',', '', str_replace('.00', '', $request->simpanan_wajib)),
-                'sum' => str_replace(',', '', str_replace('.00', '', $request->simpanan_wajib)),
-                'lu' => date('Y-m-d H:i:s'),
-                'id_user' => auth()->user()->id,
-            ]);
-            
-            $anggota = Anggota::where('id', $nia)->first();
-            $nik = $anggota->nik;
-            $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
-            $disabled = '';
-            $tgl = $kec->tgl_anggota;
-
-            if ($anggota) {
-                $simpanan_anggota = Simpanan::where('nia', $anggota->id)
-                    ->where('jenis_simpanan', '2')
-                    ->with(['realSimpananTerbesar'])
+            // Cek apakah sudah punya rekening jenis ini (untuk jenis tertentu)
+            if ($jenis_simpanan == 1 || $jenis_simpanan == 2) {
+                $cekSimpanan = Simpanan::where('nia', $request->nia)
+                    ->where('jenis_simpanan', $request->jenis_simpanan)
                     ->first();
-
-                $simpanan = Simpanan::where('nia', $anggota->id)
-                    ->whereNotIn('jenis_simpanan', [1, 2])
-                    ->with(['realSimpananTerbesar','js','sts'])
-                    ->get();
-
-                $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
-                    'anggota',
-                    'jpp',
-                    'sis_pokok',
-                    'saldo',
-                    'sts',
-                ])->withCount('real_i')->get();
-
-                if ($anggota->status == 0) {
-                    $status = 'B'; // Blacklist
-                    $disabled = 'readonly'; 
+            
+                if ($cekSimpanan) {
+                    return response()->json([
+                        'success' => false,
+                        'msg' => 'Anggota sudah memiliki simpanan jenis ini dengan nomor rekening: ' . $cekSimpanan->nomor_rekening
+                    ], 400);
                 }
-                if ($simpanan_anggota) {
-                    $status = 'A'; // Aktif
-                }
+            }
 
+            $jenis = str_pad($request->jenis_simpanan, 2, '0', STR_PAD_LEFT);
+        
+            $lastSimpanan = Simpanan::where('jenis_simpanan', $request->jenis_simpanan)
+                ->where('nia', $request->nia)
+                ->orderBy('id', 'DESC')
+                ->first();
+        
+            $urutan = $lastSimpanan ? (intval(substr($lastSimpanan->nomor_rekening, -4)) + 1) : 1;
+            $nourutan = str_pad($urutan, 4, '0', STR_PAD_LEFT);
+            $nomorRekening = "{$jenis}-{$kec->id}.{$request->nia}-{$nourutan}";
+
+            $nomorRekening = "{$jenis}-{$kec->id}.{$request->nia}-{$nourutan}";
+
+            // Bersihkan format rupiah
+            $setoranAwal = floatval(str_replace(',', '', $request->setoran_awal));
+            $admin = floatval(str_replace(',', '', $request->admin ?? 0));
+        
+            // Handle lembaga checkbox
+            $lembaga = $request->has('lembaga') && $request->lembaga == '1' ? 1 : 0;
+        
+            $insert = [
+                'nomor_rekening' => $nomorRekening,
+                'jenis_simpanan' => $request->jenis_simpanan,
+                'nia' => $request->nia,
+                'jumlah' => $setoranAwal,
+                'tgl_up' => date('Y-m-d'),
+                'jangka' => 0,
+                'pros_jasa' => $request->bunga ?? 0,
+                'tgl_buka' => Tanggal::tglNasional($request->tgl_buka_rekening),
+                'tgl_tutup' => null,
+                'tgl_st' => date('Y-m-d'),
+                'bunga' => $request->bunga ?? 0,
+                'pajak' => $request->pajak_bunga ?? 0,
+                'admin' => $admin,
+                'status' => 'A',
+                'sp' => 0,
+                'lembaga' => $lembaga,
+                'jabatan' => $lembaga == 1 ? $request->jabatan : null,
+                'pengampu' => $request->pengampu ?? null,
+                'hubungan' => $request->hubungan ?? null,
+                'catatan_simpanan' => $request->catatan_simpanan ?? sprintf(
+                    'Pembukaan Rekening Simpanan - Setoran Awal: Rp %s',
+                    number_format($setoranAwal, 0, ',', '.')
+                ),
+                'lu' => date('Y-m-d H:i:s'),
+                'user_id' => auth()->user()->id
+            ];
+            if ($jenis_simpanan == 1 || $jenis_simpanan == 2) {
+                $simpananWajib = floatval(str_replace('.', '', $request->simpanan_wajib ?? 0));
+                $biayaAdmin = floatval(str_replace('.', '', $request->biaya_administrasi ?? 0));
+                $totalSimpanan = $setoranAwal + $simpananWajib;
+            
+                $insert['jumlah'] = $totalSimpanan;
+                $insert['sp'] = $setoranAwal;
+                $insert['admin'] = $biayaAdmin;
+                $insert['catatan_simpanan'] = sprintf(
+                    'Pendaftaran Anggota - Simpanan Pokok: Rp %s, Simpanan Wajib: Rp %s, Biaya Admin: Rp %s',
+                    number_format($setoranAwal, 0, ',', '.'),
+                    number_format($simpananWajib, 0, ',', '.'),
+                    number_format($biayaAdmin, 0, ',', '.')
+                );
+            
+                $setoranAwal = $totalSimpanan; 
+            }
+
+            $simpanan_save = Simpanan::create($insert);
+
+            if (!$simpanan_save) {
+                throw new \Exception('Gagal menyimpan data simpanan');
             }
             
-        $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
+            $jenisSimpanan = JenisSimpanan::find($request->jenis_simpanan);
+            $kodeDebit = $jenisSimpanan->rek_kas;
+            $kodeKredit = $jenisSimpanan->rek_simp;
+            $kodeTransaksi = kode::where('def', 1)->first();
+
+            $transaksi = Transaksi::create([
+                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
+                'rekening_debit' => $kodeDebit,
+                'rekening_kredit' => $kodeKredit,
+                'idtp' => 0,
+                'id_pinj' => 0,
+                'id_pinj_i' => 0,
+                'id_simp' => $simpanan_save->id,
+                'keterangan_transaksi' => sprintf(
+                    'Pembukaan Rekening %s a/n %s (%s)',
+                    $nomorRekening,
+                    $anggota->namadepan,
+                    $simpanan_save->id
+                ),
+                'relasi' => $anggota->namadepan,
+                'jumlah' => $setoranAwal,
+                'urutan' => '0',
+                'id_user' => auth()->user()->id
+            ]);
+
+            if (!$transaksi) {
+                throw new \Exception('Gagal menyimpan transaksi');
+            }
+
+            if ($setoranAwal > 0) {
+                RealSimpanan::create([
+                    'cif' => $simpanan_save->id,
+                    'idt' => $transaksi->idt, 
+                    'kode' => $kodeTransaksi->kode, 
+                    'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
+                    'real_d' => $setoranAwal, 
+                    'real_k' => 0, 
+                    'sum' => $setoranAwal, 
+                    'lu' => date('Y-m-d H:i:s'),
+                    'id_user' => auth()->user()->id
+                ]);
+            }
+
+            // Reload data untuk view
+            $nik = $anggota->nik;
+            $tgl = $kec->tgl_anggota;
+            $anggota = Anggota::where('nik', $nik)->first();
+            $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
         
+            $simpanan_anggota = Simpanan::where('nia', $anggota->id)
+                ->where('jenis_simpanan', 2)
+                ->with(['realSimpananTerbesar'])
+                ->first();
+
+            $simpanan = Simpanan::where('nia', $anggota->id)
+                ->whereNotIn('jenis_simpanan', [1, 2])
+                ->with(['realSimpananTerbesar', 'js', 'sts'])
+                ->get();
+
+            $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
+                'anggota',
+                'jpp',
+                'sis_pokok',
+                'saldo',
+                'sts',
+            ])->withCount('real_i')->get();
+
+            $status = $simpanan_anggota ? 'A' : 'N';
+            $disabled = '';
+
+            $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
+
+            $jenisText = $jenis_simpanan == 3 ? 'Simpanan Umum' : 
+                        ($jenis_simpanan == 1 ? 'Simpanan Pokok' : 'Simpanan Wajib');
+
             return response()->json([
-                'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota','disabled','desa','jenis_kegiatan','nik'))->render(),
-                'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled','desa'))->render(),
                 'success' => true,
-                'msg' => 'Data simpanan berhasil disimpan'
-            ], Response::HTTP_ACCEPTED);
+                'msg' => sprintf(
+                    '%s atas nama %s berhasil dibuat dengan No. Rekening: %s',
+                    $jenisText,
+                    $anggota->namadepan,
+                    $nomorRekening
+                ),
+                'data' => [
+                    'nomor_rekening' => $nomorRekening,
+                    'simpanan_id' => $simpanan_save->id,
+                    'transaksi_id' => $transaksi->idt,
+                    'setoran_awal' => $setoranAwal
+                ],
+                'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota', 'disabled', 'desa', 'jenis_kegiatan', 'nik'))->render(),
+                'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled', 'desa'))->render(),
+            ], 200);
 
-        }else{ //simpanan biasa (bukan simpanan anggota)
-            $simpanan = new Simpanan();
-            $simpanan ->nomor_rekening = $request->nomor_rekening;
-            $simpanan ->lembaga = $request->lembaga;
-            $simpanan ->jabatan = $request->jabatan;
-            $simpanan ->catatan_simpanan = $request->catatan_simpanan;
-            $simpanan ->jenis_simpanan = $request->jenis_simpanan;
-            $simpanan ->nia = $request->nia;
-            $simpanan ->jumlah = $request->setoran_awal;
-            $simpanan ->tgl_buka = Tanggal::tglNasional($request->tgl_buka_rekening);
-            $simpanan ->tgl_tutup = Tanggal::tglNasional($request->tgl_minimal_tutup_rekening);
-            $simpanan ->bunga = $request->bunga;
-            $simpanan ->pajak = $request->pajak_bunga;
-            $simpanan ->admin = $request->admin;
-            $simpanan ->status = 'A';
-            $simpanan ->sp = $request->kuasa;
-            $simpanan ->pengampu = $request->ahli_waris;
-            $simpanan ->hubungan = $request->hubungan;
-            $simpanan ->user_id = auth()->id();
-            $simpanan ->lu = date('Y-m-d H:i:s');
-            $simpanan ->save();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 
-            $maxId = Simpanan::max('id');
+    public function perpanjang(Request $request)
+    {
+        $rules = [
+            'nia' => 'required',
+            'tgl_transaksi' => 'required',
+            'jumlah' => 'required', 
+        ];
 
-            $js = JenisSimpanan::where('id', $request->jenis_simpanan)->first();
-            $anggota = Anggota::where('id', $request->nia)->first();
+        $validate = Validator::make($request->all(), $rules);
 
+        if ($validate->fails()) {
+            return response()->json([
+                'errors' => $validate->errors(),
+                'success' => false
+            ], 422);
+        }
 
-            //setoran awal
-            Transaksi::create([
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'rekening_debit' => $js->rek_kas,
-                'rekening_kredit' =>  $js->rek_simp,
-                'idtp' => '0',
-                'id_pinj' => '0',
-                'id_pinj_i' => '0',
-                'id_simp' => $maxId,
-                'keterangan_transaksi' => 'Setoran Awal ' . $js->nama_js . ' ' . $anggota->namadepan . '',
-                'relasi' => $anggota->namadepan . '[' . $request->nia . ']',
-                'jumlah' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
-                'urutan' => '0',
-                'id_user' => auth()->user()->id,
-            ]);
-            $maxIdt = Transaksi::max('idt');
+        try {
+            $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
+            $anggota = Anggota::find($request->nia);
         
-            //admin register
-            Transaksi::create([
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'rekening_debit' => $js->rek_kas,
-                'rekening_kredit' =>  $js->rek_adm,
-                'idtp' => '0',
-                'id_pinj' => '0',
-                'id_pinj_i' => '0',
-                'id_simp' => '0',
-                'keterangan_transaksi' => 'Pendapatan Admin Simpanan ' . $js->nama_js . ' ' . $anggota->namadepan . '',
-                'relasi' => $anggota->namadepan . '[' . $request->nia . ']',
-                'jumlah' => str_replace(',', '', str_replace('.00', '', $request->admin_register)),
-                'urutan' => '0',
-                'id_user' => auth()->user()->id,
-            ]);
+            if (!$anggota) {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Data anggota tidak ditemukan'
+                ], 404);
+            }
+
+            $simpanan_list = Simpanan::where('nia', $request->nia)
+                ->where('jenis_simpanan', 2)
+                ->first();
+
+            if (!$simpanan_list) {
+                return response()->json([
+                    'success' => false,
+                    'msg' => 'Simpanan anggota tidak ditemukan. Silakan daftarkan anggota terlebih dahulu.'
+                ], 404);
+            }
+
+            // Bersihkan format rupiah (hapus titik, koma, spasi)
+            $jumlah = $request->jumlah;
         
-            //real setoran awalx
+            // Remove all non-numeric characters except decimal point
+            $jumlah = preg_replace('/[^\d.]/', '', $jumlah);
+            $jumlah = floatval($jumlah);
+
+            // Jika jumlah kosong/0, gunakan jumlah default dari simpanan
+            if ($jumlah <= 0) {
+                $jumlah = $simpanan_list->jumlah;
+            }
+
+            // Ambil kode rekening dari jenis simpanan
+            $jenisSimpanan = JenisSimpanan::find($simpanan_list->jenis_simpanan);
+            $kodeDebit = $jenisSimpanan->rek_kas;
+            $kodeKredit = $jenisSimpanan->rek_simp;
+        
+            // Ambil kode transaksi default
+            $kodeTransaksi = kode::where('def', 1)->first();
+
+            // 1. INSERT ke TRANSAKSI
+            $transaksi = Transaksi::create([
+                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_transaksi),
+                'rekening_debit' => $kodeDebit,
+                'rekening_kredit' => $kodeKredit,
+                'idtp' => 0, // Selalu 0 untuk simpanan
+                'id_pinj' => 0,
+                'id_pinj_i' => 0,
+                'id_simp' => $simpanan_list->id,
+                'keterangan_transaksi' => sprintf(
+                    'Perpanjang Keanggotaan %s a/n %s',
+                    $simpanan_list->nomor_rekening,
+                    $anggota->namadepan
+                ),
+                'relasi' => $anggota->namadepan,
+                'jumlah' => $jumlah,
+                'urutan' => '0',
+                'id_user' => auth()->user()->id
+            ]);
+
+            if (!$transaksi) {
+                throw new \Exception('Gagal menyimpan transaksi');
+            }
+
+            // 2. INSERT ke REAL_SIMPANAN
+            // Hitung saldo terakhir
+            $lastReal = RealSimpanan::where('cif', $simpanan_list->id)
+                ->orderBy('id', 'DESC')
+                ->first();
+        
+            $saldoSebelum = $lastReal ? $lastReal->sum : 0;
+            $saldoBaru = $saldoSebelum + $jumlah;
+
             RealSimpanan::create([
-                'cif' => $maxId,
-                'idt' => $maxIdt,
-                'kode' => 1,
-                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_buka_rekening),
-                'real_d' =>  '0',
-                'real_k' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
-                'sum' => str_replace(',', '', str_replace('.00', '', $request->setoran_awal)),
+                'cif' => $simpanan_list->id,
+                'idt' => $transaksi->idt,
+                'kode' => $kodeTransaksi->kode,
+                'tgl_transaksi' => Tanggal::tglNasional($request->tgl_transaksi),
+                'real_d' => $jumlah, // Debet (masuk)
+                'real_k' => 0, // Kredit (keluar)
+                'sum' => $saldoBaru, // Saldo baru
                 'lu' => date('Y-m-d H:i:s'),
-                'id_user' => auth()->user()->id,
+                'id_user' => auth()->user()->id
             ]);
+
+            // Update tgl_up di simpanan
+            Simpanan::where('id', $simpanan_list->id)->update([
+                'tgl_up' => date('Y-m-d'),
+                'lu' => date('Y-m-d H:i:s')
+            ]);
+
+            // Reload data untuk view
+            $nik = $anggota->nik;
+            $tgl = $kec->tgl_anggota;
+            $anggota = Anggota::where('nik', $nik)->first();
+            $desa = Desa::where('kd_kec', $kec->kd_kec)->get();
+        
+            $simpanan_anggota = Simpanan::where('nia', $anggota->id)
+                ->where('jenis_simpanan', 2)
+                ->with(['realSimpananTerbesar'])
+                ->first();
+
+            $simpanan = Simpanan::where('nia', $anggota->id)
+                ->whereNotIn('jenis_simpanan', [1, 2])
+                ->with(['realSimpananTerbesar', 'js', 'sts'])
+                ->get();
+
+            $pinjaman = PinjamanIndividu::where('nia', $anggota->id)->with([
+                'anggota',
+                'jpp',
+                'sis_pokok',
+                'saldo',
+                'sts',
+            ])->withCount('real_i')->get();
+
+            $status = $simpanan_anggota ? 'A' : 'N';
+            $disabled = '';
+
+            $jenis_kegiatan = JenisKegiatan::with('usaha')->get();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data simpanan berhasil disimpan',
-                'id' => $simpanan->id
-            ]);
+                'msg' => sprintf(
+                    'Perpanjang keanggotaan atas nama %s berhasil. Jumlah: Rp %s',
+                    $anggota->namadepan,
+                    number_format($jumlah, 0, ',', '.')
+                ),
+                'data' => [
+                    'simpanan_id' => $simpanan->id,
+                    'transaksi_id' => $transaksi->idt,
+                    'jumlah' => $jumlah,
+                    'saldo_baru' => $saldoBaru
+                ],
+                'html_kiri' => view('penduduk.partial._isi_kiri', compact('anggota', 'disabled', 'desa', 'jenis_kegiatan', 'nik'))->render(),
+                'html_kanan' => view('penduduk.partial._isi_kanan', compact('anggota', 'simpanan_anggota', 'simpanan', 'pinjaman', 'status', 'tgl', 'disabled', 'desa'))->render(),
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'msg' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
         }
     }
 
