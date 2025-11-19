@@ -23,11 +23,6 @@ class Simpanan extends Model
     {
         return $this->belongsTo(JenisSimpanan::class, 'jenis_simpanan');
     }
-    
-    public function sts()
-    {
-        return $this->belongsTo(StatusPinjaman::class, 'status', 'kd_status');
-    }
 
     public function jasa()
     {

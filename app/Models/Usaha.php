@@ -22,9 +22,4 @@ class Usaha extends Model
     {
         return $this->belongsTo(TandaTanganLaporan::class, 'id', 'lokasi');
     }
-    public function jenisKegiatan()
-    {
-        return $this->belongsTo(JenisKegiatan::class, 'jenis_kegiatan');
-    }
-
 }
