@@ -1,14 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\app",
-    "\\app\\Http",
-    "\\app\\Http\\Controllers",
-    "\\resources",
-    "\\resources\\views",
-    "\\resources\\views\\penduduk",
-    "\\resources\\views\\penduduk\\partial"
+    ""
   ],
-  "SelectedNode": "\\app\\Http\\Controllers\\AnggotaController.php",
+  "SelectedNode": "\\C:\\laragon\\www\\koperasi",
   "PreviewInSolutionExplorer": false
 }
