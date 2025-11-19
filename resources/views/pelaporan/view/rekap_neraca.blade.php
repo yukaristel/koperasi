@@ -53,7 +53,7 @@
                             $total_saldo = 0;
 
                             $kode_akun3 = $lev3->kode_akun;
-                            if ($kode_akun3 == '3.2.02.00') {
+                            if ($kode_akun3 == '3.2.04.00') {
                                 $total_saldo += $laba_rugi[$kec->id];
                             } else {
                                 foreach ($akun3[$kec->id][$kode_akun3]->rek as $rek) {

@@ -15,6 +15,11 @@
       "taskLabel": "task-lkm",
       "appliesTo": "/",
       "type": "launch"
+    },
+    {
+      "taskLabel": "task-koperasi",
+      "appliesTo": "/",
+      "type": "launch"
     }
   ]
 }

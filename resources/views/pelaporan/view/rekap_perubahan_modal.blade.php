@@ -63,7 +63,7 @@
                 foreach ($kecamatan as $kec) {
                     $rekKecamatan = $rekening[$kec->id][$key_rek];
 
-                    if ($rekKecamatan->kode_akun == '3.2.02.01') {
+                    if ($rekKecamatan->kode_akun == '3.2.04.01') {
                         $saldoKecamatan = $laba_rugi[$kec->id];
                     } else {
                         $saldoKecamatan = $keuangan->komSaldo($rekKecamatan);
@@ -132,7 +132,7 @@
                 foreach ($kecamatan as $kec) {
                     $rekKecamatan = $rekening2[$kec->id][$key_rek];
 
-                    if ($rekKecamatan->kode_akun == '3.2.02.01') {
+                    if ($rekKecamatan->kode_akun == '3.2.04.01') {
                         $saldoKecamatan = $laba_rugi[$kec->id];
                     } else {
                         $saldoKecamatan = $keuangan->komSaldo($rekKecamatan);

@@ -12,6 +12,9 @@
         <div class="card-body text-center">
 
             @php
+                // Fallback jika $simpanan tidak ada
+                $simpanan = $simpanan ?? $simpanan_list ?? collect();
+
                 $status = $status ?? null;
                 $tgl_kondisi = $simpanan_anggota->realSimpananTerbesar->tgl_transaksi ?? null;
                 $tgl_kondisi = \Carbon\Carbon::parse($tgl_kondisi ?? null);
@@ -142,7 +145,7 @@
                                 <tr class="fw-normal" style="cursor: pointer;" data-toggle="modal" data-target="#myModalDetailSimpanan" id="DetailSimpanan{{$simp->id}}">
                                     <td>{{ $simp->nomor_rekening }}</td>
                                     <td>{{ $simp->js->nama_js }}</td>
-                                    <td>{{ number_format($simp->realSimpananTerbesar->sum ?? 0) }}</td>
+                                    <td>{{ number_format((float)($simp->realSimpananTerbesar->sum ?? 0)) }}</td>
                                     <td><span class="badge bg-{{ $simp->sts->warna_status }} text-black">{{ $simp->sts->nama_status }}</span></td>
                                 </tr>
                             @endforeach
@@ -191,8 +194,8 @@
                                 <tr class="fw-normal" style="cursor: pointer;" onclick="window.location.href='{{ url('/detail_i/' . $pinj->id) }}'">
                                     <td>{{ $pinj->id }}</td>
                                     <td>{{ $pinj->tgl_cair }}</td>
-                                    <td>{{ number_format($pinj->alokasi ?? 0) }}</td>
-                                    <td>{{ number_format($pinj->saldo->saldo_pokok ?? 0) }}</td>
+                                    <td>{{ number_format((float)($pinj->alokasi ?? 0)) }}</td>
+                                    <td>{{ number_format((float)($pinj->saldo->saldo_pokok ?? 0)) }}</td>
                                     <td><span class="badge bg-{{ $pinj->sts->warna_status }} text-black">{{ $pinj->sts->nama_status }}</span></td>
                                 </tr>
                             @endforeach

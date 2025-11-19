@@ -223,7 +223,7 @@
                                                 $saldo = $keuangan->getTbSaldo($saldoRek);
                                                 $saldo_awal = $saldo['saldo_awal'];
                                                 $saldo_berjalan = $saldo['saldo_berjalan'];
-                                                if ($kode_akun == '3.2.02.01') {
+                                                if ($kode_akun == '3.2.04.01') {
                                                     $saldo_berjalan = $laba_rugi[$kec->id];
                                                 }
 

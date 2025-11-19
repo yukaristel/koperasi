@@ -255,7 +255,7 @@ class TransaksiController extends Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.02.01') {
+                if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.04.01') {
                     foreach ($rek->kom_saldo as $saldo) {
                         if ($saldo->bulan == 0) {
                             if ($saldo->debit != 0) $saldo_awal_debit = floatval($saldo->debit);
@@ -383,7 +383,7 @@ class TransaksiController extends Controller
             $debit = 0;
             $kredit = 0;
 
-            if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.02.01') {
+            if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.04.01') {
                 foreach ($rek->kom_saldo as $saldo) {
                     if ($saldo->bulan == 0) {
                         if ($saldo->debit > 0) $saldo_awal_debit = $saldo->debit;

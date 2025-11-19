@@ -6,10 +6,9 @@
     "\\app\\Http\\Controllers",
     "\\resources",
     "\\resources\\views",
-    "\\resources\\views\\transaksi",
-    "\\resources\\views\\transaksi\\jurnal_angsuran",
-    "\\resources\\views\\transaksi\\jurnal_angsuran\\individu"
+    "\\resources\\views\\penduduk",
+    "\\resources\\views\\penduduk\\partial"
   ],
-  "SelectedNode": "\\resources\\views\\transaksi\\jurnal_angsuran\\individu\\index.blade.php",
+  "SelectedNode": "\\app\\Http\\Controllers\\AnggotaController.php",
   "PreviewInSolutionExplorer": false
 }

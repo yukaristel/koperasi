@@ -78,7 +78,7 @@
                                             $_saldo = $saldo_awal + ($saldo_kredit - $saldo_debit);
                                         }
 
-                                        if ($rek->kode_akun == '3.2.02.01') {
+                                        if ($rek->kode_akun == '3.2.04.01') {
                                             $_saldo = $surplus;
                                             $laba_rugi = $surplus;
                                         }

@@ -237,7 +237,7 @@ class LaporanController extends Controller
         foreach ($data['kab']->kec as $kec) {
             foreach ($data_saldo[$kec->kd_kec]['saldo'] as $rek) {
                 $saldo = $keuangan->komSaldo($rek);
-                if ($rek->kode_akun == '3.2.02.01') {
+                if ($rek->kode_akun == '3.2.04.01') {
                     $saldo = 0;
                     foreach ($data_saldo[$kec->kd_kec]['laba_rugi'] as $lb) {
                         if ($lb->lev1 == 5) {
@@ -518,7 +518,7 @@ class LaporanController extends Controller
                 if ($rek->lev1 != '3') continue;
 
                 $saldo = $keuangan->komSaldo($rek);
-                if ($rek->kode_akun == '3.2.02.01') {
+                if ($rek->kode_akun == '3.2.04.01') {
                     $saldo = 0;
                     foreach ($data_saldo[$kec->kd_kec]['laba_rugi'] as $lb) {
                         if ($lb->lev1 == 5) {
