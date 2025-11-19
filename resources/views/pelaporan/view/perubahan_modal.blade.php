@@ -55,7 +55,7 @@
             @endif
 
             @php
-                if ($rek->kode_akun == '3.2.04.01') {
+                if ($rek->kode_akun == '3.2.02.01') {
                     $saldo = $keuangan->laba_rugi($tgl_kondisi);
                 } else {
                     $saldo = $keuangan->komSaldo($rek);
@@ -95,7 +95,7 @@
         @endphp
         @foreach ($rekening2 as $rek)
             @php
-                if ($rek->kode_akun == '3.2.04.01') {
+                if ($rek->kode_akun == '3.2.02.01') {
                     $saldo = $keuangan->laba_rugi($tgl_kondisi);
                 } else {
                     $saldo = $keuangan->komSaldo($rek);

@@ -18,8 +18,8 @@
         <tr style="background: #000; color: #fff;">
             <td width="10%">Kode</td>
             <td width="45%">Nama Akun</td>
-            <td align="center" width="15%">Saldo Tahun Lalu</td>
-            <td align="center" width="15%">Total Saldo</td>
+            <td align="center" width="15%">Saldo Awal Tahun</td>
+            <td align="center" width="15%">Saldo s.d. {{$th}}</td>
         </tr>
         <tr>
             <td colspan="4" height="1"></td>
@@ -53,7 +53,7 @@
                             $total_saldo = 0;
 
                             $kode_akun3 = $lev3->kode_akun;
-                            if ($kode_akun3 == '3.2.04.00') {
+                            if ($kode_akun3 == '3.2.02.00') {
                                 $total_saldo += $laba_rugi[$kec->id];
                             } else {
                                 foreach ($akun3[$kec->id][$kode_akun3]->rek as $rek) {

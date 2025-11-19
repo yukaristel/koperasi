@@ -40,6 +40,10 @@
     <textarea name="sub_laporan" id="sub_laporan" class="d-none"></textarea>
 
     <script>
+        if (typeof quill !== 'undefined' && quill) {
+            quill = null;
+        }
+        
         quill = new Quill('#editor', {
             theme: 'snow'
         });
@@ -92,7 +96,7 @@
 
 <script>
     $('.sublaporanselect2').select2({
-        theme: 'bootstrap-4'
+        theme: 'bootstrap-5'
     });
 </script>
 

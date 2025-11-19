@@ -72,54 +72,127 @@
     </table>
 
     <ol style="list-style: upper-alpha;">
+
+    @if(in_array(session('lokasi'), [2, 351, 352, 353, 354]))
+    
         <li>
             <div style="text-transform: uppercase;">Gambaran Umum</div>
             <div style="text-align: justify">
-                {{ $kec->nama_lembaga_sort }} adalah Badan Usaha yang didirikan dari transformasi UPK PNPM-MPd
-                dengan
-                kegiatan usaha Dana Bergulir Masyarakat (DBM) melalui produk usahanya SPP dan UEP. Dalam
-                perkembangannya sebagian dari laba DBM UPK PNPM-MPd kemudian sebelum
-                ditetapkannya PP 11 tahun 2021 telah digunakan untuk membentuk unit usaha Perdagangan dan
-                Produksi*.
+                Lembaga Koperasi Arthamari adalah lembaga ekonomi beranggotakan masyarakat desa yang dibentuk untuk meningkatkan kesejahteraan melalui prinsip gotong royong, kekeluargaan, dan partisipasi bersama.
+            </div> <br>
+            <div style="text-align: justify">
+                Regulasi atau Dasar Hukum  {{ $kec->nama_lembaga_sort }} adalah sebagai berikut : 
             </div>
+            <ol>
+                <li>
+                    Undang-Undang Nomor 25 Tahun 1992 tentang Perkoperasian
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 4 Tahun 1994 tentang Persyaratan dan Tata cara Pengesahan Akta Pendirian dan Perubahan Anggaran Dasar Koperasi. 
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 17 Tahun 1994 tentang Pembubaran Koperasi Oleh Pemerintah.
+                </li>
+                <li>
+                    Peraturan Menteri Koperasi dan UKM Nomor 13 Tahun 2023. 
+                </li>
+                <li>
+                    Peraturan Menteri Koperasi dan UKM Nomor 8 Tahun 2023.
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 7 Tahun 2021 tentang Kemudahan, Pelindungan dan Pemberdayaan Koperasi dan Usaha Mikro, Kecil dan Menengah
+                </li>
+                
+                <li>
+                    Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah (Permenkop UKM) Nomor 72 Tahun 2017
+                    <ol style="list-style: lower-alpha">
+                        <li>
+                            Permenkop 9 Tahun 2018 adalah Peraturan Menteri Koperasi dan UKM Nomor 9 Tahun 2018
+                        </li>
+                        <li>
+                            Permenkop No. 15 Tahun 2015 adalah Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah tentang Usaha Simpan Pinjam oleh Koperasi.
+                        </li>
+                        <li>
+                            Permenkop No 19 Tahun 2015 tentang Rapat Anggota Tahunan
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 9 Tahun 2020 tentang Pengawasan Koperasi
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 8 Tahun 2023 (Permenkop 8/2023) mengatur tentang usaha simpan pinjam oleh koperasi.
+                        </li>
+                        <li>
+                            Peraturan Menteri Koperasi dan Usaha Kecil dan Menengah Nomor 2 Tahun 2024 tentang Kebijakan Akuntansi Koperasi
+                        </li>
+                        <li>
+                            Permenkop No. 1 Tahun 2025 tentang "Penyaluran Pinjaman atau Pembiayaan Dana Bergulir kepada Koperasi Percontohan (Mock Up) Koperasi Desa/Kelurahan Merah Putih". 
+                        </li>
+                    </ol>
+                </li>
+            </ol>
             <p style="text-align: justify">
-                Bumdesma Lkd setelah didirikan sesuai ketentuan PP 11 tahun 2021 dilaksanakan transformasi
-                sesuai Permendesa
-                PDTT Nomor 15 tahun 2021 yang meliputi pengalihan aset, pengalihan kelembagaan, pengalihan
-                personil, dan
-                pengalihan kegiatan usaha. Modal awal Pendirian Bumdesma Lkd sesuai dengan ketentuan tersebut
-                adalah berasal
-                dari keseluruhan pengalihan keseluruhan aset DBM Eks PNPM MPd (Permendesa PDTT 15 tahun 2021
-                Pasal 5) yang
-                dicatat sebagai Ekuitas Bumdesma Lkd ditambah dengan Penyertaan Modal Desa. Yang kemudian
-                didalam laporan
-                posisi keuangan ekuitas yang berasal dari Aset DBM Eks PNPM Mpd disebut Modal Masyarakat Desa
-                (Permendesa
-                PDTT 15 tahun 2021 Pasal 6).
+                Selanjutnya {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }}
+                {{ $kec->nama_kec }}
+                telah resmi mendaftar sebagai lembaga keuangan yang selanjutnya mendapat legalitas dari Kementerian Hukum
+                dan HAM
+                Nomor: {{ $kec->nomor_bh }}.
             </p>
+        </li>
+    @else
+        <li>
+            <div style="text-transform: uppercase;">Gambaran Umum</div>
+            <div style="text-align: justify">
+                Lembaga Keuangan Mikro ({{ $kec->nama_lembaga_sort }}) adalah lembaga keuangan yang khusus didirikan untuk
+                memberikan jasa
+                pengembangan usaha dan pemberdayaan masyarakat, baik melalui pinjaman atau pembiayaan dalam usaha
+                skala mikro kepada masyarakat, pengelolaan simpanan, maupun
+                pengembangan usaha yang tidak semata-mata mencari keuntungan.
+            </div> <br>
+            <div style="text-align: justify">
+                Dalam rangka memenuhi amanat regulasi tentang pendirian dan operasional lembaga kuangan mikro (LKM) sebagai
+                berikut:
+            </div>
+            <ol>
+                <li>
+                    Undang-Undang Nomor 1 Tahun 2013 Tentang Lembaga Keuangan Mikro (Undang-Undang LKM).
+                </li>
+                <li>
+                    Peraturan Pemerintah Nomor 89 Tahun 2014 tentang Suku Bunga Pinjaman Atau Imbal Hasil Pembiayaan dan
+                    Luas Cakupan Wilayah Usaha Lembaga Keuangan Mikro.
+                </li>
+                <li>
+                    Surat Edaran Otoritas Jasa Keuangan (SEOJK), SEOJK Nomor 29/SEOJK.05/2015 tentang Laporan Keuangan
+                    Lembaga Keuangan Mikro.
+                </li>
+                <li>
+                    Peraturan Otoritas Jasa Keuangan (POJK):
+                    <ol style="list-style: lower-alpha">
+                        <li>
+                            POJK Nomor 12/POJK.05/2014 tentang Perizinan Usaha dan Kelembagaan Lembaga Keuangan Mikro.
+                        </li>
+                        <li>
+                            POJK Nomor 13/POJK.05/2014 tentang Penyelenggaraan Usaha Lembaga Keuangan Mikro.
+                        </li>
+                        <li>
+                            POJK Nomor 14/POJK.05/2014 tentang Pembinaan dan Pengawasan Lembaga Keuangan Mikro.
+                        </li>
+                        <li>
+                            POJK Nomor 61/POJK.05/2015 tentang Perubahan atas Peraturan Otoritas Jasa Keuangan Nomor
+                            12/POJK.05/2014 tentang Perizinan Usaha dan Kelembagaan Lembaga Keuangan Mikro.
+                        </li>
+                        <li>
+                            POJK Nomor 62/POJK.05/2015 tentang Perubahan atas Peraturan Otoritas Jasa Keuangan Nomor
+                            13/POJK.05/2014 tentang Penyelenggaraan Usaha Lembaga Keuangan Mikro.
+                        </li>
+                    </ol>
+                </li>
+            </ol>
             <p style="text-align: justify">
-                Sesuai dengan ketentuan UU Cipta Kerja No 11 Tahun 2020 bahwa Menetapkan status Badan hukum BUM
-                Desa pada
-                ketentuan Pasal 117 "bahwa Badan Usaha Milik Desa yang selanjutnya disebut BUM Desa adalah Badan
-                hukum yang
-                didirikan oleh desa dan atau bersama desa-desa guna mengelola usaha, memanfaatkan aset,
-                mengembangkan
-                investasi dan produktivitas, menyediakan jasa pelayanan, dan atau jenis usaha lainnya untuk
-                sebesar-besarnya
-                kesejahteraan masyarakat desa." Status inilah yang menjadi dasar hukum pelaksanaan usaha
-                didirikan dengan
-                kegiatan Usaha Utama DBM.
-            </p>
-            <p style="text-align: justify">
-                {{ $kec->nama_lembaga_sort }} didirikan di {{ $kec->nama_kec }} berdasarkan PERATURAN BERSAMA
-                KEPALA DESA
-                NOMOR {{ $peraturan_desa }} dan mendapatkan Sertifikat Badan Hukum dari Menteri Hukum dan Hak
-                Asasi Manusia
-                No. {{ $kec->nomor_bh }}. {{ $kec->nama_lembaga_sort }}
-                menjalankan usaha
-                pinjaman Dana Bergulir Masyarakat yang masuk dalam kategori usaha mikrofinance dan berdomisili
-                di {{ $kec->nama_kec }}
-                dengan perangkat organisasi sebagai berikut:
+                Selanjutnya {{ $kec->nama_lembaga_sort }} {{ $kec->sebutan_kec }}
+                {{ $kec->nama_kec }}
+                telah resmi mendaftar sebagai lembaga keuangan yang selanjutnya mendapat legalitas dari Kementerian Hukum
+                dan HAM
+                Nomor: {{ $kec->nomor_bh }}. Adapun susunan pengurusnya adalah sebagai berikut :
 
             <table style="margin-top: -10px; margin-left: 15px;">
                 <tr>
@@ -132,17 +205,23 @@
                 <tr>
                     <td style="padding: 0px; 4px;">{{ $kec->sebutan_level_1 }}</td>
                     <td style="padding: 0px; 4px;">:</td>
-                    <td style="padding: 0px; 4px;">{{ $dir->namadepan . ' ' . $dir->namabelakang }}</td>
+                    <td style="padding: 0px; 4px;">
+                        {{ $dir ? $dir->namadepan . ' ' . $dir->namabelakang : '......................................' }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="padding: 0px; 4px;">{{ $kec->sebutan_level_2 }}</td>
                     <td style="padding: 0px; 4px;">:</td>
-                    <td style="padding: 0px; 4px;">{{ $sekr->namadepan . ' ' . $sekr->namabelakang }}</td>
+                    <td style="padding: 0px; 4px;">
+                        {{ $sekr ? $sekr->namadepan . ' ' . $sekr->namabelakang : '......................................' }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="padding: 0px; 4px;">{{ $kec->sebutan_level_3 }}</td>
                     <td style="padding: 0px; 4px;">:</td>
-                    <td style="padding: 0px; 4px;">{{ $bend->namadepan . ' ' . $bend->namabelakang }}</td>
+                    <td style="padding: 0px; 4px;">
+                        {{ $bend ? $bend->namadepan . ' ' . $bend->namabelakang : '......................................' }}
+                    </td>
                 </tr>
                 {{-- <tr>
                     <td style="padding: 0px; 4px;">Unit Usaha</td>
@@ -152,6 +231,7 @@
             </table>
             </p>
         </li>
+    @endif
         <li style="margin-top: 12px;">
             <div style="text-transform: uppercase;">
                 Ikhtisar Kebijakan Akutansi
@@ -260,7 +340,7 @@
                                 @foreach ($lev3->rek as $rek)
                                     @php
                                         $saldo = $keuangan->komSaldo($rek);
-                                        if ($rek->kode_akun == '3.2.04.01' && ($bulan != '1' && $hari != '1')) {
+                                        if ($rek->kode_akun == '3.2.02.01' && ($bulan != '1' && $hari != '1')) {
                                             $saldo = $keuangan->laba_rugi($tgl_kondisi);
                                         }
 
@@ -329,6 +409,13 @@
                         </td>
                         <td align="right">{{ number_format($kredit, 2) }}</td>
                     </tr>
+                    @if($kredit!=$debit)
+                    <tr style="background: rgb(250, 0, 0); font-weight: bold;">
+                        <td height="20" colspan="3" align="left">
+                            <b>Terdapat selisih antara Aset dengan Liabilitas + Ekuitas</b> {{ number_format($debit, 2) }} != {{ number_format($kredit, 2) }}
+                        </td>
+                    </tr>
+                    @endif
                 </table>
             </div>
         </li>

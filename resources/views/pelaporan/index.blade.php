@@ -97,19 +97,17 @@
                         </div>
                     </div>
                     <input type="hidden" name="type" id="type" value="pdf">
-                    <br>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <button type="button" id="SimpanSaldo" class="btn btn-sm btn-info me-2">Simpan Saldo</button>
-                        </div>
 
+                    <br>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <button type="button" id="SimpanSaldo" class="btn btn-sm btn-danger">Simpan Saldo</button>
+                        </div>
                         <div>
                             <button type="button" id="Excel" class="btn btn-sm btn-success me-2">Excel</button>
                             <button type="button" id="Preview" class="btn btn-sm btn-dark">Preview</button>
                         </div>
                     </div>
-
-
                     <br><br>
                 </form>
             </div>
@@ -193,7 +191,8 @@
             $(this).parent('form').find('#type').val('pdf')
             var file = $('select#laporan').val()
             if (file == 'calk') {
-                await $('textarea#sub_laporan').val(quill.container.firstChild.innerHTML)
+                // Perbaikan: hapus await, langsung akses quill
+                $('#sub_laporan').val(quill.root.innerHTML)
             }
 
             var form = $('#FormPelaporan')
@@ -208,11 +207,11 @@
             $(this).parent('form').find('#type').val('excel')
             var file = $('select#laporan').val()
             if (file == 'calk') {
-                await $('textarea#sub_laporan').val(quill.container.firstChild.innerHTML)
+                // Perbaikan: hapus await, langsung akses quill
+                $('#sub_laporan').val(quill.root.innerHTML)
             }
 
             var form = $('#FormPelaporan')
-            console.log(form.serialize())
             if (file != '') {
                 form.submit()
             }

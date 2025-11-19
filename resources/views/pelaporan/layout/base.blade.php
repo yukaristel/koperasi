@@ -103,7 +103,7 @@
                     </td>
                 </tr>
             </table>
-        @elseif($laporan == 'rekap_neraca' || $laporan == 'rekap_rb')
+        @elseif(strpos($laporan, 'rekap_') === 0)
             <table width="100%" style="border-bottom: 1px solid grey;">
                 <tr>
                     <td width="30">

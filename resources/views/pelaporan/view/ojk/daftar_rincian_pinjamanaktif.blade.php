@@ -1,5 +1,6 @@
 @php
     use App\Utils\Keuangan;
+    use App\Utils\Tanggal;
     $keuangan = new Keuangan();
     $section = 0;
     $empty = false;
@@ -74,11 +75,26 @@
     .align-left {
         text-align: left;
     }
-
 </style>
+
 @php
     $nomor = 0;
+    
+    // Parse JSON kolek configuration
+    $klk = json_decode($kec->kolek, true);
+    
+    // Filter hanya item yang tidak null
+    $kolek_items = [];
+    if (is_array($klk)) {
+        foreach ($klk as $index => $item) {
+            // Hanya include jika nama tidak null
+            if (!empty($item['nama'])) {
+                $kolek_items[] = $item;
+            }
+        }
+    }
 @endphp
+
 @foreach ($jenis_pp as $jpp)
     @php
         if ($jpp->pinjaman_individu->isEmpty()) {
@@ -88,12 +104,9 @@
         $nomor++;
 
         $jumlah_aktif = 0;
-        $j_saldo_pokok =0;
+        $j_saldo_pokok = 0;
         $t_saldo_pokok = 0;
         $t_alokasi = 0;
-
-
-
         $kd_desa = [];
     @endphp
 
@@ -131,6 +144,7 @@
             <td width="70%" class="style9 bottom">:{{ $tgl }}</td>
         </tr>
     </table>
+
     <table width="96%" border="0" align="center" cellpadding="3" cellspacing="0">
         <tr align="center" height="30px" class="style9">
             <th width="2%" rowspan="2" class="left bottom">No</th>
@@ -192,12 +206,12 @@
                     $nomor = 1;
                     $section = $pinj_i->kd_desa;
                     $nama_desa = $pinj_i->sebutan_desa . ' ' . $pinj_i->nama_desa;
-                    $kpros_jasa =number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'],2);
+                    $kpros_jasa = number_format($pinj_i['pros_jasa'] - $pinj_i['jangka'],2);
 
                     $ktgl1 = $pinj_i['tgl_cair'];
-                    $kpenambahan ="+".$pinj_i['jangka']." month";
+                    $kpenambahan = "+".$pinj_i['jangka']." month";
                     $ktgl2 = date('Y-m-d', strtotime($kpenambahan, strtotime($ktgl1)));
-                    $kpros_jasa =number_format($pinj_i['pros_jasa']/$pinj_i['jangka'],2);
+                    $kpros_jasa = number_format($pinj_i['pros_jasa']/$pinj_i['jangka'],2);
 
                     $j_alokasi = 0;
                     $j_saldo = 0;
@@ -231,12 +245,14 @@
                 $wajib_pokok = 0;
                 $wajib_jasa = 0;
                 $angsuran_ke = 0;
+                $jatuh_tempo = 0;
                 if ($pinj_i->target) {
                     $target_pokok = $pinj_i->target->target_pokok;
                     $target_jasa = $pinj_i->target->target_jasa;
                     $wajib_pokok = $pinj_i->target->wajib_pokok;
                     $wajib_jasa = $pinj_i->target->wajib_jasa;
                     $angsuran_ke = $pinj_i->target->angsuran_ke;
+                    $jatuh_tempo = $pinj_i->target->jatuh_tempo;
                 }
 
                 $tunggakan_pokok = $target_pokok - $sum_pokok;
@@ -273,23 +289,61 @@
 
                 $selisih = $selisih->y * 12 + $selisih->m;
 
+                $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
+
                 $_kolek = 0;
                 if ($wajib_pokok != '0') {
                     $_kolek = $tunggakan_pokok / $wajib_pokok;
                 }
                 
-                $kolek = round($_kolek + ($selisih - $angsuran_ke));
-                if ($pinj_i->tgl_lunas <= $tgl_kondisi && ($pinj_i->status == 'L' || $pinj_i->status == 'H' || $pinj_i->status == 'R')) {
-                    $kolek = 0;
+                $kolek_bulan = round($_kolek + ($selisih - $angsuran_ke));
+
+                $kolek_hari = 0;
+                if ($tunggakan_pokok <= 0) {
+                    $kolek_hari = 0;
+                } elseif ($jatuh_tempo != 0) {
+                    $kolek_hari = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
+                    if ($kolek_hari < 0) {
+                        $kolek_hari = 0;
+                    }
                 }
 
-                if($kolek<=6){
-                    $keterangan="Lancar" ; 
-                } elseif ($kolek >= 6 && $kolek <= 12) {
-                    $keterangan="Diragukan" ; 
-                }else{
-                    $keterangan="Macet" ; 
-                } 
+                // Logika penentuan kolektibilitas dari JSON
+                $keterangan = null;
+                $matched = false;
+                
+                foreach ($kolek_items as $idx => $item) {
+                    if (!is_array($item) || !isset($item['durasi'], $item['satuan'])) {
+                        continue;
+                    }
+
+                    $durasi = (int) $item['durasi'];
+                    $match = false;
+                    
+                    if ($item['satuan'] === 'hari' && isset($kolek_hari) && $kolek_hari < $durasi) {
+                        $match = true;
+                    } elseif ($item['satuan'] === 'bulan' && isset($kolek_bulan) && $kolek_bulan < $durasi) {
+                        $match = true;
+                    }
+
+                    if ($match) {
+                        $keterangan = $item['nama'];
+                        $matched = true;
+                        break;
+                    }
+                }
+
+                // Jika tidak ada yang cocok, ambil kategori terakhir
+                if (!$matched && count($kolek_items) > 0) {
+                    $last_item = end($kolek_items);
+                    $keterangan = $last_item['nama'];
+                }
+
+                // Jika pinjaman sudah lunas
+                if ($pinj_i->tgl_lunas <= $tgl_kondisi && ($pinj_i->status == 'L' || $pinj_i->status == 'H' || $pinj_i->status == 'R')) {
+                    $kolek_bulan = 0;
+                    $keterangan = $kolek_items[0]['nama'] ?? 'Lancar';
+                }
             @endphp
 
             <tr align="right" height="15px" class="style9">
@@ -303,7 +357,7 @@
                 <td class="left top" align="center">per bulan</td>
                 <td class="left top">{{number_format($pinj_i->alokasi)}}</td>
                 <td class="left top">{{ number_format($saldo_pokok) }}</td>
-                <td class="left top">{{$kolek}}</td>
+                <td class="left top">{{$kolek_bulan}}</td>
                 <td class="left top right" align="left">{{$keterangan}}</td>
             </tr>
 
@@ -311,11 +365,13 @@
                 $j_alokasi += $pinj_i->alokasi;
                 $j_saldo += $saldo_pokok;
             @endphp
-              @php
-              $t_alokasi += $pinj_i->alokasi;
-              $t_saldo_pokok += $saldo_pokok;
-          @endphp
+            
+            @php
+                $t_alokasi += $pinj_i->alokasi;
+                $t_saldo_pokok += $saldo_pokok;
+            @endphp
         @endforeach
+
         @if (count($kd_desa) > 0)
         <tr style="font-weight: bold; border: 1px solid;">
             <td class="t l b" colspan="8" align="left" height="15">
@@ -325,26 +381,34 @@
             <td class="t l b" align="right">{{number_format($j_saldo)}}</td>
             <td colspan="2"class="t l b" align="right"></td>
         </tr>
-            <tr class="style9">
-                <th colspan="8" class="left top" align="center"style="background:rgba(0,0,0, 0.3);">TOTAL KESELURUHAN({{$jumlah_aktif}} Anggota)</th>
-                <th class="left top" align="right">{{number_format($t_alokasi)}}</th>
-                <th class="left top" align="right">{{number_format($t_saldo_pokok)}}</th>
-                <th colspan="2" class="left right top" align="right"></th>
-                </tr>
-            <tr class="style9">
-                <th colspan="12" class="top" align="center">&nbsp;</th>
-            </tr>
-            <tr>
-                <td class="style10 top" colspan="12"><b>Keterangan</b> : Data yang ditampilkan diatas
-                    merupakan Individu aktif
-                    pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu aktif tahun lalu dapat
-                    memilih mode tahun lalu
-                    {{ $tahun - 1 }}.</td>
-            </tr>
+
+        <tr class="style9">
+            <th colspan="8" class="left top" align="center"style="background:rgba(0,0,0, 0.3);">TOTAL KESELURUHAN({{$jumlah_aktif}} Anggota)</th>
+            <th class="left top" align="right">{{number_format($t_alokasi)}}</th>
+            <th class="left top" align="right">{{number_format($t_saldo_pokok)}}</th>
+            <th colspan="2" class="left right top" align="right"></th>
+        </tr>
+
+        <tr class="style9">
+            <th colspan="12" class="top" align="center">&nbsp;</th>
+        </tr>
+
+        <tr>
+            <td class="style10 top" colspan="12"><b>Keterangan</b> : Data yang ditampilkan diatas merupakan Individu aktif pada tahun berjalan {{$tahun}}, untuk menampilkan data Individu aktif tahun lalu dapat memilih mode tahun lalu {{ $tahun - 1 }}.</td>
+        </tr>
+
+        <tr>
+            <td class="style10 top" colspan="12">
+                <b>Kolektibilitas</b> : 
+                @foreach ($kolek_items as $idx => $item)
+                    {{ $item['nama'] }} ({{ $item['durasi'] }} {{ $item['satuan'] }})@if ($idx < count($kolek_items) - 1), @endif
+                @endforeach
+            </td>
+        </tr>
         @endif
     </table>
-    <table class="p" border="0" align="center" width="96%" cellspacing="0" cellpadding="0"
-    style="font-size: 12px;"> 
+
+    <table class="p" border="0" align="center" width="96%" cellspacing="0" cellpadding="0" style="font-size: 12px;"> 
         <tr>
             <td colspan="14">
                 <div style="margin-top: 14px;"></div>

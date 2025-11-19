@@ -1,7 +1,7 @@
 @php
     use App\Utils\Tanggal;
     $section = 0;
-    $nomor_jenis_pp =0;
+    $nomor_jenis_pp = 0;
 @endphp
 
 @extends('pelaporan.layout.base')
@@ -21,13 +21,35 @@
             $t_saldo = 0;
             $t_tunggakan_pokok = 0;
             $t_tunggakan_jasa = 0;
-            $t_kolek1 = 0;
-            $t_kolek2 = 0;
-            $t_kolek3 = 0;
+
+            // Parse JSON kolek configuration
+            $klk = json_decode($kec->kolek, true);
+            
+            // Filter hanya item yang tidak null
+            $kolek_items = [];
+            if (is_array($klk)) {
+                foreach ($klk as $index => $item) {
+                    // Hanya include jika nama tidak null
+                    if (!empty($item['nama'])) {
+                        $kolek_items[] = $item;
+                    }
+                }
+            }
+            
+            // Jumlah kolom kolektibilitas yang aktif
+            $jumlah_kolek = count($kolek_items);
+            
+            // Inisialisasi total untuk setiap kolom kolek
+            $t_kolek_total = [];
+            for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                $t_kolek_total[$i] = 0;
+            }
         @endphp
-        @if ($jpp->$nomor_jenis_pp != 0)
+
+        @if ($nomor_jenis_pp != 0)
             <div class="break"></div>
         @endif
+
         <table border="0" width="100%" cellspacing="0" cellpadding="0" style="font-size: 11px;">
             <tr>
                 <td colspan="3" align="center">
@@ -42,15 +64,14 @@
             <tr>
                 <td colspan="3" height="5"></td>
             </tr>
-
         </table>
 
         @foreach ($jpp->pinjaman_anggota as $pinkel)
             @php
                 $kd_desa[] = $pinkel->kd_desa;
                 $desa = $pinkel->kd_desa;
-
             @endphp
+
             @if (array_count_values($kd_desa)[$pinkel->kd_desa] <= '1')
                 @if ($section != $desa && count($kd_desa) > 1)
                     @php
@@ -59,9 +80,10 @@
                         $t_saldo += $j_saldo;
                         $t_tunggakan_pokok += $j_tunggakan_pokok;
                         $t_tunggakan_jasa += $j_tunggakan_jasa;
-                        $t_kolek1 += $j_kolek1;
-                        $t_kolek2 += $j_kolek2;
-                        $t_kolek3 += $j_kolek3;
+                        
+                        for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                            $t_kolek_total[$i] += ${"j_kolek{$i}"};
+                        }
                     @endphp
                 @endif
 
@@ -70,9 +92,11 @@
                     $j_saldo = 0;
                     $j_tunggakan_pokok = 0;
                     $j_tunggakan_jasa = 0;
-                    $j_kolek1 = 0;
-                    $j_kolek2 = 0;
-                    $j_kolek3 = 0;
+                    
+                    for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                        ${"j_kolek{$i}"} = 0;
+                    }
+                    
                     $section = $pinkel->kd_desa;
                     $nama_desa = $pinkel->sebutan_desa . ' ' . $pinkel->nama_desa;
                 @endphp
@@ -95,12 +119,14 @@
                 $wajib_pokok = 0;
                 $wajib_jasa = 0;
                 $angsuran_ke = 0;
+                $jatuh_tempo = 0;
                 if ($pinkel->target) {
                     $target_pokok = $pinkel->target->target_pokok;
                     $target_jasa = $pinkel->target->target_jasa;
                     $wajib_pokok = $pinkel->target->wajib_pokok;
                     $wajib_jasa = $pinkel->target->wajib_jasa;
                     $angsuran_ke = $pinkel->target->angsuran_ke;
+                    $jatuh_tempo = $pinkel->target->jatuh_tempo;
                 }
 
                 $tunggakan_pokok = $target_pokok - $sum_pokok;
@@ -135,39 +161,69 @@
                 $tgl_awal = new DateTime($pinkel->tgl_cair);
                 $selisih = $tgl_akhir->diff($tgl_awal);
 
-                // if ($lpp == 'Minggu') {
-                //     $selisih_hari = $selisih->days;
-                //     $selisih = floor($selisih_hari / 7);
-                // } else {
-                // }
                 $selisih = $selisih->y * 12 + $selisih->m;
+
+                $jum_nunggak = ceil($wajib_pokok == 0 ? 0 : $tunggakan_pokok/$wajib_pokok);
 
                 $_kolek = 0;
                 if ($wajib_pokok != '0') {
                     $_kolek = $tunggakan_pokok / $wajib_pokok;
                 }
-                $kolek = round($_kolek + ($selisih - $angsuran_ke));
-                if ($kolek < 6) {
-                    $kolek1 = $saldo_pokok;
-                    $kolek2 = 0;
-                    $kolek3 = 0;
-                } elseif ($kolek >= 6 && $kolek <= 12) {
-                    $kolek1 = 0;
-                    $kolek2 = $saldo_pokok;
-                    $kolek3 = 0;
-                } else {
-                    $kolek1 = 0;
-                    $kolek2 = 0;
-                    $kolek3 = $saldo_pokok;
+                $kolek_bulan = round($_kolek + ($selisih - $angsuran_ke));
+
+                $kolek_hari = 0;
+                if ($tunggakan_pokok <= 0) {
+                    $kolek_hari = 0;
+                } elseif ($jatuh_tempo != 0) {
+                    $kolek_hari = round((strtotime($tgl_kondisi) - strtotime($jatuh_tempo)) / (60 * 60 * 24))+(($jum_nunggak-1)*30);
+                    if ($kolek_hari < 0) {
+                        $kolek_hari = 0;
+                    }
+                }
+
+                // Inisialisasi semua kolom kolek berdasarkan jumlah aktif
+                for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                    ${"kolek{$i}"} = 0;
+                }
+
+                // Logika penentuan kolektibilitas
+                $matched = false;
+                foreach ($kolek_items as $idx => $item) {
+                    $kolekNum = $idx + 1;
+                    
+                    if (!is_array($item) || !isset($item['durasi'], $item['satuan'])) {
+                        continue;
+                    }
+
+                    $durasi = (int) $item['durasi'];
+                    $match = false;
+                    
+                    if ($item['satuan'] === 'hari' && isset($kolek_hari) && $kolek_hari < $durasi) {
+                        $match = true;
+                    } elseif ($item['satuan'] === 'bulan' && isset($kolek_bulan) && $kolek_bulan < $durasi) {
+                        $match = true;
+                    }
+
+                    if ($match) {
+                        ${"kolek{$kolekNum}"} = $saldo_pokok;
+                        $matched = true;
+                        break;
+                    }
+                }
+
+                // Jika tidak ada yang cocok, masukkan ke kategori terakhir
+                if (!$matched && $jumlah_kolek > 0) {
+                    ${"kolek{$jumlah_kolek}"} = $saldo_pokok;
                 }
 
                 $j_alokasi += $pinkel->alokasi;
                 $j_saldo += $saldo_pokok;
                 $j_tunggakan_pokok += $tunggakan_pokok;
                 $j_tunggakan_jasa += $tunggakan_jasa;
-                $j_kolek1 += $kolek1;
-                $j_kolek2 += $kolek2;
-                $j_kolek3 += $kolek3;
+                
+                for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                    ${"j_kolek{$i}"} += ${"kolek{$i}"};
+                }
             @endphp
         @endforeach
 
@@ -178,9 +234,10 @@
                 $t_saldo += $j_saldo;
                 $t_tunggakan_pokok += $j_tunggakan_pokok;
                 $t_tunggakan_jasa += $j_tunggakan_jasa;
-                $t_kolek1 += $j_kolek1;
-                $t_kolek2 += $j_kolek2;
-                $t_kolek3 += $j_kolek3;
+                
+                for ($i = 1; $i <= $jumlah_kolek; $i++) {
+                    $t_kolek_total[$i] += ${"j_kolek{$i}"};
+                }
 
                 $t_pros = 0;
                 if ($t_saldo) {
@@ -203,42 +260,59 @@
                     <td align="center">c</td>
                     <td align="center">d</td>
                     <td align="center">e = c * d</td>
-                    <td align="center">f = (2 + 3) / saldo</td>
+                    <td align="center" >f = (selain lancar) / total saldo</td>
                 </tr>
-                <tr>
-                    <td align="center">1</td>
-                    <td>Lancar</td>
-                    <td align="center">0%</td>
-                    <td align="right">{{ number_format($t_kolek1) }}</td>
-                    <td align="right">{{ number_format(($t_kolek1 * 0) / 100) }}</td>
-                    <td align="center" rowspan="4">
-                        {{ round($t_kolek1 + $t_kolek2 + $t_kolek3 > 0 ? (($t_kolek2 + $t_kolek3) / ($t_kolek1 + $t_kolek2 + $t_kolek3)) * 100 : 0, 2) }}%
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center">2</td>
-                    <td>Diragukan</td>
-                    <td align="center">50%</td>
-                    <td align="right">{{ number_format($t_kolek2) }}</td>
-                    <td align="right">{{ number_format(($t_kolek2 * 50) / 100) }}</td>
-                </tr>
-                <tr>
-                    <td align="center">3</td>
-                    <td>Macet</td>
-                    <td align="center">100%</td>
-                    <td align="right">{{ number_format($t_kolek3) }}</td>
-                    <td align="right">{{ number_format(($t_kolek3 * 100) / 100) }}</td>
-                </tr>
-                <tr>
+
+                @php
+                    $no_urut = 1;
+                    $total_saldo = 0;
+                    $total_beban = 0;
+                    
+                    // Hitung total saldo dan beban
+                    foreach ($kolek_items as $idx => $item) {
+                        $kolekNum = $idx + 1;
+                        $nilai_kolek = $t_kolek_total[$kolekNum] ?? 0;
+                        $prosentase = (float) $item['prosentase'];
+                        $beban = ($nilai_kolek * $prosentase) / 100;
+                        $total_saldo += $nilai_kolek;
+                        $total_beban += $beban;
+                    }
+                @endphp
+
+                @foreach ($kolek_items as $idx => $item)
+                    @php
+                        $kolekNum = $idx + 1;
+                        $nilai_kolek = $t_kolek_total[$kolekNum] ?? 0;
+                        $prosentase = (float) $item['prosentase'];
+                        $beban = ($nilai_kolek * $prosentase) / 100;
+                        $npl = $total_saldo > 0 ? (($total_saldo - $t_kolek_total[1]) / $total_saldo) * 100 : 0;
+                    @endphp
+                    <tr>
+                        <td align="center">{{ $no_urut }}</td>
+                        <td>{{ $item['nama'] }}</td>
+                        <td align="center">{{ $prosentase }}%</td>
+                        <td align="right">{{ number_format($nilai_kolek) }}</td>
+                        <td align="right">{{ number_format($beban) }}</td>
+                        @if ($idx == 0)
+                            <td align="center" rowspan="{{ $jumlah_kolek +1}}">
+                                {{ round($npl, 2) }}%
+                            </td>
+                        @endif
+                    </tr>
+                    @php $no_urut++; @endphp
+                @endforeach
+
+                <tr style="font-weight: bold;">
                     <th colspan="3" height="15">Total</th>
-                    <th>{{ number_format($t_kolek1 + $t_kolek2 + $t_kolek3) }}</th>
-                    <th>{{ number_format(($t_kolek1 * 0) / 100 + ($t_kolek2 * 50) / 100 + ($t_kolek3 * 100) / 100) }}</th>
+                    <th align="right">{{ number_format($total_saldo) }}</th>
+                    <th align="right">{{ number_format($total_beban) }}</th>
                 </tr>
             </table>
 
             <div style="margin-top: 16px;"></div>
             {!! json_decode(str_replace('{tanggal}', $tanggal_kondisi, $kec->ttd->tanda_tangan_pelaporan), true) !!}
         @endif
+
         @php
             $nomor_jenis_pp++;
         @endphp

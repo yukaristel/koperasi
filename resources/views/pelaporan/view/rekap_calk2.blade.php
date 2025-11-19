@@ -170,8 +170,8 @@
                     <tr style="background: #000; color: #fff;">
                         <td width="10%">Kode</td>
                         <td width="45%">Nama Akun</td>
-                        <td align="center" width="15%">Saldo Tahun Lalu</td>
-                        <td align="center" width="15%">Total Saldo</td>
+                        <td align="center" width="15%">Saldo Awal Tahun</td>
+                        <td align="center" width="15%">Saldo s.d. {{$th}}</td>
                     </tr>
                     <tr>
                         <td colspan="4" height="1"></td>
@@ -220,7 +220,7 @@
                                                 $saldo = $keuangan->getTbSaldo($saldoRek);
                                                 $saldo_awal = $saldo['saldo_awal'];
                                                 $saldo_berjalan = $saldo['saldo_berjalan'];
-                                                if ($kode_akun == '3.2.04.01') {
+                                                if ($kode_akun == '3.2.02.01') {
                                                     $saldo_berjalan = $laba_rugi[$kec->id];
                                                 }
 

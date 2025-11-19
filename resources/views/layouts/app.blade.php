@@ -7,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>{{ $title ?? 'SiKopii' }}</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -108,7 +110,7 @@
 
         .dataTables_length select {
             height: 38px;
-            padding: 6px 12px;
+            padding: 6px 20px;
             font-size: 14px;
             width: 80px;
             margin: 0 5px;
@@ -153,6 +155,44 @@
             font-size: 14px;
             width: 80px;
             margin: 0 5px;
+        }
+
+        /* Select2 Custom Styling */
+        .select2-container--bootstrap4 .select2-selection--single {
+            border-color: #d3d3d3 !important;
+            height: 38px;
+            display: flex;
+            align-items: center;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--single:focus,
+        .select2-container--bootstrap4.select2-container--focus .select2-selection--single {
+            border-color: #129990 !important;
+            box-shadow: 0 0 8px 2px rgba(18, 153, 144, 0.6) !important;
+        }
+
+        .select2-container--bootstrap4 .select2-selection--single:hover {
+            border-color: #129990 !important;
+        }
+
+        /* Select2 Dropdown Search */
+        .select2-search--dropdown .select2-search__field {
+            border-color: #129990 !important;
+        }
+
+        .select2-search--dropdown .select2-search__field:focus {
+            border-color: #129990 !important;
+            outline: none;
+            box-shadow: 0 0 8px 2px rgba(18, 153, 144, 0.6) !important;
+        }
+
+        /* Select2 Options Container */
+        .select2-container--bootstrap4 .select2-dropdown {
+            border-color: #129990 !important;
+        }
+
+        .select2-results__option--highlighted {
+            background-color: #129990 !important;
         }
     </style>
 
@@ -315,6 +355,23 @@
                     }
                 });
             });
+
+            // Inisialisasi Select2 Global
+            initializeSelect2();
+        });
+
+        // Fungsi untuk initialize Select2
+        function initializeSelect2() {
+            $('.js-select2, .pelaporanselect2, .sublaporanselect2').select2({
+                theme: 'bootstrap4',
+                allowClear: true,
+                width: '100%'
+            });
+        }
+
+        // Reinitialize Select2 saat content di-load via AJAX
+        $(document).on('ajaxComplete', function() {
+            initializeSelect2();
         });
 
         // Fungsi Toastr Custom (pakai Swal.fire Toast)
