@@ -223,28 +223,42 @@
 
             var tahun = $('select#tahun').val()
             var bulan = $('select#bulan').val()
+    
             if (bulan < 1) {
                 bulan = 0
             }
 
             var nama_bulan = namaBulan(bulan)
-
             var pesan = nama_bulan + " sampai Desember "
             if (bulan == '12') {
                 pesan = nama_bulan + " "
             }
 
-            loading = Swal.fire({
-                title: "Mohon Menunggu..",
-                html: "Menyimpan Saldo Bulan " + pesan + tahun,
-                timerProgressBar: true,
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
+            // Tambahkan konfirmasi pop-up
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: "Menyimpan Saldo Bulan " + pesan + tahun,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    loading = Swal.fire({
+                        title: "Mohon Menunggu..",
+                        html: "Menyimpan Saldo Bulan " + pesan + tahun,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    })
+
+                    childWindow = window.open('/simpan_saldo?bulan=00&tahun=' + tahun + '&bulan=' + bulan, '_blank');
                 }
             })
-
-            childWindow = window.open('/simpan_saldo?bulan=00&tahun=' + tahun + '&bulan=' + bulan, '_blank');
         })
 
         window.addEventListener('message', function(event) {
