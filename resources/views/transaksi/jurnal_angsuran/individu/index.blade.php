@@ -265,220 +265,233 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-    $('#cariAnggota').typeahead({
-        source: function (query, process) {
-            return $.get('/perguliran/cari_anggota', { query: query }, function (result) {
-                const states = result.map(item => ({
-                    id: item.id,
-                    name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - ${item.id} [${item.nik}]`,
-                    value: item.id
-                }));
-                process(states);
-            });
-        },
-    
-        afterSelect: function(item) {
-            const path = '{{ Request::path() }}';
-        
-            if (path === 'transaksi/jurnal_angsuran_individu') {
-                $.get('/transaksi/form_angsuran_individu/' + item.id, function(result) {
-                    const ch_pokok = document.getElementById('chartP').getContext("2d");
-                    const ch_jasa = document.getElementById('chartJ').getContext("2d");
-                
-                    angsuran(true, result);
-                    makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
-                    makeChart('jasa', ch_jasa, result.sisa_jasa, result.sum_jasa);
-                
-                    $('#loan-id').html(item.id);
-                });
-            } else {
-                window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.id;
-            }
-        }
-    });
-    function tampilAngsuran(data) {
-        // Di sini kamu bisa tampilkan data di tabel atau card
-        console.log('Data angsuran:', data);
-    }
+        // =============================================
+        // VARIABEL GLOBAL
+        // =============================================
+        var chr_pokok = null;
+        var chr_jasa  = null;
 
-    function buatChart(type, ctx, sisa, total) {
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Sisa', 'Terbayar'],
-                datasets: [{
-                    data: [sisa, total - sisa]
-                }]
-            }
-        });
-    }
-    </script>
-
-    <script>
-        $("#pokok").maskMoney({
-            allowNegative: true
-        });
-        $("#jasa").maskMoney({
-            allowNegative: true
-        });
-        $("#denda").maskMoney({
-            allowNegative: true
-        });
-        $('.date').datepicker({
-            dateFormat: 'dd/mm/yy'
-        });
-
-        $(document).ready(function() {
-            $('.js-example-basic-single').select2({
-                theme: 'bootstrap4',
-            });
-        });
-
-        var chr_pokok, chr_jasa = ''
         var formatter = new Intl.NumberFormat('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-        })
+        });
 
-        var id_pinkel = "{{ Request::get('pinkel') ?: 0 }}"
+        // =============================================
+        // FUNGSI: isi form angsuran dari result API
+        // =============================================
+        function angsuran(reset, result) {
+            if (reset) {
+                if (chr_pokok) { chr_pokok.destroy(); chr_pokok = null; }
+                if (chr_jasa)  { chr_jasa.destroy();  chr_jasa  = null; }
+            }
 
-        if (id_pinkel > 0) {
-            var ch_pokok = document.getElementById('chartP').getContext("2d");
-            var ch_jasa = document.getElementById('chartJ').getContext("2d");
+            $('#id').val(result.id)
+            $('#_pokok').val(result.sisa_pokok)
+            $('#_jasa').val(result.sisa_jasa)
 
-            $.get('/transaksi/form_angsuran_individu/' + id_pinkel, function(result) {
-                angsuran(false, result)
+            $('#pokok').val(formatter.format(result.saldo_pokok ?? 0))
+            $('#jasa').val(formatter.format(result.saldo_jasa ?? 0))
+            $('#denda').val(formatter.format(0))
 
-                makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok)
-                makeChart('jasa', ch_jasa, result.sisa_jasa, result.sum_jasa)
+            var total = (result.saldo_pokok ?? 0) + (result.saldo_jasa ?? 0)
+            $('#total').val(formatter.format(total))
 
-                $('#loan-id').html(id_pinkel)
-            })
+            $('#alokasi_pokok').html(formatter.format(result.sisa_pokok ?? 0))
+            $('#alokasi_jasa').html(formatter.format(result.sisa_jasa ?? 0))
         }
 
-        $(document).on('change', '#tgl_transaksi', function(e) {
-            var tanggal = $(this).val()
-            var id_pinj = $('#id').val()
+        // =============================================
+        // FUNGSI: buat chart doughnut pokok / jasa
+        // =============================================
+        function makeChart(type, ctx, sisa, total) {
+            var terbayar = (total ?? 0) - (sisa ?? 0)
+            if (terbayar < 0) terbayar = 0
 
-            $.get('/transaksi/angsuran_individu/target/' + id_pinj, {
-                tanggal
-            }, function(result) {
+            var chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sisa', 'Terbayar'],
+                    datasets: [{
+                        data: [sisa ?? 0, terbayar],
+                        backgroundColor: ['#f7941d', '#36a2eb'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+
+            if (type === 'pokok') chr_pokok = chart;
+            if (type === 'jasa')  chr_jasa  = chart;
+        }
+
+        // =============================================
+        // TYPEAHEAD: cari anggota
+        // =============================================
+        $('#cariAnggota').typeahead({
+            source: function (query, process) {
+                return $.get('/perguliran/cari_anggota', { query: query }, function (result) {
+                    const states = result.map(item => ({
+                        id: item.id,
+                        name: `${item.namadepan} [${item.domisi}, ${item.nama_desa}] - ${item.id} [${item.nik}]`,
+                        value: item.id
+                    }));
+                    process(states);
+                });
+            },
+
+            afterSelect: function(item) {
+                const path = '{{ Request::path() }}';
+
+                if (path === 'transaksi/jurnal_angsuran_individu') {
+                    $.get('/transaksi/form_angsuran_individu/' + item.id, function(result) {
+                        var ch_pokok = document.getElementById('chartP').getContext("2d");
+                        var ch_jasa  = document.getElementById('chartJ').getContext("2d");
+
+                        angsuran(true, result);
+                        makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
+                        makeChart('jasa',  ch_jasa,  result.sisa_jasa,  result.sum_jasa);
+
+                        $('#loan-id').html(item.id);
+                    });
+                } else {
+                    window.location.href = '/transaksi/jurnal_angsuran_individu?pinkel=' + item.id;
+                }
+            }
+        });
+
+        // =============================================
+        // INISIALISASI: load data jika ada pinkel di URL
+        // =============================================
+        $("#pokok").maskMoney({ allowNegative: true });
+        $("#jasa").maskMoney({ allowNegative: true });
+        $("#denda").maskMoney({ allowNegative: true });
+
+        $('.date').datepicker({ dateFormat: 'dd/mm/yy' });
+
+        $(document).ready(function() {
+            $('.js-example-basic-single').select2({ theme: 'bootstrap4' });
+
+            var id_pinkel = "{{ Request::get('pinkel') ?: 0 }}";
+
+            if (id_pinkel > 0) {
+                var ch_pokok = document.getElementById('chartP').getContext("2d");
+                var ch_jasa  = document.getElementById('chartJ').getContext("2d");
+
+                $.get('/transaksi/form_angsuran_individu/' + id_pinkel, function(result) {
+                    angsuran(false, result);
+                    makeChart('pokok', ch_pokok, result.sisa_pokok, result.sum_pokok);
+                    makeChart('jasa',  ch_jasa,  result.sisa_jasa,  result.sum_jasa);
+                    $('#loan-id').html(id_pinkel);
+                });
+            }
+        });
+
+        // =============================================
+        // EVENT: ganti tanggal → update target pokok & jasa
+        // =============================================
+        $(document).on('change', '#tgl_transaksi', function(e) {
+            var tanggal  = $(this).val();
+            var id_pinj  = $('#id').val();
+
+            $.get('/transaksi/angsuran_individu/target/' + id_pinj, { tanggal }, function(result) {
                 $('#pokok').val(formatter.format(result.saldo_pokok))
                 $('#jasa').val(formatter.format(result.saldo_jasa))
-            })
-        })
+            });
+        });
 
+        // =============================================
+        // EVENT: hitung total saat pokok / jasa / denda berubah
+        // =============================================
         $(document).on('change', '#pokok,#jasa,#denda', function(e) {
-            var pokok = $('#pokok').val()
-            var jasa = $('#jasa').val()
-            var denda = $('#denda').val()
+            var pokok = parseFloat($('#pokok').val().split(',').join('').split('.00').join('')) || 0;
+            var jasa  = parseFloat($('#jasa').val().split(',').join('').split('.00').join(''))  || 0;
+            var denda = parseFloat($('#denda').val().split(',').join('').split('.00').join('')) || 0;
 
-            pokok = parseFloat(pokok.split(',').join('').split('.00').join(''))
-            if (!pokok) {
-                pokok = 0;
-                $('#pokok').val(formatter.format('0'))
-            }
+            $('#pokok').val(formatter.format(pokok));
+            $('#jasa').val(formatter.format(jasa));
+            $('#denda').val(formatter.format(denda));
+            $('#total').val(formatter.format(pokok + jasa + denda));
+        });
 
-            jasa = parseFloat(jasa.split(',').join('').split('.00').join(''))
-            if (!jasa) {
-                jasa = 0;
-                $('#jasa').val(formatter.format('0'))
-            }
-
-            denda = parseFloat(denda.split(',').join('').split('.00').join(''))
-            if (!denda) {
-                $('#denda').val(formatter.format('0'))
-                denda = 0;
-            }
-
-            var total = pokok + jasa + denda
-            $('#total').val(formatter.format(total))
-        })
-
+        // =============================================
+        // EVENT: simpan / posting angsuran
+        // =============================================
         $(document).on('click', '#SimpanAngsuran', function(e) {
-            $('#notif').html('')
-            e.preventDefault()
+            $('#notif').html('');
+            e.preventDefault();
 
-            var sisa_pokok = $('#_pokok').val()
-            var pokok = $('#pokok').val()
-            pokok = parseFloat(pokok.split(',').join('').split('.00').join(''))
+            var sisa_pokok = parseFloat($('#_pokok').val()) || 0;
+            var pokok      = parseFloat($('#pokok').val().split(',').join('').split('.00').join('')) || 0;
 
-            var next = true
             if (pokok > sisa_pokok) {
-                Swal.fire('Error', 'Angsuran pokok tidak boleh melebihi saldo pinjaman saat ini.', 'warning')
-                return false
-
-                next = false
+                Swal.fire('Error', 'Angsuran pokok tidak boleh melebihi saldo pinjaman saat ini.', 'warning');
+                return false;
             }
 
-            if (next == true) {
-                var form = $('#FormAngsuranIndividu')
+            var form = $('#FormAngsuranIndividu');
 
-                var loading = Swal.fire({
-                    title: "Mohon Menunggu..",
-                    html: "Memproses transaksi angsuran.",
-                    timerProgressBar: true,
-                    allowOutsideClick: false,
-                    didOpen: () => {
-                        Swal.showLoading();
-                    }
-                })
+            Swal.fire({
+                title: "Mohon Menunggu..",
+                html: "Memproses transaksi angsuran.",
+                timerProgressBar: true,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
 
-                $.ajax({
-                    type: 'POST',
-                    url: form.attr('action'),
-                    data: form.serialize(),
-                    success: function(result) {
-                        var ch_pokok = document.getElementById('chartP').getContext("2d");
-                        var ch_jasa = document.getElementById('chartJ').getContext("2d");
+            $.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function(result) {
+                    Swal.close();
 
-                        loading.close()
-                        if (result.success) {
-                            $.get('/angsuran/notifikasi_i/' + result.idtp, function(res) {
-                                $('#notif').html(res.view)
-                            })
+                    if (result.success) {
+                        $.get('/angsuran/notifikasi_i/' + result.idtp, function(res) {
+                            $('#notif').html(res.view);
+                        });
 
-                            Swal.fire('Berhasil!', result.msg, 'success').then(() => {
-                                $.get('/transaksi/form_angsuran_individu/' + result
-                                    .id_pinj_i,
-                                    function(result) {
-                                        angsuran(true, result)
+                        Swal.fire('Berhasil!', result.msg, 'success').then(() => {
+                            var ch_pokok = document.getElementById('chartP').getContext("2d");
+                            var ch_jasa  = document.getElementById('chartJ').getContext("2d");
 
-                                        makeChart('pokok', ch_pokok, result
-                                            .sisa_pokok, result
-                                            .sum_pokok)
-                                        makeChart('jasa', ch_jasa, result
-                                            .sisa_jasa,
-                                            result.sum_jasa)
-                                    })
-                            })
+                            $.get('/transaksi/form_angsuran_individu/' + result.id_pinj_i, function(res) {
+                                angsuran(true, res);
+                                makeChart('pokok', ch_pokok, res.sisa_pokok, res.sum_pokok);
+                                makeChart('jasa',  ch_jasa,  res.sisa_jasa,  res.sum_jasa);
+                            });
+                        });
 
-                            if (result.whatsapp) {
-                                sendMsg(result.number, result.nama_kelompok, result
-                                    .pesan)
-                            }
-                        } else {
-                            loading.close()
-                            Swal.fire('Error', result.msg, 'warning')
+                        if (result.whatsapp) {
+                            sendMsg(result.number, result.nama_kelompok, result.pesan);
                         }
-                    },
-                    error: function(e) {
-                        loading.close()
-                        Swal.fire('Error', '', 'warning')
+                    } else {
+                        Swal.fire('Error', result.msg, 'warning');
                     }
-                })
-            }
-        })
+                },
+                error: function(e) {
+                    Swal.close();
+                    Swal.fire('Error', 'Terjadi kesalahan pada server.', 'warning');
+                }
+            });
+        });
 
+        // =============================================
+        // EVENT: hapus transaksi
+        // =============================================
         $(document).on('click', '.btn-delete', function(e) {
-            e.preventDefault()
+            e.preventDefault();
+            var idt = $(this).attr('data-idt');
 
-            var idt = $(this).attr('data-idt')
             $.get('/transaksi/data/' + idt, function(result) {
+                $('#del_idt').val(result.idt);
+                $('#del_idtp').val(result.idtp);
+                $('#del_id_pinj').val(result.id_pinj);
 
-                $('#del_idt').val(result.idt)
-                $('#del_idtp').val(result.idtp)
-                $('#del_id_pinj').val(result.id_pinj)
                 Swal.fire({
                     title: 'Peringatan',
                     text: 'Setelah menekan tombol Hapus Transaksi dibawah, maka transaksi ini akan dihapus dari aplikasi secara permanen.',
@@ -486,94 +499,107 @@
                     confirmButtonText: 'Hapus Transaksi',
                     cancelButtonText: 'Batal',
                     icon: 'warning'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var form = $('#formHapus')
+                }).then((res) => {
+                    if (res.isConfirmed) {
+                        var form = $('#formHapus');
                         $.ajax({
                             type: form.attr('method'),
                             url: form.attr('action'),
                             data: form.serialize(),
                             success: function(result) {
                                 if (result.success) {
-                                    Swal.fire('Berhasil!', result.msg, 'success')
-                                        .then(() => {
-                                            $('#detailTransaksi').modal('hide')
-                                        })
+                                    Swal.fire('Berhasil!', result.msg, 'success').then(() => {
+                                        $('#detailTransaksi').modal('hide');
+                                    });
                                 }
                             }
-                        })
+                        });
                     }
-                })
-            })
-        })
+                });
+            });
+        });
 
+        // =============================================
+        // EVENT: cetak kartu angsuran
+        // =============================================
         $(document).on('click', '#cetakKartuAngsuran', function(e) {
-            e.preventDefault()
-            var id_pinj = $('#id').val()
+            e.preventDefault();
+            open_window('/perguliran_i/dokumen/kartu_angsuran/' + $('#id').val());
+        });
 
-            open_window('/perguliran_i/dokumen/kartu_angsuran/' + id_pinj)
-        })
-
+        // =============================================
+        // EVENT: cetak LPP
+        // =============================================
         $(document).on('click', '#cetakLPP', function(e) {
-            e.preventDefault()
-            var id_pinj = $('#id').val()
+            e.preventDefault();
+            open_window('/transaksi/angsuran_i/lpp/' + $('#id').val());
+        });
 
-            open_window('/transaksi/angsuran_i/lpp/' + id_pinj)
-        })
-
+        // =============================================
+        // EVENT: detail individu / pemanfaat
+        // =============================================
         $(document).on('click', '#btnDetailIndividu', function(e) {
-            var id = $('#id').val()
-
+            var id = $('#id').val();
             $.get('/database/anggota/detail_anggota/' + id, function(result) {
-                $('#DetailIndividu').modal('show')
+                $('#DetailIndividu').modal('show');
+                $('#DetailIndividuLabel').html(result.label);
+                $('#LayoutDetailIndividu').html(result.view);
+            });
+        });
 
-                $('#DetailIndividuLabel').html(result.label)
-                $('#LayoutDetailIndividu').html(result.view)
-            })
-        })
-
+        // =============================================
+        // EVENT: detail angsuran
+        // =============================================
         $(document).on('click', '#btnDetailAngsuran', function(e) {
-            var id = $('#id').val()
-
+            var id = $('#id').val();
             $.get('/transaksi/angsuran/detail_angsuran_i/' + id, function(result) {
-                $('#DetailAngsuran').modal('show')
+                $('#DetailAngsuran').modal('show');
+                $('#DetailAngsuranLabel').html(result.label);
+                $('#LayoutDetailAngsuran').html(result.view);
+                $('#BuktiAngsuranLabel').html(result.label_cetak);
+                $('#LayoutBuktiAngsuran').html(result.cetak);
+            });
+        });
 
-                $('#DetailAngsuranLabel').html(result.label)
-                $('#LayoutDetailAngsuran').html(result.view)
-
-                $('#BuktiAngsuranLabel').html(result.label_cetak)
-                $('#LayoutBuktiAngsuran').html(result.cetak)
-            })
-        })
-
+        // =============================================
+        // EVENT: toggle modal bukti angsuran
+        // =============================================
         $(document).on('click', '#cetakBuktiAngsuran, #tutupBuktiAngsuran', function(e) {
-            e.preventDefault()
-
+            e.preventDefault();
             $('#BuktiAngsuran').modal('toggle');
-        })
+        });
 
+        // =============================================
+        // EVENT: cetak BKM
+        // =============================================
         $(document).on('click', '#BtnCetakBkm', function(e) {
-            e.preventDefault()
-
+            e.preventDefault();
             $('#FormCetakBuktiAngsuran').attr('action', '/transaksi/angsuran/cetak_bkm');
             $('#FormCetakBuktiAngsuran').submit();
-        })
+        });
 
+        // =============================================
+        // EVENT: modal angsuran anggota
+        // =============================================
         $(document).on('click', '#btnAngsuranAnggota', function(e) {
-            e.preventDefault()
-            $('#AngsuranAnggota').modal('show')
-        })
+            e.preventDefault();
+            $('#AngsuranAnggota').modal('show');
+        });
 
+        // =============================================
+        // EVENT: open window link
+        // =============================================
         $(document).on('click', '.btn-link', function(e) {
-            var action = $(this).attr('data-action')
+            open_window($(this).attr('data-action'));
+        });
 
-            open_window(action)
-        })
-
+        // =============================================
+        // EVENT: cetak struk / kuitansi
+        // =============================================
         $(document).on('click', '.btn-struk', function(e) {
-            e.preventDefault()
+            e.preventDefault();
+            var idtp = $(this).attr('data-idtp');
 
-            var idtp = $(this).attr('data-idtp')
             Swal.fire({
                 title: "Cetak Kuitansi Angsuran",
                 showDenyButton: true,
@@ -583,24 +609,23 @@
                 denyButtonColor: "#3085d6",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    open_window('/transaksi/angsuran/struk/' + idtp)
+                    open_window('/transaksi/angsuran/struk/' + idtp);
                 } else if (result.isDenied) {
-                    open_window('/transaksi/angsuran/struk_matrix/' + idtp)
+                    open_window('/transaksi/angsuran/struk_matrix/' + idtp);
                 }
             });
-        })
+        });
 
+        // =============================================
+        // FUNGSI: kirim WhatsApp
+        // =============================================
         function sendMsg(number, nama, msg, repeat = 0) {
             $.ajax({
                 type: 'post',
                 url: '{{ $api }}/send-text',
                 timeout: 0,
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                xhrFields: {
-                    withCredentials: true
-                },
+                headers: { "Content-Type": "application/json" },
+                xhrFields: { withCredentials: true },
                 data: JSON.stringify({
                     token: "{{ auth()->user()->ip }}",
                     number: number,
@@ -608,27 +633,23 @@
                 }),
                 success: function(result) {
                     if (result.status) {
-                        MultiToast('success', 'Pesan untuk Nasabah ' + nama + ' berhasil dikirim')
+                        MultiToast('success', 'Pesan untuk Nasabah ' + nama + ' berhasil dikirim');
                     } else {
                         if (repeat < 1) {
-                            setTimeout(function() {
-                                sendMsg(number, nama, msg, repeat + 1)
-                            }, 1000)
+                            setTimeout(() => sendMsg(number, nama, msg, repeat + 1), 1000);
                         } else {
-                            MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim')
+                            MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim');
                         }
                     }
                 },
-                error: function(result) {
+                error: function() {
                     if (repeat < 1) {
-                        setTimeout(function() {
-                            sendMsg(number, nama, msg, repeat + 1)
-                        }, 1000)
+                        setTimeout(() => sendMsg(number, nama, msg, repeat + 1), 1000);
                     } else {
-                        MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim')
+                        MultiToast('error', 'Pesan untuk Nasabah ' + nama + ' gagal dikirim');
                     }
                 }
-            })
+            });
         }
     </script>
 @endsection
