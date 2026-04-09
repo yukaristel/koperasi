@@ -30,16 +30,18 @@ class AppServiceProvider extends ServiceProvider
                 ->orderBy('sort')
                 ->with('child')
                 ->get();
-                
+
+            $data = $view->getData();
+
+            if (!isset($data['kec'])) {
                 $kec = Kecamatan::where('id', 1)->first();
-            if (session()->has('lokasi')) {
-                $kec = Kecamatan::where('id', session('lokasi'))->first();
+                if (session()->has('lokasi')) {
+                    $kec = Kecamatan::where('id', session('lokasi'))->first();
+                }
+                $view->with('kec', $kec);
             }
 
-            $view->with([
-                'menus' => $menus,
-                'kec' => $kec,
-            ]);
+            $view->with('menus', $menus);
         });
     }
 }

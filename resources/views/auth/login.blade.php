@@ -1,3 +1,29 @@
+<a href="/perbandingan_rekening_koperasi.html" title="Perbandingan Rekening Koperasi" target="_blank" rel="noopener noreferrer"
+   style="
+       position: fixed;
+       top: 0;
+       right: 0;
+       width: 0;
+       height: 0;
+       border-style: solid;
+       border-width: 0 70px 70px 0;
+       border-color: transparent #0d6b63 transparent transparent;
+       z-index: 99999;
+       cursor: pointer;
+   ">
+   <span style="
+       position: absolute;
+       top: 10px;
+       right: -62px;
+       color: white;
+       font-size: 10px;
+       font-weight: 700;
+       line-height: 1.2;
+       text-align: center;
+       width: 50px;
+       pointer-events: none;
+   ">&#9432;</span>
+</a>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -331,9 +357,6 @@
                     @if (session('status'))
                         <div class="alert-success">{{ session('status') }}</div>
                     @endif
-                    @error('message')
-                        <div class="alert-danger">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 <h6>Selamat Datang</h6>
@@ -372,11 +395,7 @@
         <div class="login-image">
             <div class="image-overlay"></div>
             <div class="login-image-content" style="background-image: url('../assets/img/image-sign-in.jpg')">
-                <div style="position: relative; z-index: 3; text-align: center; color: white; padding: 40px;">
-                    <i class="fas fa-lock" style="font-size: 60px; margin-bottom: 20px; display: block;"></i>
-                    <h2 style="font-size: 28px; font-weight: 700; margin-bottom: 15px; color: white;">Keamanan Terjamin</h2>
-                    <p style="font-size: 14px; max-width: 300px; line-height: 1.6; margin: 0 auto; color: rgba(255,255,255,0.95);">Akses aman dan terpercaya untuk mengelola data koperasi Anda dengan enkripsi tingkat enterprise.</p>
-                </div>
+
             </div>
         </div>
     </main>
@@ -427,6 +446,20 @@
                 Toast.fire({
                     icon: 'success',
                     title: @json(session('pesan'))
+                });
+            });
+        </script>
+    @endif
+
+    @if ($errors->has('message'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Login Gagal',
+                    text: '{{ $errors->first('message') }}',
+                    confirmButtonText: 'Coba Lagi',
+                    confirmButtonColor: '#129990'
                 });
             });
         </script>

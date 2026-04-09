@@ -21,7 +21,12 @@ class GenerateController extends Controller
     public function index()
     {
         // Handle URL lokal
-        if (request()->server('SERVER_NAME') === '127.0.0.1' || request()->server('SERVER_NAME') === 'localhost') {
+        $serverName = request()->server('SERVER_NAME');
+        if (
+            $serverName === '127.0.0.1' ||
+            $serverName === 'localhost' ||
+            str_ends_with($serverName, '.test')
+        ) {
                     $kec = Kecamatan::where('id', self::ID_KEC)->with('kabupaten')->first();
                     //$pus = Rekap::where('id', 1)->first();return redirect('/rekap');
         } else {

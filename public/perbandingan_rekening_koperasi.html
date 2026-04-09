@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbandingan Rekening Koperasi — SAK EP 2024</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; font-size: 14px; background: #f5f5f0; color: #1a1a1a; }
+
+  .header { background: #fff; border-bottom: 1px solid #e0e0d8; padding: 20px 24px; position: sticky; top: 0; z-index: 100; }
+  .header h1 { font-size: 17px; font-weight: 600; color: #1a1a1a; }
+  .header p { font-size: 12px; color: #6b6b63; margin-top: 3px; }
+
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e0e0d8; }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #555; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+  .leg-new { background: #dcfce7; border: 1px solid #86efac; }
+  .leg-renamed { background: #fef9c3; border: 1px solid #fde047; }
+  .leg-modified { background: #dbeafe; border: 1px solid #93c5fd; }
+  .leg-removed { background: #fee2e2; border: 1px solid #fca5a5; text-decoration: line-through; }
+  .leg-unchanged { background: #fff; border: 1px solid #e0e0d8; }
+
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 24px; background: #fafaf7; border-bottom: 1px solid #e0e0d8; }
+  .filter-btn { padding: 5px 12px; font-size: 12px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; color: #444; transition: all 0.15s; }
+  .filter-btn.active { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+  .filter-btn:hover:not(.active) { background: #f0f0ea; }
+
+  .search-bar { padding: 10px 24px; background: #fafaf7; border-bottom: 1px solid #e0e0d8; }
+  .search-bar input { width: 100%; max-width: 380px; padding: 7px 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; background: #fff; color: #1a1a1a; }
+  .search-bar input:focus { outline: none; border-color: #888; }
+
+  .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 24px; background: #fff; border-bottom: 1px solid #e0e0d8; }
+  .stat { font-size: 12px; color: #555; }
+  .stat span { font-weight: 600; color: #1a1a1a; }
+
+  .table-container { overflow-x: auto; padding: 16px 24px; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0d8; font-size: 13px; }
+  thead tr { background: #f0f0ea; }
+  th { padding: 10px 12px; text-align: left; font-weight: 600; font-size: 12px; color: #555; border-bottom: 1px solid #e0e0d8; white-space: nowrap; }
+  td { padding: 8px 12px; border-bottom: 0.5px solid #eee; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.group-header td { background: #f5f5f0; font-weight: 600; font-size: 12px; color: #444; padding: 6px 12px; border-bottom: 1px solid #e0e0d8; }
+
+  tr.row-new td { background: #f0fdf4; }
+  tr.row-renamed td { background: #fefce8; }
+  tr.row-modified td { background: #eff6ff; }
+  tr.row-removed td { background: #fff5f5; opacity: 0.8; }
+  tr.row-removed td .nama { text-decoration: line-through; color: #999; }
+  tr.row-unchanged td { background: #fff; }
+
+  .badge { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 500; white-space: nowrap; }
+  .badge-new { background: #dcfce7; color: #166534; }
+  .badge-renamed { background: #fef9c3; color: #713f12; }
+  .badge-modified { background: #dbeafe; color: #1e40af; }
+  .badge-removed { background: #fee2e2; color: #991b1b; }
+  .badge-unchanged { background: #f3f4f6; color: #6b7280; }
+
+  .kode { font-family: monospace; font-size: 12px; color: #555; white-space: nowrap; }
+  .kode-baru { font-family: monospace; font-size: 12px; color: #166534; font-weight: 600; white-space: nowrap; }
+
+  .info-icon { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: #e0e0d8; font-size: 10px; cursor: pointer; color: #555; margin-left: 5px; font-style: normal; flex-shrink: 0; }
+  .info-icon:hover { background: #1a1a1a; color: #fff; }
+
+  /* Tooltip */
+  .tooltip { display: none; position: fixed; z-index: 999; background: #fff; border: 1px solid #ccc; border-radius: 8px; padding: 14px 16px; max-width: 320px; box-shadow: 0 4px 20px rgba(0,0,0,0.12); font-size: 12px; line-height: 1.6; pointer-events: none; }
+  .tooltip.visible { display: block; }
+  .tooltip h4 { font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #1a1a1a; }
+  .tooltip .dasar { display: flex; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; }
+  .tooltip .dasar-label { font-size: 10px; font-weight: 600; color: #888; flex-shrink: 0; }
+  .tooltip .dasar-text { color: #2563eb; font-size: 11px; }
+  .tooltip .perubahan { background: #f5f5f0; border-radius: 5px; padding: 7px 9px; margin-top: 6px; }
+  .tooltip .lama { color: #991b1b; font-size: 11px; }
+  .tooltip .baru { color: #166534; font-size: 11px; margin-top: 3px; }
+  .tooltip .arrow-label { font-size: 10px; color: #888; }
+  tr[data-has-tooltip]:hover td { filter: brightness(0.97); }
+
+  .empty { text-align: center; padding: 40px; color: #999; font-size: 13px; }
+  .counter { font-size: 11px; color: #888; margin-left: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Perbandingan Daftar Rekening Koperasi</h1>
+  <p>Sebelum &amp; Sesudah penyesuaian Permenkop UKM No. 2 Tahun 2024 &bull; SAK EP (Entitas Privat)</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot leg-new"></div> Akun Baru</div>
+  <div class="legend-item"><div class="legend-dot leg-renamed"></div> Nama Diubah</div>
+  <div class="legend-item"><div class="legend-dot leg-modified"></div> Dimodifikasi</div>
+  <div class="legend-item"><div class="legend-dot leg-removed"></div> Dihapus</div>
+  <div class="legend-item"><div class="legend-dot leg-unchanged"></div> Tidak Berubah</div>
+  <div class="legend-item" style="margin-left:auto; font-size:11px; color:#888;">Arahkan kursor ke ikon <b style="font-size:12px;">ⓘ</b> untuk detail perubahan</div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">Semua</button>
+  <button class="filter-btn" data-filter="new">Akun Baru</button>
+  <button class="filter-btn" data-filter="renamed">Nama Diubah</button>
+  <button class="filter-btn" data-filter="modified">Dimodifikasi</button>
+  <button class="filter-btn" data-filter="removed">Dihapus</button>
+  <button class="filter-btn" data-filter="unchanged">Tidak Berubah</button>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Cari nama akun atau kode..." />
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="table-container">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th style="width:110px">Kode Lama</th>
+        <th style="width:110px">Kode Baru</th>
+        <th>Nama Akun Lama</th>
+        <th>Nama Akun Baru</th>
+        <th style="width:90px">Mutasi</th>
+        <th style="width:90px">Status</th>
+        <th style="width:30px"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty" id="emptyMsg" style="display:none">Tidak ada akun yang cocok dengan filter/pencarian.</div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = [
+  // ── KELOMPOK 1: ASET ──
+  { grup: '1. ASET', subgrup: '1.1 Aset Lancar' },
+  { lama_kode:'1.1.01.01', baru_kode:'1.1.01.01', lama_nama:'Kas Tunai', baru_nama:'Kas Tunai', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.1.01.02', baru_kode:'1.1.01.02', lama_nama:'Kas Kecil', baru_nama:'Kas Kecil', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.1.01.03', baru_kode:'1.1.01.03', lama_nama:'Kas di Bank BRI', baru_nama:'Kas di Bank BRI', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.1.01.04', baru_kode:'1.1.01.04', lama_nama:'Kas di Bank Mandiri', baru_nama:'Kas di Bank Mandiri', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.1.02.01', baru_kode:'1.1.02.01', lama_nama:'Deposito', baru_nama:'Deposito (Jatuh Tempo ≤ 12 Bulan)', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 4 — Laporan Posisi Keuangan mengharuskan pemisahan aset lancar dan tidak lancar berdasarkan jatuh tempo.',
+    penjelasan:'Deposito kini dibedakan berdasarkan jatuh tempo: ≤12 bulan masuk Aset Lancar, >12 bulan masuk Aset Tidak Lancar (1.2.01.01). Permenkop 2/2024 Lampiran I.' },
+  { lama_kode:'1.1.02.02', baru_kode:'1.1.02.02', lama_nama:'Obligasi', baru_nama:'Obligasi (Jatuh Tempo ≤ 12 Bulan)', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 4 & Bab 11 — Klasifikasi instrumen keuangan berdasarkan jatuh tempo.',
+    penjelasan:'Obligasi dipisah berdasarkan jatuh tempo, sama seperti deposito. Obligasi >12 bulan dipindah ke akun 1.2.01.02.' },
+  { lama_kode:'1.1.02.03', baru_kode:'1.1.02.03', lama_nama:'Saham', baru_nama:'Saham (Diperdagangkan / FVTPL)', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 11 — Instrumen keuangan diukur pada nilai wajar melalui laba rugi (FVTPL) untuk aset yang diperdagangkan.',
+    penjelasan:'Penambahan keterangan FVTPL (Fair Value Through Profit or Loss) agar sesuai kategori pengukuran SAK EP Bab 11.' },
+  { lama_kode:'1.1.03.01', baru_kode:'1.1.03.01', lama_nama:'Kredit Umum', baru_nama:'Pinjaman yang Diberikan — Anggota', mutasi:'debet', status:'renamed',
+    dasar:'Permenkop UKM No. 2/2024 Lampiran I, SAK EP Bab 11 — Terminologi "pinjaman yang diberikan" menggantikan "kredit/piutang kredit".',
+    penjelasan:'PERUBAHAN UTAMA: Istilah "Kredit" diganti menjadi "Pinjaman yang Diberikan" sesuai kebijakan akuntansi KSP/USP. Wajib dipisah antara Anggota dan Non-Anggota untuk pelaporan kinerja pelayanan koperasi.' },
+  { lama_kode:null, baru_kode:'1.1.03.02', lama_nama:null, baru_nama:'Pinjaman yang Diberikan — Non-Anggota', mutasi:'debet', status:'new',
+    dasar:'Permenkop 2/2024 Lampiran I — Pemisahan wajib pinjaman ke anggota dan non-anggota.',
+    penjelasan:'Akun baru untuk pinjaman kepada non-anggota. Pemisahan ini wajib agar laporan keuangan menunjukkan seberapa besar koperasi melayani anggotanya (orientasi koperasi).' },
+  { lama_kode:'1.1.03.99', baru_kode:'1.1.03.99', lama_nama:'Piutang Lain-lain', baru_nama:'Piutang Lain-lain', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.1.04.01', baru_kode:'1.1.04.01', lama_nama:'Cadangan Kerugian Kredit Umum', baru_nama:'Penyisihan Pinjaman Tidak Tertagih — Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP Bab 11 par. 11.21–11.26 — Metode incurred loss menggantikan metode penyisihan umum. Permenkop 2/2024 Lampiran I.',
+    penjelasan:'PERUBAHAN UTAMA: "Cadangan Kerugian" diganti menjadi "Penyisihan Pinjaman Tidak Tertagih" dan wajib dihitung berdasarkan bukti objektif (incurred loss) — bukan persentase umum. Dipisah anggota/non-anggota.' },
+  { lama_kode:null, baru_kode:'1.1.04.02', lama_nama:null, baru_nama:'Penyisihan Pinjaman Tidak Tertagih — Non-Anggota', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 11 & Permenkop 2/2024 Lampiran I — Wajib dipisah dari penyisihan untuk anggota.',
+    penjelasan:'Akun penyisihan terpisah untuk pinjaman kepada non-anggota.' },
+  { lama_kode:null, baru_kode:'1.1.05.01', lama_nama:null, baru_nama:'Pendapatan Jasa yang Masih Harus Diterima', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 2 — Dasar akrual. Pendapatan diakui saat terjadi, bukan saat kas diterima.',
+    penjelasan:'Akun baru untuk pengakuan pendapatan jasa pinjaman yang sudah jatuh tempo tapi belum diterima kasnya (accrued revenue). Wajib dalam basis akrual SAK EP.' },
+  { lama_kode:'1.1.05.01', baru_kode:'1.1.06.01', lama_nama:'Rekening antar Kantor Cab Waeapo 2', baru_nama:'Rekening Antar Kantor — Cab. Waeapo 2', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi akun — Rekening antar kantor dipindah ke grup 1.1.06 (terpisah dari piutang).',
+    penjelasan:'Perubahan penomoran (reklasifikasi grup). Konten tidak berubah.' },
+  { lama_kode:'1.1.05.02', baru_kode:'1.1.06.02', lama_nama:'Rekening antar Kantor Cab Lolongguba', baru_nama:'Rekening Antar Kantor — Cab. Lolongguba', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi akun.',
+    penjelasan:'Perubahan penomoran grup saja.' },
+  { lama_kode:'1.1.05.03', baru_kode:'1.1.06.03', lama_nama:'Rekening antar Kantor Cab Waelata', baru_nama:'Rekening Antar Kantor — Cab. Waelata', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi akun.',
+    penjelasan:'Perubahan penomoran grup saja.' },
+  { lama_kode:null, baru_kode:'1.1.07.01', lama_nama:null, baru_nama:'Biaya Dibayar Dimuka (≤ 12 Bulan)', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 4 — Biaya dibayar dimuka yang akan jatuh dalam 12 bulan diklasifikasikan sebagai aset lancar.',
+    penjelasan:'Akun baru. Sebelumnya biaya dibayar dimuka dicatat di kelompok aset tidak lancar (1.2.03). Kini dipisah berdasarkan jatuh tempo.' },
+
+  { subgrup: '1.2 Aset Tidak Lancar' },
+  { lama_kode:'1.1.06.01', baru_kode:'1.2.01.04', lama_nama:'Investasi unit Usaha', baru_nama:'Investasi Unit Usaha', mutasi:'debet', status:'modified',
+    dasar:'SAK EP Bab 14/15 — Investasi jangka panjang diklasifikasikan sebagai aset tidak lancar.',
+    penjelasan:'Investasi unit usaha direklasifikasi dari aset lancar (grup 1.1.06) ke aset tidak lancar (grup 1.2.01) karena bersifat jangka panjang.' },
+  { lama_kode:'1.2.01.01', baru_kode:'1.2.02.01', lama_nama:'Tanah', baru_nama:'Tanah', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi — Aset tetap kini di grup 1.2.02 (setelah investasi jangka panjang ditambahkan di 1.2.01).',
+    penjelasan:'Hanya perubahan nomor grup. Tanah tetap tidak disusutkan sesuai SAK EP Bab 17.' },
+  { lama_kode:'1.2.01.02', baru_kode:'1.2.02.02', lama_nama:'Gedung & Bangunan', baru_nama:'Gedung dan Bangunan', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi.',
+    penjelasan:'Perubahan nomor grup saja.' },
+  { lama_kode:'1.2.01.03', baru_kode:'1.2.02.03', lama_nama:'Kendaraan dan Mesin', baru_nama:'Kendaraan dan Mesin', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'1.2.01.04', baru_kode:'1.2.02.04', lama_nama:'Inventaris/Peralatan', baru_nama:'Inventaris / Peralatan Kantor', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi.',
+    penjelasan:'Perubahan nomor grup dan perapian nama.' },
+  { lama_kode:null, baru_kode:'1.2.02.05', lama_nama:null, baru_nama:'Perangkat Teknologi Informasi', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 17 — Aset tetap dikelompokkan berdasarkan jenis. Perangkat TI sebaiknya dipisah karena umur manfaat & tarif penyusutan berbeda.',
+    penjelasan:'Akun baru untuk komputer, server, dan perangkat TI agar penyusutan bisa dihitung terpisah.' },
+  { lama_kode:null, baru_kode:'1.2.04.01', lama_nama:null, baru_nama:'Aset Hak-Guna — Bangunan', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 20A (IFRS 16) — Lessee mengakui aset hak-guna dan liabilitas sewa untuk sewa >12 bulan atau bernilai tinggi.',
+    penjelasan:'AKUN BARU PENTING: Sewa kantor jangka panjang kini diakui sebagai Aset Hak-Guna (right-of-use asset) dan tidak lagi dibebankan langsung. Berlaku untuk sewa >12 bulan.' },
+  { lama_kode:'1.2.03.01', baru_kode:'1.2.05.01', lama_nama:'Biaya Pendirian Organisasi', baru_nama:'Biaya Pendirian Organisasi', mutasi:'debet', status:'modified',
+    dasar:'Reklasifikasi ke grup aset tak berwujud yang terstruktur.',
+    penjelasan:'Hanya perubahan nomor grup.' },
+  { lama_kode:'1.2.03.02', baru_kode:'1.2.05.02', lama_nama:'Lisensi', baru_nama:'Lisensi / Perangkat Lunak', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 18 — Aset tak berwujud termasuk perangkat lunak (software) yang diperoleh secara eksternal.',
+    penjelasan:'Diperluas mencakup perangkat lunak aplikasi koperasi yang dibeli dari pihak eksternal.' },
+  { lama_kode:'1.2.03.03', baru_kode:'1.1.07.01', lama_nama:'Sewa dibayar dimuka', baru_nama:'(→ Biaya Dibayar Dimuka ≤12 Bln / Aset Hak-Guna)', mutasi:'debet', status:'removed',
+    dasar:'SAK EP Bab 20A — Sewa jangka panjang kini diakui sebagai Aset Hak-Guna, bukan biaya dibayar dimuka.',
+    penjelasan:'Akun ini dihapus. Sewa jangka panjang masuk ke akun Aset Hak-Guna (1.2.04.01). Sewa <12 bulan masuk Biaya Dibayar Dimuka (1.1.07.01).' },
+  { lama_kode:'1.2.03.04', baru_kode:'1.1.07.01', lama_nama:'Asuransi dibayar dimuka', baru_nama:'(→ Biaya Dibayar Dimuka ≤12 Bln)', mutasi:'debet', status:'removed',
+    dasar:'SAK EP Bab 4 — Digabung ke akun Biaya Dibayar Dimuka berdasarkan jatuh tempo.',
+    penjelasan:'Digabung ke akun Biaya Dibayar Dimuka (1.1.07.01 atau 1.2.07.02) sesuai jatuh temponya.' },
+  { lama_kode:'1.2.04.01', baru_kode:'1.2.06.01', lama_nama:'Akumulasi Amortisasi Biaya Pendirian Organisasi', baru_nama:'Akumulasi Amortisasi — Biaya Pendirian', mutasi:'kredit', status:'modified',
+    dasar:'Reklasifikasi ke grup akumulasi amortisasi yang terstruktur (1.2.06).',
+    penjelasan:'Hanya perubahan nomor dan penyingkatan nama.' },
+  { lama_kode:'1.2.04.02', baru_kode:'1.2.06.02', lama_nama:'Akumulasi Amortisasi Lisensi', baru_nama:'Akumulasi Amortisasi — Lisensi / Perangkat Lunak', mutasi:'kredit', status:'modified',
+    dasar:'Reklasifikasi.',
+    penjelasan:'Perubahan nomor grup dan perluasan nama mencakup perangkat lunak.' },
+  { lama_kode:'1.2.04.03', baru_kode:null, lama_nama:'Akumulasi Amortisasi Sewa dibayar dimuka', baru_nama:null, mutasi:'kredit', status:'removed',
+    dasar:'SAK EP Bab 20A — Sewa tidak lagi dicatat sebagai biaya dibayar dimuka sehingga akun amortisasinya tidak diperlukan.',
+    penjelasan:'Dihapus karena akun Sewa dibayar dimuka (1.2.03.03) sudah dihapus. Diganti oleh Beban Penyusutan Aset Hak-Guna (5.1.07.05).' },
+  { lama_kode:'1.2.04.04', baru_kode:null, lama_nama:'Akumulasi Amortisasi Asuransi dibayar dimuka', baru_nama:null, mutasi:'kredit', status:'removed',
+    dasar:'Asuransi dibayar dimuka digabung ke Biaya Dibayar Dimuka — tidak lagi memiliki akun amortisasi terpisah.',
+    penjelasan:'Dihapus, tidak diperlukan lagi.' },
+  { lama_kode:'1.2.05.01', baru_kode:'1.2.07.01', lama_nama:'Konstruksi Dalam Pengerjaan dan Uang Muka', baru_nama:'Konstruksi Dalam Pengerjaan dan Uang Muka Aset', mutasi:'debet', status:'renamed',
+    dasar:'Penyempurnaan nama agar lebih deskriptif.',
+    penjelasan:'Hanya penambahan kata "Aset" di akhir nama untuk kejelasan.' },
+  { lama_kode:'1.3.01.01', baru_kode:'1.2.07.03', lama_nama:'Aset Lain-lain', baru_nama:'Aset Tidak Lancar Lain-lain', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 4 — Aset diklasifikasikan sebagai lancar atau tidak lancar.',
+    penjelasan:'Direklasifikasi ke aset tidak lancar dengan nama yang lebih spesifik.' },
+
+  // ── KELOMPOK 2: LIABILITAS ──
+  { grup: '2. LIABILITAS', subgrup: '2.1 Liabilitas Jangka Pendek' },
+  { lama_kode:'2.1.04.01', baru_kode:'2.1.01.01', lama_nama:'Simpanan Umum', baru_nama:'Simpanan — Simpanan Umum / Tabungan', mutasi:'kredit', status:'modified',
+    dasar:'Reklasifikasi dan perapian urutan — Simpanan sebagai kewajiban terbesar koperasi diletakkan di awal grup liabilitas.',
+    penjelasan:'Direklasifikasi ke awal grup liabilitas jangka pendek. Nama diperjelas mencakup "Tabungan".' },
+  { lama_kode:'2.1.04.02', baru_kode:'2.1.01.02', lama_nama:'Simpanan Program', baru_nama:'Simpanan — Simpanan Program', mutasi:'kredit', status:'modified',
+    dasar:'Reklasifikasi.',
+    penjelasan:'Perubahan nomor grup saja.' },
+  { lama_kode:'2.1.04.03', baru_kode:'2.1.01.03', lama_nama:'Simpanan Deposito', baru_nama:'Simpanan — Simpanan Berjangka / Deposito', mutasi:'kredit', status:'modified',
+    dasar:'Permenkop 2/2024 Lampiran I — Simpanan berjangka adalah terminologi yang lebih tepat.',
+    penjelasan:'Nama diperjelas menjadi "Simpanan Berjangka / Deposito" agar sesuai terminologi SAK EP.' },
+  { lama_kode:'2.1.02.01', baru_kode:'2.1.02.01', lama_nama:'Utang Operasional', baru_nama:'Liabilitas Operasional — Beban yang Masih Harus Dibayar', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP — Terminologi "Liabilitas" menggantikan "Utang/Kewajiban" sebagai istilah standar. Dasar akrual wajib mencatat beban akrual.',
+    penjelasan:'Nama diperjelas: "Utang Operasional" → "Liabilitas Operasional — Beban yang Masih Harus Dibayar" untuk mencerminkan basis akrual.' },
+  { lama_kode:'2.1.03.01', baru_kode:'2.1.03.01', lama_nama:'Utang Pajak', baru_nama:'Utang Pajak Penghasilan (PPh Badan)', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP Bab 29 — Pajak penghasilan diakui dan disajikan secara terpisah.',
+    penjelasan:'Diperjelas menjadi PPh Badan dan ditambah akun untuk pajak lain-lain (PPh 21, PPN).' },
+  { lama_kode:'2.1.01.01', baru_kode:'2.1.04.01', lama_nama:'SHU Anggota', baru_nama:'Utang SHU — Bagian Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP & Permenkop 2/2024 — SHU yang sudah diputuskan RAT tetapi belum dibayar adalah liabilitas.',
+    penjelasan:'Direklasifikasi ke liabilitas jangka pendek (hutang SHU) setelah RAT memutuskan pembagian.' },
+  { lama_kode:'2.1.01.02', baru_kode:'2.1.04.02', lama_nama:'Cadangan Khusus', baru_nama:'Utang SHU — Dana Cadangan', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 — Cadangan yang sudah dialokasikan dari SHU dicatat sebagai kewajiban sementara sebelum dipindah ke ekuitas.',
+    penjelasan:'Direklasifikasi dari sub-akun ekuitas (cadangan) ke liabilitas transisi SHU.' },
+  { lama_kode:null, baru_kode:'2.1.06.01', lama_nama:null, baru_nama:'Liabilitas Sewa — Jatuh Tempo ≤ 12 Bulan', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 20A (IFRS 16) — Bagian liabilitas sewa yang jatuh tempo dalam 12 bulan disajikan sebagai liabilitas jangka pendek.',
+    penjelasan:'AKUN BARU PENTING: Pasangan dari Aset Hak-Guna (1.2.04.01). Untuk sewa kantor >12 bulan, liabilitas jangka pendeknya dicatat di sini.' },
+  { lama_kode:'2.1.06.01', baru_kode:'2.1.07.01', lama_nama:'Utang Jangka Pendek Lainnya', baru_nama:'Liabilitas Jangka Pendek Lain-lain', mutasi:'kredit', status:'renamed',
+    dasar:'Penyesuaian terminologi SAK EP.',
+    penjelasan:'"Utang" → "Liabilitas" sesuai terminologi SAK EP.' },
+
+  { subgrup: '2.2 Liabilitas Jangka Panjang' },
+  { lama_kode:'2.2.01.01', baru_kode:'2.2.01.01', lama_nama:'Utang Bank', baru_nama:'Pinjaman Diterima dari Bank', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP Bab 11 — Terminologi "Pinjaman Diterima" untuk instrumen utang.',
+    penjelasan:'"Utang Bank" → "Pinjaman Diterima dari Bank" sesuai terminologi SAK EP.' },
+  { lama_kode:'2.2.01.02', baru_kode:'2.2.01.02', lama_nama:'Utang Jangka Panjang Lain', baru_nama:'Pinjaman Diterima dari Non-Bank / Pihak Ke-3', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP Bab 11 — Terminologi disesuaikan.',
+    penjelasan:'Diperjelas sumbernya: dari pihak ke-3 non-bank.' },
+  { lama_kode:null, baru_kode:'2.2.02.01', lama_nama:null, baru_nama:'Liabilitas Imbalan Pascakerja (Pesangon)', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 28 (setara PSAK 24) — Imbalan kerja wajib diakrualkan. Pesangon adalah kewajiban konstruktif yang harus diakui.',
+    penjelasan:'AKUN BARU WAJIB: Estimasi kewajiban pesangon pegawai (sesuai UU Ketenagakerjaan) wajib diakui sebagai liabilitas meskipun belum dibayar. Dihitung secara aktuaria atau metode disederhanakan.' },
+  { lama_kode:null, baru_kode:'2.2.03.01', lama_nama:null, baru_nama:'Liabilitas Sewa — Jatuh Tempo > 12 Bulan', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 20A (IFRS 16) — Bagian liabilitas sewa jangka panjang.',
+    penjelasan:'Bagian liabilitas sewa yang jatuh tempo lebih dari 12 bulan ke depan.' },
+
+  // ── KELOMPOK 3: EKUITAS ──
+  { grup: '3. EKUITAS', subgrup: '3.1 Modal & Cadangan' },
+  { lama_kode:'3.1.01.02', baru_kode:'3.1.01.01', lama_nama:'Simpanan Pokok/Modal Tetap', baru_nama:'Simpanan Pokok / Modal Tetap', mutasi:'kredit', status:'unchanged' },
+  { lama_kode:'3.1.01.03', baru_kode:'3.1.01.02', lama_nama:'Simpanan Wajib/Modal Tambahan', baru_nama:'Simpanan Wajib / Modal Tambahan', mutasi:'kredit', status:'unchanged' },
+  { lama_kode:'3.1.01.04', baru_kode:'3.1.01.03', lama_nama:'Modal Penyertaan', baru_nama:'Modal Penyertaan', mutasi:'kredit', status:'unchanged' },
+  { lama_kode:'3.1.02.01', baru_kode:'3.1.02.01', lama_nama:'Modal Lain-lain', baru_nama:'Cadangan Umum', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 Lampiran I — Cadangan Umum adalah komponen ekuitas wajib yang harus tersaji secara eksplisit.',
+    penjelasan:'Nama diubah dari "Modal Lain-lain" ke "Cadangan Umum" sesuai struktur ekuitas Permenkop 2/2024.' },
+  { lama_kode:null, baru_kode:'3.1.02.02', lama_nama:null, baru_nama:'Cadangan Risiko (Cadangan Khusus)', mutasi:'kredit', status:'new',
+    dasar:'Permenkop 2/2024 Lampiran I & SAK EP — Cadangan Risiko adalah komponen ekuitas tersendiri yang wajib disajikan untuk KSP.',
+    penjelasan:'AKUN BARU WAJIB: Cadangan untuk menanggung risiko kerugian kredit. Dibentuk dari alokasi SHU setiap tahun sesuai ketentuan AD/ART koperasi.' },
+  { lama_kode:null, baru_kode:'3.1.03.01', lama_nama:null, baru_nama:'Keuntungan (Kerugian) Aktuarial Imbalan Kerja', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 28 & Bab 2 (Penghasilan Komprehensif Lain / OCI) — Keuntungan/kerugian aktuarial diakui di OCI.',
+    penjelasan:'AKUN BARU: Penghasilan Komprehensif Lain (OCI) adalah konsep baru di SAK EP yang tidak ada di SAK ETAP. Perubahan asumsi aktuaria imbalan kerja masuk ke sini, bukan ke laba rugi.' },
+  { lama_kode:null, baru_kode:'3.1.03.02', lama_nama:null, baru_nama:'Surplus Revaluasi Aset Tetap', mutasi:'kredit', status:'new',
+    dasar:'SAK EP Bab 17 & Bab 2 — Jika model revaluasi digunakan, surplus revaluasi diakui di OCI.',
+    penjelasan:'Akun OCI untuk kenaikan nilai aset tetap jika koperasi memilih model revaluasi.' },
+
+  { subgrup: '3.2 Sisa Hasil Usaha (SHU)' },
+  { lama_kode:'3.2.01.01', baru_kode:'3.2.01.01', lama_nama:'SHU Ditahan s/d Tahun lalu', baru_nama:'SHU Ditahan s/d Tahun Lalu', mutasi:'kredit', status:'unchanged' },
+  { lama_kode:'3.2.01.02', baru_kode:'3.2.01.02', lama_nama:'SHU Tahun lalu belum dibagi', baru_nama:'SHU Tahun Lalu Belum Dibagi', mutasi:'kredit', status:'unchanged' },
+  { lama_kode:'3.2.02.01', baru_kode:'3.2.02.01', lama_nama:'SHU Berjalan', baru_nama:'SHU Berjalan (Tahun Ini)', mutasi:'kredit', status:'unchanged' },
+
+  // ── KELOMPOK 4: PENDAPATAN ──
+  { grup: '4. PENDAPATAN', subgrup: '4.1 Pendapatan Usaha — dari Anggota (BARU)' },
+  { lama_kode:'4.1.01.01', baru_kode:'4.1.01.01', lama_nama:'Pendapatan Jasa Kredit Umum', baru_nama:'Pendapatan Jasa Pinjaman — Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 Lampiran I — Pendapatan wajib dipisah antara yang berasal dari anggota dan non-anggota untuk mengukur kinerja pelayanan koperasi.',
+    penjelasan:'PERUBAHAN UTAMA: "Kredit" diganti "Pinjaman". Kini hanya mencatat pendapatan dari anggota. Pendapatan dari non-anggota pindah ke grup 4.2.' },
+  { lama_kode:'4.1.02.01', baru_kode:'4.1.02.01', lama_nama:'Pendapatan Denda Kredit Umum', baru_nama:'Pendapatan Denda Pinjaman — Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 Lampiran I — Pemisahan anggota/non-anggota.',
+    penjelasan:'Hanya mencatat denda dari anggota.' },
+  { lama_kode:'4.1.03.01', baru_kode:'4.1.03.01', lama_nama:'Pendapatan Administrasi Simpanan', baru_nama:'Pendapatan Administrasi Simpanan — Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 Lampiran I — Pemisahan anggota/non-anggota.',
+    penjelasan:'Ditambah keterangan "— Anggota".' },
+  { lama_kode:'4.1.04.01', baru_kode:'4.1.04.01', lama_nama:'Pendapatan Provisi Kredit', baru_nama:'Pendapatan Provisi Pinjaman — Anggota', mutasi:'kredit', status:'renamed',
+    dasar:'Permenkop 2/2024 Lampiran I — Pemisahan dan perubahan terminologi.',
+    penjelasan:'"Kredit" → "Pinjaman", ditambah "— Anggota".' },
+
+  { subgrup: '4.2 Pendapatan Usaha — dari Non-Anggota (BARU)' },
+  { lama_kode:null, baru_kode:'4.2.01.01', lama_nama:null, baru_nama:'Pendapatan Jasa Pinjaman — Non-Anggota', mutasi:'kredit', status:'new',
+    dasar:'Permenkop 2/2024 Lampiran I — Pemisahan wajib pendapatan dari anggota dan non-anggota.',
+    penjelasan:'GRUP BARU: Seluruh pendapatan dari non-anggota dicatat terpisah. Hal ini memungkinkan laporan keuangan menunjukkan proporsi pelayanan kepada anggota vs non-anggota.' },
+  { lama_kode:null, baru_kode:'4.2.02.01', lama_nama:null, baru_nama:'Pendapatan Denda Pinjaman — Non-Anggota', mutasi:'kredit', status:'new', dasar:'Permenkop 2/2024 Lampiran I.', penjelasan:'Grup pendapatan non-anggota.' },
+
+  { subgrup: '4.3 & 4.4 Pendapatan Lainnya' },
+  { lama_kode:'4.1.05.01', baru_kode:'4.3.01.01', lama_nama:'Pendapatan Dividen Anak Usaha', baru_nama:'Pendapatan Dividen / Bagi Hasil Anak Usaha', mutasi:'kredit', status:'renamed',
+    dasar:'Reklasifikasi ke grup pendapatan usaha lainnya.',
+    penjelasan:'Direklasifikasi, nama sedikit diperjelas.' },
+  { lama_kode:'4.2.01.01', baru_kode:'4.4.01.01', lama_nama:'Pendapatan Bunga Bank', baru_nama:'Pendapatan Bunga / Jasa Giro Bank', mutasi:'kredit', status:'renamed',
+    dasar:'Reklasifikasi ke grup pendapatan non-usaha.',
+    penjelasan:'Diperjelas dengan penambahan "Jasa Giro".' },
+  { lama_kode:'4.2.01.02', baru_kode:'4.4.01.02', lama_nama:'Pendapatan Hadiah', baru_nama:'Pendapatan Hadiah', mutasi:'kredit', status:'modified', dasar:'Reklasifikasi nomor grup.', penjelasan:'Perubahan nomor saja.' },
+  { lama_kode:'4.2.01.03', baru_kode:'4.4.01.03', lama_nama:'Pendapatan Hibah', baru_nama:'Pendapatan Hibah', mutasi:'kredit', status:'modified', dasar:'Reklasifikasi nomor grup.', penjelasan:'Perubahan nomor saja.' },
+  { lama_kode:'4.3.01.01', baru_kode:'4.5.01.02', lama_nama:'Pendapatan Revaluasi Aset', baru_nama:'Keuntungan Revaluasi Instrumen Keuangan', mutasi:'kredit', status:'renamed',
+    dasar:'SAK EP Bab 2 — Keuntungan revaluasi aset tetap masuk OCI (ekuitas), bukan laba rugi. Hanya keuntungan instrumen keuangan masuk laba rugi.',
+    penjelasan:'PERUBAHAN KONSEPTUAL: Surplus revaluasi aset tetap tidak boleh masuk laporan laba rugi menurut SAK EP — harus ke OCI (Ekuitas 3.1.03.02). Yang masuk sini hanya keuntungan dari instrumen keuangan.' },
+
+  // ── KELOMPOK 5: BEBAN ──
+  { grup: '5. BEBAN', subgrup: '5.1 Beban Usaha' },
+  { lama_kode:'5.1.01.01', baru_kode:'5.1.01.01', lama_nama:'Beban Jasa Simpanan', baru_nama:'Beban Jasa Simpanan Umum / Tabungan', mutasi:'debet', status:'renamed',
+    dasar:'Penyempurnaan nama agar sesuai dengan jenis simpanan.',
+    penjelasan:'Diperjelas jenis simpanannya.' },
+  { lama_kode:null, baru_kode:'5.1.01.02', lama_nama:null, baru_nama:'Beban Jasa Simpanan Berjangka / Deposito', mutasi:'debet', status:'new',
+    dasar:'Pemisahan beban jasa simpanan berdasarkan jenis produk.',
+    penjelasan:'Akun baru untuk beban jasa simpanan berjangka agar bisa dianalisis terpisah.' },
+  { lama_kode:'5.1.02.01', baru_kode:'5.1.02.01', lama_nama:'Beban Gaji Pegawai', baru_nama:'Beban Gaji Pegawai', mutasi:'debet', status:'unchanged' },
+  { lama_kode:'5.1.02.04', baru_kode:'5.1.02.04', lama_nama:'Beban Bpjs Ketenagakerjaan', baru_nama:'Beban BPJS Ketenagakerjaan', mutasi:'debet', status:'renamed',
+    dasar:'Perbaikan penulisan nama.',
+    penjelasan:'Perbaikan huruf kapital BPJS.' },
+  { lama_kode:null, baru_kode:'5.1.02.05', lama_nama:null, baru_nama:'Beban BPJS Kesehatan (Tanggungan Pemberi Kerja)', mutasi:'debet', status:'new',
+    dasar:'UU No. 40/2004 & UU No. 24/2011 — Iuran BPJS Kesehatan yang ditanggung pemberi kerja adalah beban koperasi.',
+    penjelasan:'Akun baru khusus BPJS Kesehatan bagian koperasi. Sebelumnya mungkin digabung ke beban administrasi.' },
+  { lama_kode:null, baru_kode:'5.1.02.09', lama_nama:null, baru_nama:'Beban Imbalan Pascakerja / Pesangon (Akrual)', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 28 (setara PSAK 24) — Beban imbalan pascakerja wajib diakui setiap periode, tidak hanya saat dibayar.',
+    penjelasan:'AKUN BARU WAJIB: Beban akrual pesangon pegawai sesuai UU Ketenagakerjaan. Pasangan dari Liabilitas Imbalan Pascakerja (2.2.02.01). Harus dihitung setiap tahun.' },
+  { lama_kode:null, baru_kode:'5.1.05.03', lama_nama:null, baru_nama:'Beban Sewa Jangka Pendek / Nilai Rendah', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 20A — Pengecualian: sewa jangka pendek (≤12 bulan) atau nilai rendah boleh dibebankan langsung.',
+    penjelasan:'Akun ini untuk sewa yang tidak memenuhi kriteria Aset Hak-Guna (misalnya sewa mesin fotokopi, sewa gudang <12 bulan).' },
+  { lama_kode:'5.1.06.01', baru_kode:'5.1.06.01', lama_nama:'Beban Penyisihan Kerugian Kredit Umum', baru_nama:'Beban Penyisihan Pinjaman Tidak Tertagih — Anggota', mutasi:'debet', status:'renamed',
+    dasar:'SAK EP Bab 11 — Terminologi dan metode berubah dari cadangan umum ke incurred loss.',
+    penjelasan:'PERUBAHAN TERMINOLOGI & METODE: Dari "Cadangan Kerugian" ke "Penyisihan Pinjaman Tidak Tertagih". Metode penyisihan harus berbasis bukti objektif (incurred loss), bukan persentase tetap.' },
+  { lama_kode:null, baru_kode:'5.1.07.05', lama_nama:null, baru_nama:'Beban Penyusutan Aset Hak-Guna', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 20A — Aset Hak-Guna disusutkan selama masa sewa.',
+    penjelasan:'Beban penyusutan untuk Aset Hak-Guna sewa kantor jangka panjang.' },
+
+  { subgrup: '5.3 Beban Keuangan' },
+  { lama_kode:'5.3.01.01', baru_kode:'5.3.01.01', lama_nama:'Beban Bunga Utang Bank', baru_nama:'Beban Bunga Pinjaman Bank', mutasi:'debet', status:'renamed',
+    dasar:'Penyesuaian terminologi SAK EP — "Pinjaman Diterima" bukan "Utang".',
+    penjelasan:'"Utang Bank" → "Pinjaman Bank".' },
+  { lama_kode:null, baru_kode:'5.3.02.01', lama_nama:null, baru_nama:'Beban Bunga Liabilitas Sewa', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 20A — Bunga atas liabilitas sewa diakui secara terpisah menggunakan suku bunga efektif.',
+    penjelasan:'AKUN BARU: Bunga atas Liabilitas Sewa (dari sewa kantor jangka panjang). Berbeda dari beban sewa biasa.' },
+
+  { subgrup: '5.5 Beban Pajak' },
+  { lama_kode:'5.5.01.01', baru_kode:'5.5.01.01', lama_nama:'Taksiran PPh (0.5%)', baru_nama:'Taksiran PPh Final (0,5% — PP 55/2022)', mutasi:'debet', status:'renamed',
+    dasar:'PP No. 55 Tahun 2022 — Tarif PPh Final 0,5% untuk koperasi dengan omzet ≤ Rp4,8 miliar.',
+    penjelasan:'Ditambahkan referensi dasar hukum terbaru PP 55/2022 menggantikan PP 23/2018.' },
+  { lama_kode:null, baru_kode:'5.5.01.02', lama_nama:null, baru_nama:'Beban Pajak Penghasilan Badan (Non-Final)', mutasi:'debet', status:'new',
+    dasar:'SAK EP Bab 29 — Pajak penghasilan disajikan sebagai beban tersendiri.',
+    penjelasan:'Akun baru untuk koperasi yang terkena PPh tarif umum (non-final).' },
+];
+
+const statusLabel = { new:'Akun Baru', renamed:'Nama Diubah', modified:'Dimodifikasi', removed:'Dihapus', unchanged:'Tidak Berubah' };
+const badgeClass = { new:'badge-new', renamed:'badge-renamed', modified:'badge-modified', removed:'badge-removed', unchanged:'badge-unchanged' };
+
+let currentFilter = 'all';
+let currentSearch = '';
+
+function renderStats() {
+  const rows = DATA.filter(d => !d.grup && !d.subgrup);
+  const counts = { new:0, renamed:0, modified:0, removed:0, unchanged:0 };
+  rows.forEach(r => counts[r.status]++);
+  document.getElementById('statsBar').innerHTML =
+    `<div class="stat">Total: <span>${rows.length}</span></div>` +
+    `<div class="stat">Akun Baru: <span style="color:#166534">${counts.new}</span></div>` +
+    `<div class="stat">Nama Diubah: <span style="color:#713f12">${counts.renamed}</span></div>` +
+    `<div class="stat">Dimodifikasi: <span style="color:#1e40af">${counts.modified}</span></div>` +
+    `<div class="stat">Dihapus: <span style="color:#991b1b">${counts.removed}</span></div>` +
+    `<div class="stat">Tidak Berubah: <span>${counts.unchanged}</span></div>`;
+}
+
+function renderTable() {
+  const body = document.getElementById('tableBody');
+  body.innerHTML = '';
+  let hasVisible = false;
+  let visibleCount = 0;
+
+  DATA.forEach((row, idx) => {
+    if (row.grup) {
+      const tr = document.createElement('tr');
+      tr.className = 'group-header';
+      tr.dataset.type = 'header';
+      tr.innerHTML = `<td colspan="7" style="font-size:13px;color:#1a1a1a;padding:10px 12px 6px;">${row.grup}</td>`;
+      body.appendChild(tr);
+      return;
+    }
+    if (row.subgrup) {
+      const tr = document.createElement('tr');
+      tr.className = 'group-header';
+      tr.dataset.type = 'subheader';
+      tr.innerHTML = `<td colspan="7" style="background:#fafaf7;font-size:11px;color:#666;padding:5px 12px 5px 20px;">${row.subgrup}</td>`;
+      body.appendChild(tr);
+      return;
+    }
+
+    const matchFilter = currentFilter === 'all' || row.status === currentFilter;
+    const searchTerm = currentSearch.toLowerCase();
+    const matchSearch = !searchTerm ||
+      (row.lama_kode||'').toLowerCase().includes(searchTerm) ||
+      (row.baru_kode||'').toLowerCase().includes(searchTerm) ||
+      (row.lama_nama||'').toLowerCase().includes(searchTerm) ||
+      (row.baru_nama||'').toLowerCase().includes(searchTerm);
+
+    const tr = document.createElement('tr');
+    tr.className = `row-${row.status}`;
+
+    if (!matchFilter || !matchSearch) {
+      tr.style.display = 'none';
+    } else {
+      hasVisible = true;
+      visibleCount++;
+    }
+
+    const hasTooltip = row.dasar || row.penjelasan;
+
+    if (hasTooltip) {
+      tr.dataset.hasTooltip = '1';
+      tr.dataset.idx = idx;
+    }
+
+    tr.innerHTML = `
+      <td class="kode">${row.lama_kode || '<span style="color:#ccc">—</span>'}</td>
+      <td class="${row.status==='new'||row.status==='renamed'?'kode-baru':'kode'}">${row.baru_kode || '<span style="color:#ccc">—</span>'}</td>
+      <td><span class="nama ${row.status==='removed'?'nama':''}">${row.lama_nama || '<span style="color:#ccc">—</span>'}</span></td>
+      <td>${row.baru_nama || '<span style="color:#ccc">—</span>'}</td>
+      <td><span style="font-size:11px;color:#888;">${row.mutasi||''}</span></td>
+      <td><span class="badge ${badgeClass[row.status]}">${statusLabel[row.status]}</span></td>
+      <td style="font-size:11px;color:#bbb;text-align:center">${hasTooltip ? '···' : ''}</td>
+    `;
+    body.appendChild(tr);
+  });
+
+  document.getElementById('emptyMsg').style.display = hasVisible ? 'none' : 'block';
+
+  // Update filter button counters
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const f = btn.dataset.filter;
+    if (f === 'all') {
+      btn.textContent = 'Semua';
+    } else {
+      const rows = DATA.filter(d => !d.grup && !d.subgrup && d.status === f);
+      btn.textContent = statusLabel[f] + ` (${rows.length})`;
+    }
+  });
+}
+
+function buildTooltipHTML(row) {
+  let html = `<h4>${row.baru_nama || row.lama_nama}</h4>`;
+  if (row.lama_nama && row.baru_nama && row.lama_nama !== row.baru_nama) {
+    html += `<div class="perubahan">
+      <div class="lama">✕ Sebelum: ${row.lama_nama}</div>
+      <div class="baru">✓ Sesudah: ${row.baru_nama}</div>
+    </div>`;
+  }
+  if (row.lama_kode && row.baru_kode && row.lama_kode !== row.baru_kode) {
+    html += `<div class="perubahan" style="margin-top:4px">
+      <div class="lama arrow-label">Kode: ${row.lama_kode} → <span style="color:#166534;font-weight:600">${row.baru_kode}</span></div>
+    </div>`;
+  }
+  if (row.penjelasan) {
+    html += `<p style="margin-top:8px;color:#333;font-size:12px;line-height:1.6">${row.penjelasan}</p>`;
+  }
+  if (row.dasar) {
+    html += `<div class="dasar"><span class="dasar-label">DASAR</span><span class="dasar-text">${row.dasar}</span></div>`;
+  }
+  return html;
+}
+
+function positionTooltip(mouseX, mouseY) {
+  const tip = document.getElementById('tooltip');
+  const tipW = 320;
+  const tipH = tip.offsetHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const offset = 16;
+
+  let left = mouseX + offset;
+  if (left + tipW > vw - 8) left = mouseX - tipW - offset;
+  if (left < 8) left = 8;
+
+  let top = mouseY + offset;
+  if (top + tipH > vh - 8) top = mouseY - tipH - offset;
+  if (top < 8) top = 8;
+
+  tip.style.left = left + 'px';
+  tip.style.top = top + 'px';
+}
+
+const tip = document.getElementById('tooltip');
+
+document.getElementById('tableBody').addEventListener('mouseover', e => {
+  const tr = e.target.closest('tr[data-has-tooltip]');
+  if (!tr) return;
+  const idx = parseInt(tr.dataset.idx);
+  const row = DATA[idx];
+  if (!row) return;
+  tip.innerHTML = buildTooltipHTML(row);
+  tip.classList.add('visible');
+});
+
+document.getElementById('tableBody').addEventListener('mousemove', e => {
+  const tr = e.target.closest('tr[data-has-tooltip]');
+  if (!tr) { tip.classList.remove('visible'); return; }
+  positionTooltip(e.clientX, e.clientY);
+});
+
+document.getElementById('tableBody').addEventListener('mouseout', e => {
+  const tr = e.target.closest('tr[data-has-tooltip]');
+  if (!tr) return;
+  const related = e.relatedTarget;
+  if (related && tr.contains(related)) return;
+  tip.classList.remove('visible');
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderTable();
+  });
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  renderTable();
+});
+
+renderStats();
+renderTable();
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ use Session;
 
 class AuthController extends Controller
 {
-    private const ID_KEC = 1;
+    private const ID_KEC = 351;
     public function index()
     {
         $keuangan = new Keuangan;
@@ -74,7 +74,12 @@ class AuthController extends Controller
             ]);
         }
 
-        if (request()->server('SERVER_NAME') === '127.0.0.1' || request()->server('SERVER_NAME') === 'localhost') {
+        $serverName = request()->server('SERVER_NAME');
+        if (
+            $serverName === '127.0.0.1' ||
+            $serverName === 'localhost' ||
+            str_ends_with($serverName, '.test')
+        ) {
             $kec = Kecamatan::where('id', self::ID_KEC)
                 ->with('kabupaten')
                 ->first();
@@ -105,7 +110,7 @@ class AuthController extends Controller
         $rekap = Rekap::whereRaw("CONCAT(',', REPLACE(lokasi, ' ', ''), ',') LIKE ?", ['%,' . $lokasi . ',%'])->first();
 
         if (!$rekap) {
-            return redirect()->back();
+            return redirect()->back()->withErrors(['message' => 'Username dan/atau password tidak dikenal atau salah.']);
         }
         if ($user) {
             if ($password === $user->pass) {
@@ -161,7 +166,7 @@ class AuthController extends Controller
             }
         }
 
-        return redirect()->back();
+        return redirect()->back()->withErrors(['message' => 'Username dan/atau password tidak dikenal atau salah.']);
     }
 
     public function force($uname)
@@ -172,7 +177,12 @@ class AuthController extends Controller
         $username = $uname;
         $password = $uname;
 
-        if (request()->server('SERVER_NAME') === '127.0.0.1' || request()->server('SERVER_NAME') === 'localhost') {
+        $serverName = request()->server('SERVER_NAME');
+        if (
+            $serverName === '127.0.0.1' ||
+            $serverName === 'localhost' ||
+            str_ends_with($serverName, '.test')
+        ) {
             $kec = Kecamatan::where('id', self::ID_KEC)
                 ->first();
         } else {
