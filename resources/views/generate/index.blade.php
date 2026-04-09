@@ -32,31 +32,120 @@
         table.table tr th {
             vertical-align: middle;
         }
+
+        /* Animated Tab Styles */
+        .custom-tabs {
+            position: relative;
+            background: #fff;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .custom-tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #67748e;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .custom-tab:hover {
+            color: #344767;
+        }
+
+        .custom-tab.active {
+            color: #fff;
+            background: linear-gradient(310deg, #2152ff, #21d4fd);
+            box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(33, 82, 255, 0.4);
+        }
+
+        .custom-tab .material-icons {
+            font-size: 20px;
+        }
+
+        .tab-content-custom {
+            display: none;
+            animation: fadeIn 0.4s ease-in;
+        }
+
+        .tab-content-custom.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #67748e;
+        }
+
+        .loading-spinner .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
     </style>
 </head>
 
 <body>
     <main class="main-content mt-3">
         <section class="container">
-            <div class="nav-wrapper position-relative end-0">
-                {{-- <ul class="nav nav-pills nav-fill p-1" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link mb-0 px-0 py-1 active" data-bs-toggle="tab" href="#Individu" role="tab"
-                            aria-controls="Individu" aria-selected="true">
-                            <span class="material-icons align-middle mb-1">
-                                person
-                            </span>
-                            Individu
-                        </a>
-                    </li>
-                </ul> --}}
+            <!-- Custom Animated Tabs -->
+            <div class="custom-tabs">
+                <div class="custom-tab active" data-tab="individu">
+                    <span class="material-icons">person</span>
+                    <span>Individu</span>
+                </div>
+                <div class="custom-tab" data-tab="kelompok">
+                    <span class="material-icons">groups</span>
+                    <span>Kelompok</span>
+                </div>
+            </div>
 
-                <div class="tab-content mt-2">
-                    <div class="tab-pane fade show active" id="Individu" role="tabpanel" aria-labelledby="Individu">
-                        <div class="card">
-                            <div class="card-body" id="StructruIndividu">
-
+            <!-- Tab Contents -->
+            <div class="tab-content-custom active" id="tab-individu">
+                <div class="card">
+                    <div class="card-body" id="StructureIndividu">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Loading...</span>
                             </div>
+                            <div class="mt-3">Memuat data individu...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content-custom" id="tab-kelompok">
+                <div class="card">
+                    <div class="card-body" id="StructureKelompok">
+                        <div class="loading-spinner">
+                            <div class="spinner-border text-info" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <div class="mt-3">Memuat data kelompok...</div>
                         </div>
                     </div>
                 </div>
@@ -73,12 +162,35 @@
     <script src="/assets/js/plugins/sweetalert.min.js"></script>
 
     <script>
-        $.get('/generate/individu', function(result) {
-            $('#StructruIndividu').html(result.view)
-        })
-        $.get('/generate/kelompok', function(result) {
-            $('#StructurKelompok').html(result.view)
-        })
+        // Load data on page load
+        $(document).ready(function() {
+            // Load Individu data
+            $.get('/generate/individu', function(result) {
+                $('#StructureIndividu').html(result.view);
+            }).fail(function() {
+                $('#StructureIndividu').html('<div class="alert alert-danger">Gagal memuat data individu</div>');
+            });
+
+            // Load Kelompok data
+            $.get('/generate/kelompok', function(result) {
+                $('#StructureKelompok').html(result.view);
+            }).fail(function() {
+                $('#StructureKelompok').html('<div class="alert alert-danger">Gagal memuat data kelompok</div>');
+            });
+        });
+
+        // Tab switching functionality
+        $('.custom-tab').on('click', function() {
+            const tabName = $(this).data('tab');
+            
+            // Update active tab
+            $('.custom-tab').removeClass('active');
+            $(this).addClass('active');
+            
+            // Update active content
+            $('.tab-content-custom').removeClass('active');
+            $('#tab-' + tabName).addClass('active');
+        });
     </script>
 
     <script>

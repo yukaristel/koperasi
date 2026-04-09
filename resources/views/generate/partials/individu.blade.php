@@ -22,7 +22,7 @@
 <form action="/generate/save" method="post" target="_blank">
     @csrf
 
-    <input type="hidden" name="jenis_pinjaman" id="jenis_pinjaman" value="1">
+    <input type="hidden" name="jenis_pinjaman" id="jenis_pinjaman" value="I">
     <input type="hidden" name="pinjaman" id="pinjaman" value="individu">
     <div class="table-responsive">
         <diV><b>GENERATE </b>Kecamatan {{ $kec->nama_kec }} [{{ $kec->id }}], {{ $kec->kabupaten->nama_kab }}</diV>
