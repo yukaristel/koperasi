@@ -1718,8 +1718,8 @@ class TransaksiController extends Controller
             $real->sum_jasa = 0;
         }
 
-        $target_pokok = $pinkel->target->target_pokok;
-        $target_jasa = $pinkel->target->target_jasa;
+        $target_pokok = $pinkel->target?->target_pokok ?? 0;
+        $target_jasa  = $pinkel->target?->target_jasa  ?? 0;
 
         $saldo_pokok = ($target_pokok - $real->sum_pokok > 0) ? $target_pokok - $real->sum_pokok : 0;
         $saldo_jasa = ($target_jasa - $real->sum_jasa > 0) ? $target_jasa - $real->sum_jasa : 0;
