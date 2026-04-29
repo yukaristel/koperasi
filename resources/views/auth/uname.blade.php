@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Daftar Pengguna - {{ $kec->nama_kec ?? 'Koperasi' }}</title>
+    <title>Developer Login - {{ $kec->nama_kec ?? 'Koperasi' }}</title>
     <link rel="icon" type="image/png" href="../assets/img/favicon.png">
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800"
@@ -19,8 +19,9 @@
 
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #0f1117;
             min-height: 100vh;
+            color: #e2e8f0;
         }
 
         .header-bar {
@@ -30,30 +31,49 @@
             width: 100%;
             height: 50px;
             z-index: 9999;
-            background-color: #129990;
-            color: white;
+            background-color: #1a1d2e;
+            color: #a78bfa;
             padding: 0 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(167, 139, 250, 0.15);
         }
 
-        .header-bar span:first-child {
+        .header-bar .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-bar .dev-badge {
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+            color: white;
+            font-size: 10px;
             font-weight: 700;
-            font-size: 16px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .header-bar span:last-child {
-            font-style: italic;
-            font-size: 14px;
-            opacity: 0.95;
+        .header-bar .title {
+            font-weight: 700;
+            font-size: 15px;
+            color: #e2e8f0;
+        }
+
+        .header-bar .kec-name {
+            font-size: 13px;
+            opacity: 0.7;
+            color: #a78bfa;
         }
 
         .main-content {
             padding-top: 70px;
             padding-bottom: 40px;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding-left: 20px;
             padding-right: 20px;
@@ -61,64 +81,112 @@
 
         .page-title {
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .page-title h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2d3748;
             margin-bottom: 8px;
         }
 
+        .page-title h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 6px;
+        }
+
+        .page-title h2 i {
+            color: #a78bfa;
+        }
+
         .page-title p {
-            font-size: 14px;
-            color: #718096;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .hint-bar {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 10px 16px;
+            background: rgba(167, 139, 250, 0.08);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #a78bfa;
+        }
+
+        .hint-bar i {
+            margin-right: 6px;
         }
 
         .user-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 14px;
         }
 
         .user-card {
-            background: white;
+            background: #1a1d2e;
             border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+            padding: 18px;
+            border: 1px solid #2d3148;
+            transition: all 0.25s ease;
             cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #7c3aed, #a78bfa, #7c3aed);
+            opacity: 0;
+            transition: opacity 0.25s ease;
         }
 
         .user-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(18, 153, 144, 0.15);
-            border-color: #129990;
+            border-color: #7c3aed;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .user-card:hover::before {
+            opacity: 1;
+        }
+
+        .user-card:active {
+            transform: translateY(0);
+        }
+
+        .user-card.logging-in {
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+        }
+
+        .user-card.logging-in::before {
+            background: linear-gradient(90deg, #22c55e, #4ade80, #22c55e);
+            opacity: 1;
         }
 
         .user-card-header {
             display: flex;
             align-items: center;
-            gap: 14px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 14px;
         }
 
         .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: #129990;
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 17px;
             flex-shrink: 0;
             overflow: hidden;
         }
@@ -136,83 +204,152 @@
 
         .user-name {
             font-weight: 600;
-            font-size: 15px;
-            color: #2d3748;
+            font-size: 14px;
+            color: #e2e8f0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .user-uname {
-            font-size: 12px;
-            color: #a0aec0;
-            margin-top: 2px;
-        }
-
-        .user-meta {
+        .user-meta-badges {
             display: flex;
-            gap: 8px;
+            gap: 6px;
+            margin-top: 4px;
             flex-wrap: wrap;
         }
 
         .badge {
-            font-size: 11px;
-            padding: 3px 10px;
-            border-radius: 20px;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 4px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .badge-level {
-            background-color: #ebf8ff;
-            color: #2b6cb0;
+            background-color: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
 
         .badge-jabatan {
-            background-color: #f0fff4;
-            color: #276749;
+            background-color: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .credentials {
+            background: #12141f;
+            border-radius: 8px;
+            padding: 10px 14px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .cred-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cred-label {
+            font-size: 10px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        .cred-value {
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+            color: #a78bfa;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .login-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 17, 23, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        .login-overlay.active {
+            display: flex;
+        }
+
+        .login-overlay .spinner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .login-overlay .spinner i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .card-footer-section {
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #2d3148;
             padding-top: 16px;
             text-align: center;
             margin-top: 30px;
         }
 
         .card-footer-section p {
-            font-size: 12px;
-            color: #a0aec0;
+            font-size: 11px;
+            color: #475569;
         }
 
         .back-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            color: #129990;
+            color: #64748b;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             transition: color 0.3s ease;
         }
 
         .back-link:hover {
-            color: #0d6b63;
+            color: #a78bfa;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #a0aec0;
+            color: #475569;
         }
 
         .empty-state i {
             font-size: 48px;
             margin-bottom: 16px;
+            color: #2d3148;
         }
 
         .empty-state p {
-            font-size: 16px;
+            font-size: 15px;
+        }
+
+        /* Hidden login form */
+        #login-form {
+            display: none;
         }
 
         @media (max-width: 600px) {
@@ -225,8 +362,11 @@
 
 <body>
     <div class="header-bar">
-        <span>{{ $kec->nama_lembaga_long ?? 'Koperasi' }}</span>
-        <span>{{ $kec->nama_kec ?? '' }}</span>
+        <div class="left">
+            <span class="dev-badge"><i class="fas fa-code"></i> DEV</span>
+            <span class="title">{{ $kec->nama_lembaga_long ?? 'Koperasi' }}</span>
+        </div>
+        <span class="kec-name">{{ $kec->nama_kec ?? '' }}</span>
     </div>
 
     <div class="main-content">
@@ -235,14 +375,24 @@
         </a>
 
         <div class="page-title">
-            <h2><i class="fas fa-users"></i> Daftar Pengguna</h2>
+            <h2><i class="fas fa-terminal"></i> Developer Quick Login</h2>
             <p>{{ $kec->nama_kec ?? '' }} &mdash; {{ $kec->kabupaten->nama_kab ?? '' }}</p>
+        </div>
+
+        <div class="hint-bar">
+            <i class="fas fa-mouse-pointer"></i>
+            Double-klik pada kartu user untuk login otomatis sebagai user tersebut
         </div>
 
         @if($users->count() > 0)
             <div class="user-grid">
                 @foreach($users as $user)
-                    <div class="user-card">
+                    <div class="user-card" data-uname="{{ $user->uname }}" data-pass="{{ $user->pass }}" ondblclick="quickLogin(this)">
+                        <div class="login-overlay">
+                            <div class="spinner">
+                                <i class="fas fa-circle-notch"></i> Logging in...
+                            </div>
+                        </div>
                         <div class="user-card-header">
                             <div class="user-avatar">
                                 @if($user->foto)
@@ -253,16 +403,25 @@
                             </div>
                             <div class="user-info">
                                 <div class="user-name">{{ $user->namadepan }} {{ $user->namabelakang }}</div>
-                                <div class="user-uname">{{ '@' . $user->uname }}</div>
+                                <div class="user-meta-badges">
+                                    @if($user->l)
+                                        <span class="badge badge-level">{{ $user->l->nama_level ?? '' }}</span>
+                                    @endif
+                                    @if($user->j)
+                                        <span class="badge badge-jabatan">{{ $user->j->nama_jabatan ?? '' }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                        <div class="user-meta">
-                            @if($user->l)
-                                <span class="badge badge-level">{{ $user->l->nama_level ?? '' }}</span>
-                            @endif
-                            @if($user->j)
-                                <span class="badge badge-jabatan">{{ $user->j->nama_jabatan ?? '' }}</span>
-                            @endif
+                        <div class="credentials">
+                            <div class="cred-item">
+                                <span class="cred-label">Username</span>
+                                <span class="cred-value">{{ $user->uname }}</span>
+                            </div>
+                            <div class="cred-item">
+                                <span class="cred-label">Password</span>
+                                <span class="cred-value">{{ $user->pass }}</span>
+                            </div>
                         </div>
                     </div>
                 @endforeach
@@ -275,9 +434,40 @@
         @endif
 
         <div class="card-footer-section">
-            <p>&copy; {{ date('Y') }} Sistem Informasi Koperasi</p>
+            <p>&copy; {{ date('Y') }} Developer Tools &mdash; Sistem Informasi Koperasi</p>
         </div>
     </div>
+
+    <!-- Hidden form for login -->
+    <form id="login-form" method="POST" action="/login">
+        @csrf
+        <input type="hidden" name="username" id="form-username">
+        <input type="hidden" name="password" id="form-password">
+    </form>
+
+    <script>
+        function quickLogin(card) {
+            const uname = card.getAttribute('data-uname');
+            const pass = card.getAttribute('data-pass');
+
+            // Show loading overlay
+            card.classList.add('logging-in');
+            card.querySelector('.login-overlay').classList.add('active');
+
+            // Disable further clicks
+            document.querySelectorAll('.user-card').forEach(c => {
+                c.style.pointerEvents = 'none';
+            });
+
+            // Fill hidden form and submit
+            document.getElementById('form-username').value = uname;
+            document.getElementById('form-password').value = pass;
+
+            setTimeout(() => {
+                document.getElementById('login-form').submit();
+            }, 300);
+        }
+    </script>
 </body>
 
 </html>
