@@ -2,34 +2,21 @@
 <link rel="stylesheet" href="/assets/css/style.css">
 
 <body class="w-100 min-vh-100 d-flex align-items-center justify-content-center flex-column">
-    <form action="/generate" method="post">
+    <form action="/generate/save/{{ $offset }}" method="post">
         @csrf
 
         @foreach ($data as $key => $val)
             @php
-                if ($key == '_token') {
-                    continue;
-                }
+                if ($key == '_token') { continue; }
             @endphp
 
             @if (is_array($val))
-                @php
-                    $opt = $val['operator'];
-                    $value = $val['value'];
-                @endphp
-
-                <input type="hidden" name="{{ $key }}[operator]" value="{{ $opt }}">
-                <input type="hidden" name="{{ $key }}[value]" value="{{ $value }}">
+                <input type="hidden" name="{{ $key }}[operator]" value="{{ $val['operator'] }}">
+                <input type="hidden" name="{{ $key }}[value]"    value="{{ $val['value'] }}">
             @else
-                @php
-                    $value = $val;
-                @endphp
-
-                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                <input type="hidden" name="{{ $key }}" value="{{ $val }}">
             @endif
         @endforeach
-
-        <input type="hidden" name="offset" value="{{ $offset }}">
 
         <div class="text-center">
             Generate <b>{{ $offset }}</b> data.
@@ -38,13 +25,16 @@
     </form>
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
     @if (count($data_id_pinj) >= $limit)
+        {{-- Masih ada data — lanjut otomatis --}}
         <script>
-            $('#generate').trigger('click')
+            $('#generate').trigger('click');
         </script>
     @else
+        {{-- Semua data selesai — tutup tab --}}
         <script>
-            window.close()
+            window.close();
         </script>
     @endif
 </body>
