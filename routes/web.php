@@ -385,7 +385,7 @@ Route::get('/download/{file}', function ($file) {
 Route::get('/unpaid', [DashboardController::class, 'unpaid'])->middleware('auth', 'is_aktif');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth');
 
-Route::get('/generate', [GenerateController::class, 'index']);
+Route::get('/generate',          [GenerateController::class, 'index']);
 Route::get('/generate/individu', [GenerateController::class, 'individu']);
 Route::get('/generate/kelompok', [GenerateController::class, 'kelompok']);
 Route::get('/generate/agent', [GenerateController::class, 'agent']);

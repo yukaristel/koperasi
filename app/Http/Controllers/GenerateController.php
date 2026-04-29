@@ -567,9 +567,12 @@ class GenerateController extends Controller
             if (!empty($real))    RealAngsuranI::insert($real);
         }
 
-        $data   = $request->all();
-        $offset = $offset + $limit;
-
-        return view('generate.generate')->with(compact('data_id_pinj', 'data', 'offset', 'limit'));
+        // Kembalikan JSON — AJAX di index.blade.php yang menangani looping batch
+        // { count: N } → jika N >= limit, JS akan kirim batch berikutnya
+        return response()->json([
+            'count'   => count($data_id_pinj),
+            'offset'  => $offset + $limit,
+            'ids'     => $data_id_pinj,
+        ]);
     }
 }
