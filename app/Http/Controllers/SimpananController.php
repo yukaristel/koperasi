@@ -43,18 +43,10 @@ class SimpananController extends Controller
                 ->orderBy('id', 'DESC');
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
-                    return $row->anggota->namadepan ?? '-';
+                    return $row->anggota ? $row->anggota->namadepan : '-';
                 })
                 ->addColumn('jenis_simpanan', function ($row) {
-                    return $row->js->nama_js ?? '-';
-                })
-                ->addColumn('status', function ($row) {
-                    $status = '<span class="badge bg-secondary">-</span>';
-                    if ($row->status) {
-                        $badge = $row->status == 'A' ? 'success' : 'danger';
-                        $status = '<span class="badge bg-' . $badge . '">' . ($row->status == 'A' ? 'Aktif' : 'Non-Aktif') . '</span>';
-                    }
-                    return $status;
+                    return $row->js ? $row->js->nama_js : '-';
                 })
                 ->addColumn('status', function ($row) {
                     $status = '<span class="badge bg-secondary">-</span>';
@@ -84,18 +76,10 @@ class SimpananController extends Controller
                 ->orderBy('id', 'DESC');
             return DataTables::of($simpanan)
                 ->addColumn('nama_anggota', function ($row) {
-                    return $row->anggota->namadepan ?? '-';
+                    return $row->anggota ? $row->anggota->namadepan : '-';
                 })
                 ->addColumn('jenis_simpanan', function ($row) {
-                    return $row->js->nama_js ?? '-';
-                })
-                ->addColumn('status', function ($row) {
-                    $status = '<span class="badge bg-secondary">-</span>';
-                    if ($row->status) {
-                        $badge = $row->status == 'A' ? 'success' : 'danger';
-                        $status = '<span class="badge bg-' . $badge . '">' . ($row->status == 'A' ? 'Aktif' : 'Non-Aktif') . '</span>';
-                    }
-                    return $status;
+                    return $row->js ? $row->js->nama_js : '-';
                 })
                 ->addColumn('status', function ($row) {
                     $status = '<span class="badge bg-secondary">-</span>';
@@ -161,7 +145,7 @@ class SimpananController extends Controller
     public function detailAnggota($id)
     {
         $nia = Simpanan::where('id', $id)->with(['anggota'])->first();
-        $title = 'Simpanan $nia->anggota->namadepan';
+        $title = $nia && $nia->anggota ? 'Simpanan ' . $nia->anggota->namadepan : 'Simpanan';
         return view('simpanan.partials.detail')->with(compact('title', 'nia'));
     }
 
@@ -246,24 +230,25 @@ class SimpananController extends Controller
         $desa = Desa::where('kd_kec', $kec->kd_kec)->with('sebutan_desa')->get();
         $hubungan = Keluarga::orderBy('kekeluargaan', 'ASC')->get();
 
-        $nia = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
-        $title = ucwords($simpanan->anggota->namadepan);
+        $simpanan->load(['anggota', 'js']);
+        $nia = $simpanan;
+        $title = $simpanan->anggota ? ucwords($simpanan->anggota->namadepan) : 'Simpanan';
         return view('simpanan.partials.detail')->with(compact('nia', 'title', 'hubungan'));
     }
 
 
     public function kop(Simpanan $simpanan)
     {
-        $simpanan = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
-        $title = 'Cetak KOP buku ' . $simpanan->anggota->namadepan;
+        $simpanan->load(['anggota', 'js']);
+        $title = $simpanan->anggota ? 'Cetak KOP buku ' . $simpanan->anggota->namadepan : 'Cetak KOP buku';
         return view('simpanan.partials.cetak_kop')->with(compact('title', 'simpanan'));
     }
     public function koran(Simpanan $simpanan)
     {
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
-        $simpanan = $simpanan->where('id', $simpanan->id)->with(['anggota', 'js'])->first();
+        $simpanan->load(['anggota', 'js']);
         $transaksi = Transaksi::where('id_simp', $simpanan->id)->with('realSimpanan', 'user')->get();
-        $title = 'Cetak Rekening Koran' . $simpanan->anggota->namadepan;
+        $title = $simpanan->anggota ? 'Cetak Rekening Koran ' . $simpanan->anggota->namadepan : 'Cetak Rekening Koran';
         return view('simpanan.partials.cetak_koran')->with(compact('title','transaksi', 'simpanan', 'kec'));
     }
 
