@@ -77,10 +77,11 @@ class GenerateController extends Controller
         ]);
     }
 
-    public function generate(Request $request, $offset = 0)
+    public function generate(Request $request)
     {
         $real = [];
         $rencana = [];
+        $offset = (int)$request->input('offset', 0);
         $is_pinkel = ($request->pinjaman == 'kelompok') ? true : false;
         $kec = Kecamatan::where('id', Session::get('lokasi'))->first();
 
@@ -88,7 +89,7 @@ class GenerateController extends Controller
         $whereIn = [];
         $whereNotIn = [];
         foreach ($request->all() as $key => $val) {
-            if ($key == '_token' || $key == 'pinjaman') {
+            if ($key == '_token' || $key == 'pinjaman' || $key == 'offset') {
                 continue;
             }
 
@@ -502,18 +503,25 @@ class GenerateController extends Controller
             RencanaAngsuran::whereIn('loan_id', $data_id_pinj)->delete();
             RealAngsuran::whereIn('loan_id', $data_id_pinj)->delete();
 
-            RencanaAngsuran::insert($rencana);
-            RealAngsuran::insert($real);
+            if (!empty($rencana)) {
+                RencanaAngsuran::insert($rencana);
+            }
+            if (!empty($real)) {
+                RealAngsuran::insert($real);
+            }
         } else {
             RencanaAngsuranI::whereIn('loan_id', $data_id_pinj)->delete();
             RealAngsuranI::whereIn('loan_id', $data_id_pinj)->delete();
 
-            RencanaAngsuranI::insert($rencana);
-            RealAngsuranI::insert($real);
+            if (!empty($rencana)) {
+                RencanaAngsuranI::insert($rencana);
+            }
+            if (!empty($real)) {
+                RealAngsuranI::insert($real);
+            }
         }
 
         $data = $request->all();
         $offset = $offset + $limit;
         return view('generate.generate')->with(compact('data_id_pinj', 'data', 'offset', 'limit'));
-    }
 }

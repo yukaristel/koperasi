@@ -13,7 +13,7 @@ class RealAngsuran extends Model
     protected $table;
     public $timestamps = false;
 
-    protected $guarded = [''];
+    protected $guarded = [];
 
     public function __construct()
     {
