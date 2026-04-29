@@ -145,6 +145,8 @@ class SimpananController extends Controller
     public function detailAnggota($id)
     {
         $nia = Simpanan::where('id', $id)->with(['anggota'])->first();
+        // Debug
+        dd('$nia:', $nia);
         $title = $nia && $nia->anggota ? 'Simpanan ' . $nia->anggota->namadepan : 'Simpanan';
         return view('simpanan.partials.detail')->with(compact('title', 'nia'));
     }

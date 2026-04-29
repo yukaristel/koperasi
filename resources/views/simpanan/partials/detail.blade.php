@@ -8,15 +8,19 @@
                     <div class="widget-content">
                         <div class="widget-content-wrapper">
                             <div class="widget-content-left">
-                                <div class="widget-heading">Nasabah {{ $nia->anggota->namadepan }} CIF. {{$nia->id}} 
-                                    ({{ $nia->js->nama_js }})</div>
+                                <div class="widget-heading">Nasabah {{ $nia->anggota ? $nia->anggota->namadepan : '-' }} CIF. {{$nia->id}} 
+                                    ({{ $nia->js ? $nia->js->nama_js : '-' }})</div>
                                 <div class="widget-subheading">
-                                    <span class="badge bg-info">{{ $nia->anggota->nia }}</span>
-                                    <span class="badge bg-info">{{ $nia->anggota->alamat_anggota }}</span>
-                                    <span class="badge bg-info">
-                                        {{ $nia->anggota->d->sebutan_desa->sebutan_desa }}
-                                        {{ $nia->anggota->d->nama_desa }}
-                                    </span>
+                                    @if($nia->anggota)
+                                        <span class="badge bg-info">{{ $nia->anggota->nia }}</span>
+                                        <span class="badge bg-info">{{ $nia->anggota->alamat_anggota }}</span>
+                                        @if($nia->anggota->d)
+                                            <span class="badge bg-info">
+                                                {{ $nia->anggota->d->sebutan_desa->sebutan_desa ?? '' }}
+                                                {{ $nia->anggota->d->nama_desa ?? '' }}
+                                            </span>
+                                        @endif
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -54,12 +58,12 @@
                                 </div>
                                 <div class="position-relative mb-3">
                                     <label for="nama_debitur" class="form-label">Nama Debitur</label>
-                                    <input autocomplete="off" type="text" name="nama_debitur" id="nama_debitur" class="form-control" value="{{$nia->anggota->namadepan}}" disabled>
+                                    <input autocomplete="off" type="text" name="nama_debitur" id="nama_debitur" class="form-control" value="{{ $nia->anggota ? $nia->anggota->namadepan : '' }}" disabled>
                                     <small class="text-danger" id="msg_nama_debitur"></small>
                                 </div>
                                 <div class="position-relative mb-3">
                                     <label for="nik" class="form-label">NIK</label>
-                                    <input autocomplete="off" type="text" name="nik" id="nik" class="form-control" value="{{$nia->anggota->nik}}" disabled>
+                                    <input autocomplete="off" type="text" name="nik" id="nik" class="form-control" value="{{ $nia->anggota ? $nia->anggota->nik : '' }}" disabled>
                                     <small class="text-danger" id="msg_nik"></small>
                                 </div>
                                 
