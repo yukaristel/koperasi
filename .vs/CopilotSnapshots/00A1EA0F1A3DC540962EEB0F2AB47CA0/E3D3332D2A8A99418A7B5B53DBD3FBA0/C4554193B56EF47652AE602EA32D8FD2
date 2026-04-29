@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -524,5 +524,4 @@ class GenerateController extends Controller
         $data = $request->all();
         $offset = $offset + $limit;
         return view('generate.generate')->with(compact('data_id_pinj', 'data', 'offset', 'limit'));
-    }
 }
