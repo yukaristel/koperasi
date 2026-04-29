@@ -268,6 +268,63 @@
             color: #a78bfa;
             font-weight: 600;
             word-break: break-all;
+            cursor: pointer;
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .cred-value:hover {
+            background: rgba(167, 139, 250, 0.15);
+            color: #c4b5fd;
+        }
+
+        .cred-value .copy-icon {
+            font-size: 10px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            color: #64748b;
+        }
+
+        .cred-value:hover .copy-icon {
+            opacity: 1;
+        }
+
+        .cred-value .copied-tip {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.8);
+            background: #22c55e;
+            color: white;
+            font-size: 10px;
+            font-family: 'Open Sans', sans-serif;
+            padding: 3px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .cred-value .copied-tip.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .cred-value .copied-tip::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #22c55e;
         }
 
         .login-overlay {
@@ -416,11 +473,11 @@
                         <div class="credentials">
                             <div class="cred-item">
                                 <span class="cred-label">Username</span>
-                                <span class="cred-value">{{ $user->uname }}</span>
+                                <span class="cred-value" onclick="copyToClipboard(event, this, '{{ $user->uname }}')">{{ $user->uname }}<i class="fas fa-copy copy-icon"></i><span class="copied-tip">Copied!</span></span>
                             </div>
                             <div class="cred-item">
                                 <span class="cred-label">Password</span>
-                                <span class="cred-value">{{ $user->pass }}</span>
+                                <span class="cred-value" onclick="copyToClipboard(event, this, '{{ $user->pass }}')">{{ $user->pass }}<i class="fas fa-copy copy-icon"></i><span class="copied-tip">Copied!</span></span>
                             </div>
                         </div>
                     </div>
@@ -446,6 +503,30 @@
     </form>
 
     <script>
+        function copyToClipboard(event, el, text) {
+            event.stopPropagation();
+
+            navigator.clipboard.writeText(text).then(function() {
+                const tip = el.querySelector('.copied-tip');
+                tip.classList.add('show');
+                setTimeout(() => tip.classList.remove('show'), 1200);
+            }).catch(function() {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+
+                const tip = el.querySelector('.copied-tip');
+                tip.classList.add('show');
+                setTimeout(() => tip.classList.remove('show'), 1200);
+            });
+        }
+
         function quickLogin(card) {
             const uname = card.getAttribute('data-uname');
             const pass = card.getAttribute('data-pass');
