@@ -3369,7 +3369,7 @@ class PelaporanController extends Controller
             $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
         }
 
-        $data['inventaris'] = Rekening::where('kode_akun', 'LIKE', '1.2.01%')
+        $data['inventaris'] = Rekening::where('kode_akun', 'LIKE', '1.2.02%')
             ->with([
                 'inventaris' => function ($query) use ($data) {
                     $query->where([
@@ -3407,7 +3407,7 @@ class PelaporanController extends Controller
             $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
         }
 
-        $data['inventaris'] = Rekening::where('kode_akun', 'LIKE', '1.2.03%')
+        $data['inventaris'] = Rekening::where('kode_akun', 'LIKE', '1.2.05%')
             ->with([
                 'inventaris' => function ($query) use ($data) {
                     $query->where([

@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\app",
+    "\\app\\Http",
+    "\\resources",
+    "\\resources\\views"
   ],
-  "SelectedNode": "\\config",
+  "SelectedNode": "\\_ide_helper.php",
   "PreviewInSolutionExplorer": false
 }

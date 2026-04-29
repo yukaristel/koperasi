@@ -201,6 +201,77 @@ class LaporanController extends Controller
         return $this->$file($data);
     }
 
+
+    private function CALK(array $data)
+    {
+        $keuangan = new Keuangan;
+
+        $thn = $data['tahun'];
+        $bln = $data['bulan'];
+        $hari = $data['hari'];
+
+        $tgl = $thn . '-' . $bln . '-' . $hari;
+        $data['tgl'] = Tanggal::tahun($tgl);
+        $data['nama_tgl'] = 'Tahun ' . $thn;
+        $data['sub_judul'] = 'Tahun ' . $thn;
+        if ($data['bulanan']) {
+            $data['tgl'] = Tanggal::namaBulan($tgl) . ' ' . Tanggal::tahun($tgl);
+            $data['nama_tgl'] = 'Bulan ' . Tanggal::namaBulan($tgl) . ' Tahun ' . $thn;
+            $data['sub_judul'] = 'Bulan ' . Tanggal::namaBulan($tgl) . ' Tahun ' . $thn;
+        }
+
+        $data['debit'] = 0;
+        $data['kredit'] = 0;
+
+        $data['akun1'] = AkunLevel1::where('lev1', '<=', '3')->with([
+            'akun2',
+            'akun2.akun3',
+            'akun2.akun3.rek',
+            'akun2.akun3.rek.kom_saldo' => function ($query) use ($data) {
+                $query->where('tahun', $data['tahun'])->where(function ($query) use ($data) {
+                    $query->where('bulan', '0')->orwhere('bulan', $data['bulan']);
+                });
+            },
+        ])->orderBy('kode_akun', 'ASC')->get();
+
+        $data['keterangan'] = Calk::where([
+            ['lokasi', Session::get('lokasi')],
+            ['tanggal', 'LIKE', $data['tahun'] . '-' . $data['bulan'] . '%']
+        ])->first();
+
+        $data['sekr'] = User::where([
+            ['level', '1'],
+            ['jabatan', '2'],
+            ['lokasi', Session::get('lokasi')],
+        ])->first();
+
+        $data['bend'] = User::where([
+            ['level', '1'],
+            ['jabatan', '3'],
+            ['lokasi', Session::get('lokasi')],
+        ])->first();
+
+        $data['pengawas'] = User::where([
+            ['level', '3'],
+            ['jabatan', '1'],
+            ['lokasi', Session::get('lokasi')],
+        ])->first();
+
+        $data['saldo_calk'] = Saldo::where([
+            ['kode_akun', $data['kec']->kd_kec],
+            ['tahun', $thn]
+        ])->get();
+        $view = view('pelaporan.view.calk', $data)->render();
+
+        if ($data['type'] == 'pdf') {
+            $pdf = PDF::loadHTML($view);
+            return $pdf->stream();
+        } else {
+            return $view;
+        }
+    }
+
+
     public function neraca($data)
     {
         $keuangan = new Keuangan;
@@ -237,7 +308,7 @@ class LaporanController extends Controller
         foreach ($data['kab']->kec as $kec) {
             foreach ($data_saldo[$kec->kd_kec]['saldo'] as $rek) {
                 $saldo = $keuangan->komSaldo($rek);
-                if ($rek->kode_akun == '3.2.04.01') {
+                if ($rek->kode_akun == '3.2.02.01') {
                     $saldo = 0;
                     foreach ($data_saldo[$kec->kd_kec]['laba_rugi'] as $lb) {
                         if ($lb->lev1 == 5) {
@@ -518,7 +589,7 @@ class LaporanController extends Controller
                 if ($rek->lev1 != '3') continue;
 
                 $saldo = $keuangan->komSaldo($rek);
-                if ($rek->kode_akun == '3.2.04.01') {
+                if ($rek->kode_akun == '3.2.02.01') {
                     $saldo = 0;
                     foreach ($data_saldo[$kec->kd_kec]['laba_rugi'] as $lb) {
                         if ($lb->lev1 == 5) {
@@ -550,4 +621,5 @@ class LaporanController extends Controller
         $pdf = PDF::loadHTML($view);
         return $pdf->stream();
     }
+
 }

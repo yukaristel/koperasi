@@ -33,32 +33,33 @@ class AuthController extends Controller
         ]);
 
         $rekap = Rekap::where('web_rekap', $url)->first();
-        $login_rekap = Rekap::where('username', $data['username'])->first();
-        if ($login_rekap) {
-            if ($login_rekap->password == $rekap->password && $login_rekap->password === $data['password']) {
-                if (Auth::guard('rekap')->loginUsingId($login_rekap->id)) {
-                    $request->session()->regenerate();
-                    
-                        $lokasiIds = array_filter(explode(',', $rekap->lokasi));
-                        $kdKecList = Kecamatan::whereIn('id', $lokasiIds)->pluck('kd_kec');
-                        $kecamatan = Kecamatan::whereIn('kd_kec', $kdKecList)
-                                        ->select('id', 'kd_kec as kode', 'nama_kec as nama')
-                                        ->orderBy('nama_kec', 'ASC')
-                                        ->get();
+        $login_rekap = Rekap::where('web_rekap', $url)
+                            ->where('username', $data['username'])
+                            ->first();
 
-                    session([
-                        'nama_rekap' => ucwords(strtolower($login_rekap->nama_rekap)),
-                        'kecamatan' => $kecamatan,
-                        'kd_rekap' => "",
-                        'kd_prov' => "",
-                        'id_rekap' => $login_rekap->id,
-                        'rekapan' => $login_rekap->lokasi,
-                    ]);
+        if ($login_rekap && $login_rekap->password === $data['password']) {
+            if (Auth::guard('rekap')->loginUsingId($login_rekap->id)) {
+                $request->session()->regenerate();
 
-                    return redirect('/rekap/dashboard')->with([
-                        'pesan' => 'Login rekapitulasi ' . ucwords(strtolower($login_rekap->nama_rekap)) . ' Berhasil'
-                    ]);
-                }
+                $lokasiIds = array_filter(explode(',', $login_rekap->lokasi));
+                $kdKecList = Kecamatan::whereIn('id', $lokasiIds)->pluck('kd_kec');
+                $kecamatan = Kecamatan::whereIn('kd_kec', $kdKecList)
+                                    ->select('id', 'kd_kec as kode', 'nama_kec as nama')
+                                    ->orderBy('nama_kec', 'ASC')
+                                    ->get();
+
+                session([
+                    'nama_rekap' => ucwords(strtolower($login_rekap->nama_rekap)),
+                    'kecamatan' => $kecamatan,
+                    'kd_rekap' => "",
+                    'kd_prov' => "",
+                    'id_rekap' => $login_rekap->id,
+                    'rekapan' => $login_rekap->lokasi,
+                ]);
+
+                return redirect('/rekap/dashboard')->with([
+                    'pesan' => 'Login rekapitulasi ' . ucwords(strtolower($login_rekap->nama_rekap)) . ' Berhasil'
+                ]);
             }
         }
 

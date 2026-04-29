@@ -1,29 +1,3 @@
-<a href="/perbandingan_rekening_koperasi.html" title="Perbandingan Rekening Koperasi" target="_blank" rel="noopener noreferrer"
-   style="
-       position: fixed;
-       top: 0;
-       right: 0;
-       width: 0;
-       height: 0;
-       border-style: solid;
-       border-width: 0 70px 70px 0;
-       border-color: transparent #0d6b63 transparent transparent;
-       z-index: 99999;
-       cursor: pointer;
-   ">
-   <span style="
-       position: absolute;
-       top: 10px;
-       right: -62px;
-       color: white;
-       font-size: 10px;
-       font-weight: 700;
-       line-height: 1.2;
-       text-align: center;
-       width: 50px;
-       pointer-events: none;
-   ">&#9432;</span>
-</a>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -85,13 +59,45 @@
             opacity: 0.95;
         }
 
-        .login-container {
-            display: flex;
+        .info-banner {
             position: fixed;
             top: 50px;
             left: 0;
             width: 100%;
-            height: calc(100vh - 50px);
+            z-index: 9998;
+            background-color: #ffc107;
+            color: #5a3e00;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            box-sizing: border-box;
+        }
+        .info-banner i {
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+        .info-banner a {
+            color: #3d2900;
+            font-weight: 700;
+            text-decoration: underline;
+            white-space: nowrap;
+            margin-left: 4px;
+        }
+        .info-banner a:hover {
+            color: #000;
+        }
+
+        .login-container {
+            display: flex;
+            position: fixed;
+            top: 86px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 86px);
         }
 
         .login-image {
@@ -341,6 +347,15 @@
     <div class="header-bar">
         <span>{{ $kec->nama_lembaga_long }}</span>
         <span class="efek-ketik">{{ $kec->nama_kec }}</span>
+    </div>
+
+    <div class="info-banner">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>Terdapat perubahan pada rekening koperasi. Silakan cek informasi terbaru &mdash;
+            <a href="/perbandingan_rekening_koperasi.html" target="_blank" rel="noopener noreferrer">
+                Lihat Perbandingan Rekening
+            </a>
+        </span>
     </div>
 
     <main class="login-container">

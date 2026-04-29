@@ -265,13 +265,11 @@
             });
 
             const map = {
-                '1.2.02.01': '5.1.07.01',
-                '1.2.02.02': '5.1.07.02',
-                '1.2.02.03': '5.1.07.03',
-                '1.2.04.01': '5.1.07.04',
-                '1.2.04.02': '5.1.07.05',
-                '1.2.04.03': '5.1.07.06',
-                '1.2.04.04': '5.1.07.07'
+                '1.2.02.02': '5.1.07.01', // Gedung → Penyusutan Gedung
+                '1.2.02.03': '5.1.07.02', // Kendaraan → Penyusutan Kendaraan
+                '1.2.02.04': '5.1.07.03', // Inventaris → Penyusutan Inventaris
+                '1.2.02.05': '5.1.07.04', // Perangkat TI → Penyusutan Perangkat TI
+                '1.2.04.01': '5.1.07.05', // Aset Hak-Guna → Penyusutan Aset Hak-Guna
             };
 
             if (map[sumber_dana]) $('#disimpan_ke').val(map[sumber_dana]).trigger('change');

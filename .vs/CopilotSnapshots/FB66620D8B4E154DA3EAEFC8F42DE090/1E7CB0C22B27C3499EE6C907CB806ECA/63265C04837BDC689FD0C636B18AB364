@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/icon/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/img/icon/favicon.png">
+    <title>Sistem Informasi Koperasi - Login</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="stylesheet" type="text/css"
+        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+
+    <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
+
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+
+    <link id="pagestyle" href="/assets/css/material-dashboard.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/style.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url('/assets/img/bg1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            font-family: 'Roboto', sans-serif;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transform: translateZ(0);
+            animation: slideUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25);
+        }
+
+        .card-header h4 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .card-header p {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.95;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        .card-body {
+            padding: 40px 35px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-of-type {
+            margin-bottom: 25px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            background: #fff;
+            color: #333;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+            font-weight: 400;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .error-message {
+            display: block;
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .btn-signin {
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #2d3436 0%, #1a1a1a 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-signin:hover {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-signin:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-signin:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .swal2-container {
+            height: unset !important;
+        }
+
+        @media (max-width: 600px) {
+            .login-wrapper {
+                padding: 15px;
+            }
+
+            .login-container {
+                max-width: 100%;
+            }
+
+            .card-header {
+                padding: 35px 25px;
+            }
+
+            .card-header h4 {
+                font-size: 24px;
+            }
+
+            .card-body {
+                padding: 30px 25px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .card-header {
+                padding: 30px 20px;
+            }
+
+            .card-header h4 {
+                font-size: 20px;
+            }
+
+            .card-header p {
+                font-size: 12px;
+            }
+
+            .card-body {
+                padding: 25px 20px;
+            }
+
+            .form-group input {
+                padding: 12px 14px;
+                font-size: 13px;
+            }
+
+            .btn-signin {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Sign In</h4>
+                    <p>Login Rekap Koperasi</p>
+                </div>
+                <div class="card-body">
+                    @if ($errors->any())
+                        <div style="background-color: #ffe6e6; border: 1px solid #ffcccc; color: #c00; padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 13px;">
+                            @foreach ($errors->all() as $error)
+                                <div>{{ $error }}</div>
+                            @endforeach
+                        </div>
+                    @endif
+
+                    <form method="POST" action="/rekap/login" autocomplete="off">
+                        @csrf
+
+                        <div class="form-group">
+                            <input type="text" id="username" name="username" 
+                                   placeholder="Username" 
+                                   value="{{ old('username') }}"
+                                   autocomplete="off" required autofocus>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="password" id="password" name="password" 
+                                   placeholder="Password" 
+                                   autocomplete="off" required>
+                        </div>
+
+                        <button type="submit" class="btn-signin">SIGN IN</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/core/popper.min.js"></script>
+    <script src="/assets/js/core/bootstrap.min.js"></script>
+    <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="/assets/js/material-dashboard.min.js"></script>
+    <script src="/assets/js/plugins/sweetalert.min.js"></script>
+    <script>
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        })
+
+        function Toastr(icon, text) {
+            font = "1.2rem Nimrod MT";
+            canvas = document.createElement("canvas");
+            context = canvas.getContext("2d");
+            context.font = font;
+            width = context.measureText(text).width;
+            formattedWidth = Math.ceil(width) + 100;
+
+            Toast.fire({
+                icon: icon,
+                title: text,
+                width: formattedWidth
+            })
+        }
+    </script>
+    @if (session('pesan'))
+        <script>
+            Toastr('success', "{{ session('pesan') }}")
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Toastr('error', "{{ session('error') }}")
+        </script>
+    @endif
+</body>
+
+</html>

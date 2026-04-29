@@ -1,0 +1,277 @@
+@php
+    $thn_awal = explode('-', $kec->tgl_pakai)[0];
+@endphp
+
+@extends('rekap.layout.base')
+
+@section('content')
+    <div class="card mb-3">
+        <div class="card-header pt-3">
+            <div>
+                {{ strtoupper($kec->nama_lembaga_long) }}
+            </div>
+            <div class="fw-bold">
+                <small>{{ strtoupper($nama_kec) }}</small>
+            </div>
+        </div>
+        <div class="card-body pt-0 pb-0">
+
+            <form action="/pelaporan/preview/{{ $kec->id }}" method="post" id="FormPelaporan" target="_blank">
+                @csrf
+
+                <br>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="validationCustom01" class="form-label">Tahunan</label>
+                        <select class="pelaporanselect2 form-control" name="tahun" id="tahun">
+                            <option value="">---</option>
+                            @for ($i = date('Y'); $i >= $thn_awal; $i--)
+                                <option {{ $i == date('Y') ? 'selected' : '' }} value="{{ $i }}">
+                                    {{ $i }}
+                                </option>
+                            @endfor
+                        </select>
+                        <small class="text-danger" id="msg_tahun"></small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="validationCustom02" class="form-label">Bulanan</label>
+                        <select class="pelaporanselect2 form-control" name="bulan" id="bulan">
+                            <option value="">---</option>
+                            <option {{ date('m') == '01' ? 'selected' : '' }} value="01">01. JANUARI</option>
+                            <option {{ date('m') == '02' ? 'selected' : '' }} value="02">02. FEBRUARI</option>
+                            <option {{ date('m') == '03' ? 'selected' : '' }} value="03">03. MARET</option>
+                            <option {{ date('m') == '04' ? 'selected' : '' }} value="04">04. APRIL</option>
+                            <option {{ date('m') == '05' ? 'selected' : '' }} value="05">05. MEI</option>
+                            <option {{ date('m') == '06' ? 'selected' : '' }} value="06">06. JUNI</option>
+                            <option {{ date('m') == '07' ? 'selected' : '' }} value="07">07. JULI</option>
+                            <option {{ date('m') == '08' ? 'selected' : '' }} value="08">08. AGUSTUS</option>
+                            <option {{ date('m') == '09' ? 'selected' : '' }} value="09">09. SEPTEMBER</option>
+                            <option {{ date('m') == '10' ? 'selected' : '' }} value="10">10. OKTOBER</option>
+                            <option {{ date('m') == '11' ? 'selected' : '' }} value="11">11. NOVEMBER</option>
+                            <option {{ date('m') == '12' ? 'selected' : '' }} value="12">12. DESEMBER</option>
+                        </select>
+                        <small class="text-danger" id="msg_bulan"></small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="hari" class="form-label">Harian</label>
+                        <select class="pelaporanselect2 form-control" name="hari" id="hari">
+                            <option value="">---</option>
+                            @for ($j = 1; $j <= 31; $j++)
+                                @if ($j < 10)
+                                    <option value="0{{ $j }}">0{{ $j }}</option>
+                                @else
+                                    <option value="{{ $j }}">{{ $j }}</option>
+                                @endif
+                            @endfor
+                        </select>
+                        <small class="text-danger" id="msg_hari"></small>
+                    </div>
+                </div>
+                <div class="row">
+                    <div id="namaLaporan" class="col-md-6">
+                        <div class="my-2">
+                            <label class="form-label" for="laporan">Nama Laporan</label>
+                            <select class="pelaporanselect2 form-control" name="laporan" id="laporan">
+                                <option value="">---</option>
+                                @foreach ($laporan as $lap)
+                                    <option value="{{ $lap->file }}">
+                                        {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}.
+                                        {{ $lap->nama_laporan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger" id="msg_laporan"></small>
+                        </div>
+                    </div>
+                    <div id="subLaporan" class="col-md-6">
+                        <div class="my-2">
+                            <label class="form-label" for="sub_laporan">Nama Sub Laporan</label>
+                            <select class="pelaporanselect2 form-control" name="sub_laporan" id="sub_laporan">
+                                <option value="">---</option>
+                            </select>
+                            <small class="text-danger" id="msg_sub_laporan"></small>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="type" id="type" value="pdf">
+
+                <br>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <button type="button" id="SimpanSaldo" class="btn btn-sm btn-danger">Simpan Saldo</button>
+                    </div>
+                    <div>
+                        <button type="button" id="Excel" class="btn btn-sm btn-success me-2">Excel</button>
+                        <button type="button" id="Preview" class="btn btn-sm btn-dark">Preview</button>
+                    </div>
+                </div>
+                <br><br>
+            </form>
+        </div>
+    </div>
+@endsection
+
+@section('script')
+    <script>
+        //select 2
+        $(document).ready(function() {
+            $('.pelaporanselect2').select2({
+                theme: 'bootstrap4',
+            });
+        });
+
+        $(document).on('change', '#tahun, #bulan', function(e) {
+            e.preventDefault()
+
+            var file = $('select#laporan').val()
+            subLaporan(file)
+        })
+
+        $(document).on('change', '#laporan', function(e) {
+            e.preventDefault()
+
+            var file = $(this).val()
+            subLaporan(file)
+        })
+
+        function subLaporan(file) {
+            var tahun = $('select#tahun').val()
+            var bulan = $('select#bulan').val()
+
+            if (file == 'calk') {
+                $('#namaLaporan').removeClass('col-md-6')
+                $('#namaLaporan').addClass('col-md-12')
+                $('#subLaporan').removeClass('col-md-6')
+                $('#subLaporan').addClass('col-md-12')
+            }
+
+            $.get('/pelaporan/sub_laporan/' + file + '?tahun=' + tahun + '&bulan=' + bulan, function(result) {
+                $('#subLaporan').html(result)
+            })
+        }
+
+        $(document).on('click', '#Preview', async function(e) {
+            e.preventDefault()
+
+            $(this).parent('form').find('#type').val('pdf')
+            var file = $('select#laporan').val()
+            if (file == 'calk') {
+                $('#sub_laporan').val(quill.root.innerHTML)
+            }
+
+            var form = $('#FormPelaporan')
+            if (file != '') {
+                form.submit()
+            }
+        })
+
+        $(document).on('click', '#Excel', async function(e) {
+            e.preventDefault()
+
+            $(this).parent('form').find('#type').val('excel')
+            var file = $('select#laporan').val()
+            if (file == 'calk') {
+                $('#sub_laporan').val(quill.root.innerHTML)
+            }
+
+            var form = $('#FormPelaporan')
+            if (file != '') {
+                form.submit()
+            }
+        })
+
+        let childWindow, loading;
+        $(document).on('click', '#SimpanSaldo', function(e) {
+            e.preventDefault()
+
+            var tahun = $('select#tahun').val()
+            var bulan = $('select#bulan').val()
+
+            if (bulan < 1) {
+                bulan = 0
+            }
+
+            var nama_bulan = namaBulan(bulan)
+            var pesan = nama_bulan + " sampai Desember "
+            if (bulan == '12') {
+                pesan = nama_bulan + " "
+            }
+
+            // Tambahkan konfirmasi pop-up
+            Swal.fire({
+                title: 'Apakah Anda Yakin?',
+                text: "Menyimpan Saldo Bulan " + pesan + tahun,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Simpan!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    loading = Swal.fire({
+                        title: "Mohon Menunggu..",
+                        html: "Menyimpan Saldo Bulan " + pesan + tahun,
+                        timerProgressBar: true,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    })
+
+                    childWindow = window.open('/simpan_saldo?bulan=00&tahun=' + tahun + '&bulan=' + bulan, '_blank');
+                }
+            })
+        })
+
+        window.addEventListener('message', function(event) {
+            if (event.data === 'closed') {
+                loading.close()
+                window.location.reload()
+            }
+        })
+
+        function namaBulan(bulan) {
+            switch (bulan) {
+                case '01':
+                    return 'Januari';
+                    break;
+                case '02':
+                    return 'Februari';
+                    break;
+                case '03':
+                    return 'Maret';
+                    break;
+                case '04':
+                    return 'April';
+                    break;
+                case '05':
+                    return 'Mei';
+                    break;
+                case '06':
+                    return 'Juni';
+                    break;
+                case '07':
+                    return 'Juli';
+                    break;
+                case '08':
+                    return 'Agustus';
+                    break;
+                case '09':
+                    return 'September';
+                    break;
+                case '10':
+                    return 'Oktober';
+                    break;
+                case '11':
+                    return 'November';
+                    break;
+                case '12':
+                    return 'Desember';
+                    break;
+            }
+
+            return 'Januari';
+        }
+    </script>
+@endsection

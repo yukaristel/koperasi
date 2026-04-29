@@ -255,7 +255,7 @@ class TransaksiController extends Controller
                 $debit = 0;
                 $kredit = 0;
 
-                if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.04.01') {
+                if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.02.01') {
                     foreach ($rek->kom_saldo as $saldo) {
                         if ($saldo->bulan == 0) {
                             if ($saldo->debit != 0) $saldo_awal_debit = floatval($saldo->debit);
@@ -314,7 +314,7 @@ class TransaksiController extends Controller
         ])->get();
 
         $cadangan_resiko = Rekening::where('kode_akun', 'like', '1.1.04.%')->get();
-        $pembagian_surplus = Rekening::where('kode_akun', 'like', '2.1.01.%')->where([
+        $pembagian_surplus = Rekening::where('kode_akun', 'like', '2.1.04.%')->where([
             ['nama_akun', 'NOT LIKE', '%pajak%'],
             ['nama_akun', 'NOT LIKE', '%operasional%'],
             ['nama_akun', 'NOT LIKE', '%bank%'],
@@ -383,7 +383,7 @@ class TransaksiController extends Controller
             $debit = 0;
             $kredit = 0;
 
-            if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.04.01') {
+            if ($rek->lev1 < 4 && $rek->kode_akun != '3.2.02.01') {
                 foreach ($rek->kom_saldo as $saldo) {
                     if ($saldo->bulan == 0) {
                         if ($saldo->debit > 0) $saldo_awal_debit = $saldo->debit;
@@ -404,7 +404,7 @@ class TransaksiController extends Controller
                 $saldo_kredit += floatval($alokasi_laba['' . $rek->kode_akun . '']);
             }
             // Cadangan Kerugian Piutang
-            if (Keuangan::startWith($rek->kode_akun, '2.1.01')) {
+            if (Keuangan::startWith($rek->kode_akun, '2.1.04')) {
                 $jumlah = str_replace(',', '', str_replace('.00', '', $surplus_bersih[$rek->kode_akun]));
                 $keterangan = str_replace('Utang', '', $rek->nama_akun) . ' tahun ' . $tahun;
                 if ($jumlah != 0) {
@@ -524,7 +524,7 @@ class TransaksiController extends Controller
             ]);
         }
 
-        if (Keuangan::startWith($request->sumber_dana, '1.2.02') && Keuangan::startWith($request->disimpan_ke, '5.3.02.01') && $request->jenis_transaksi == '2') {
+        if (Keuangan::startWith($request->sumber_dana, '1.2.02') && Keuangan::startWith($request->disimpan_ke, '5.4.02.01') && $request->jenis_transaksi == '2') {
             $data = $request->only([
                 'tgl_transaksi',
                 'jenis_transaksi',
@@ -612,7 +612,7 @@ class TransaksiController extends Controller
             $trx_penjualan = [
                 'tgl_transaksi' => (string) Tanggal::tglNasional($request->tgl_transaksi),
                 'rekening_debit' => '1.1.01.01',
-                'rekening_kredit' => '4.2.01.04',
+                'rekening_kredit' => '4.5.01.01',
                 'idtp' => '0',
                 'id_pinj' => '0',
                 'id_pinj_i' => '0',
@@ -638,7 +638,7 @@ class TransaksiController extends Controller
                 $msg = 'Penjualan ' . $request->unit . ' unit ' . $barang;
             }
         } else {
-            if (Keuangan::startWith($request->disimpan_ke, '1.2.01') || Keuangan::startWith($request->disimpan_ke, '1.2.03')) {
+            if (Keuangan::startWith($request->disimpan_ke, '1.2.02') || Keuangan::startWith($request->disimpan_ke, '1.2.05')) {
                 $data = $request->only([
                     'tgl_transaksi',
                     'jenis_transaksi',
@@ -699,7 +699,7 @@ class TransaksiController extends Controller
                 $inv = Inventaris::create($inventaris);
 
                 $msg = 'Transaksi ' .  $rek_simpan->nama_akun . ' (' . $insert['keterangan_transaksi'] . ') berhasil disimpan';
-            } elseif (Keuangan::startWith($request->sumber_dana, '1.1.01') && Keuangan::startWith($request->disimpan_ke, '5.1.08.02') && $request->jenis_transaksi == '2') {
+            } elseif (Keuangan::startWith($request->sumber_dana, '1.1.01') && Keuangan::startWith($request->disimpan_ke, '5.2.02.02') && $request->jenis_transaksi == '2') {
                 $data = $request->only([
                     'tgl_transaksi',
                     'jenis_transaksi',
@@ -1451,9 +1451,9 @@ class TransaksiController extends Controller
             $rek1 = Rekening::where(function ($query) {
                 $query->where('lev1', '2')->orwhere('lev1', '3')->orwhere('lev1', '4');
             })->where([
-                ['kode_akun', '!=', '2.1.04.01'],
-                ['kode_akun', '!=', '2.1.04.02'],
-                ['kode_akun', '!=', '2.1.04.03'],
+                ['kode_akun', '!=', '2.1.01.01'],
+                ['kode_akun', '!=', '2.1.01.02'],
+                ['kode_akun', '!=', '2.1.01.03'],
                 ['kode_akun', '!=', '2.1.02.01'],
                 ['kode_akun', '!=', '2.1.03.01'],
                 ['kode_akun', 'NOT LIKE', '4.1.01%']
@@ -1466,7 +1466,7 @@ class TransaksiController extends Controller
             $rek1 = Rekening::where(function ($query) {
                 $query->where('lev1', '1')->orwhere('lev1', '2');
             })->where([
-                ['kode_akun', 'NOT LIKE', '2.1.04%']
+                ['kode_akun', 'NOT LIKE', '2.1.01%']
             ])->orderBy('kode_akun', 'ASC')->get();
 
             $rek2 = Rekening::where('lev1', '2')->orwhere('lev1', '3')->orwhere('lev1', '5')->orderBy('kode_akun', 'ASC')->get();
@@ -1491,16 +1491,19 @@ class TransaksiController extends Controller
         $sumber_dana = request()->get('sumber_dana');
         $disimpan_ke = request()->get('disimpan_ke');
 
-        if (Keuangan::startWith($sumber_dana, '1.2.02') && Keuangan::startWith($disimpan_ke, '5.3.02.01') && $jenis_transaksi == 2) {
-            if ($sumber_dana == '1.2.02.01') {
-                $jenis = '1';
+        if (Keuangan::startWith($sumber_dana, '1.2.02') && Keuangan::startWith($disimpan_ke, '5.4.02.01') && $jenis_transaksi == 2) {
+            if ($sumber_dana == '1.2.02.02') {
+                $jenis = '2';
                 $kategori = '2';
-            } elseif ($sumber_dana == '1.2.02.02') {
-                $jenis = '1';
+            } elseif ($sumber_dana == '1.2.02.03') {
+                $jenis = '2';
                 $kategori = '3';
-            } else {
-                $jenis = '1';
+            } elseif ($sumber_dana == '1.2.02.04') {
+                $jenis = '2';
                 $kategori = '4';
+            } else {
+                $jenis = '2';
+                $kategori = '5';
             }
 
             $inventaris = Inventaris::where([
@@ -1511,7 +1514,7 @@ class TransaksiController extends Controller
             })->get();
             return view('transaksi.jurnal_umum.partials.form_hapus_inventaris')->with(compact('inventaris', 'tgl_transaksi'));
         } else {
-            if (Keuangan::startWith($disimpan_ke, '1.2.01') || Keuangan::startWith($disimpan_ke, '1.2.03')) {
+            if (Keuangan::startWith($disimpan_ke, '1.2.02') || Keuangan::startWith($disimpan_ke, '1.2.05')) {
                 $kuitansi = false;
                 $relasi = false;
                 $files = 'bm';
@@ -1548,7 +1551,7 @@ class TransaksiController extends Controller
                 }
 
                 return view('transaksi.jurnal_umum.partials.form_inventaris')->with(compact('relasi'));
-            } elseif (Keuangan::startWith($sumber_dana, '1.1.01') && Keuangan::startWith($disimpan_ke, '5.1.08.02') && $jenis_transaksi == 2) {
+            } elseif (Keuangan::startWith($sumber_dana, '1.1.01') && Keuangan::startWith($disimpan_ke, '5.2.02.02') && $jenis_transaksi == 2) {
                 // $Anggota = Anggota::with([
                 //     'pinjaman' => function ($query) {
                 //     $query->where('status', 'A');

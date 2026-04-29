@@ -804,7 +804,7 @@ class Keuangan
         ];
 
         $rekening = Rekening::where(function ($query) {
-            $query->where('kode_akun', '3.1.01.01')->orwhere('kode_akun', '3.1.01.02')->orwhere('kode_akun', '3.1.01.03');
+            $query->where('kode_akun', 'LIKE', '3.1.01.%');
         })->with([
             'kom_saldo' => function ($query) use ($data) {
                 $query->where('tahun', $data['tahun'])->where(function ($query) use ($data) {
