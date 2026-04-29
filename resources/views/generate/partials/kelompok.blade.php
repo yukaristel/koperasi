@@ -40,6 +40,8 @@
     @csrf
 
     <input type="hidden" name="pinjaman" value="kelompok">
+    {{-- Fallback lokasi: dikirim bersama AJAX jika session kosong --}}
+    <input type="hidden" name="_lokasi"  value="{{ Session::get('lokasi') }}">
 
     <div class="table-responsive">
         <table class="table table-striped">

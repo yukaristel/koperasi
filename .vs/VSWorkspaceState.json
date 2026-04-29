@@ -1,11 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app",
-    "\\app\\Http",
+    "\\app\\Console",
     "\\resources",
-    "\\resources\\views"
+    "\\resources\\views",
+    "\\resources\\views\\generate",
+    "\\resources\\views\\generate\\partials"
   ],
-  "SelectedNode": "\\_ide_helper.php",
+  "SelectedNode": "\\resources\\views\\generate\\partials\\kelompok.blade.php",
   "PreviewInSolutionExplorer": false
 }

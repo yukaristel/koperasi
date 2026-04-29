@@ -183,7 +183,8 @@
 <script>
 // ── Setup CSRF untuk semua AJAX ──────────────────────────────────────────────
 $.ajaxSetup({
-    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+    xhrFields: { withCredentials: true }  // bawa session cookie di AJAX
 });
 
 // ── Load partials ────────────────────────────────────────────────────────────

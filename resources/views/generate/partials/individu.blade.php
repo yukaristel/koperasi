@@ -47,6 +47,8 @@
 
     <input type="hidden" name="jenis_pinjaman" value="I">
     <input type="hidden" name="pinjaman"        value="individu">
+    {{-- Fallback lokasi: dikirim bersama AJAX jika session kosong --}}
+    <input type="hidden" name="_lokasi"         value="{{ Session::get('lokasi') }}">
 
     <div class="table-responsive">
         <div class="mb-3">

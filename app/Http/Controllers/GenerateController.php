@@ -127,45 +127,69 @@ class GenerateController extends Controller
         $rencana = [];
         $offset  = (int) $request->input('offset', 0);
         $is_pinkel = ($request->pinjaman == 'kelompok');
-        $kec    = Kecamatan::where('id', Session::get('lokasi'))->first();
+
+        // ------------------------------------------------------------------
+        // Pastikan lokasi tersimpan di session.
+        // Saat AJAX POST, session bisa kosong jika cookie tidak terbawa.
+        // Solusi: kirim lokasi dari form (hidden input) sebagai fallback.
+        // ------------------------------------------------------------------
+        $lokasi = Session::get('lokasi');
+        if (!$lokasi && $request->has('_lokasi')) {
+            $lokasi = $request->input('_lokasi');
+            Session::put('lokasi', $lokasi);
+        }
+
+        $kec = Kecamatan::where('id', $lokasi)->first();
+
+        if (!$kec) {
+            return response()->json(['error' => 'Lokasi tidak ditemukan. Silakan refresh halaman.'], 422);
+        }
 
         // ------------------------------------------------------------------
         // Bangun kondisi WHERE dari request
+        // Kolom yang dilewati: token, pinjaman, offset, _lokasi, jenis_pinjaman
+        // Array field yang valuenya kosong diabaikan agar tidak filter semua data
         // ------------------------------------------------------------------
+        $skip        = ['_token', 'pinjaman', 'offset', '_lokasi', 'jenis_pinjaman'];
         $where       = [];
         $whereIn     = [];
         $whereNotIn  = [];
 
         foreach ($request->all() as $key => $val) {
-            if (in_array($key, ['_token', 'pinjaman', 'offset'])) {
+            if (in_array($key, $skip)) {
                 continue;
             }
 
-            $opt   = '=';
-            $value = $val;
-
             if (is_array($val)) {
-                $opt   = $val['operator'];
-                $value = $val['value'];
+                $opt   = $val['operator'] ?? '=';
+                $value = $val['value']    ?? '';
 
-                if (!$value) continue;
+                // Kosong → abaikan, jangan jadikan filter
+                if ($value === '' || $value === null) continue;
 
                 if ($opt == 'IN') {
                     foreach (explode(',', $value) as $v) {
-                        $whereIn[$key][] = $v;
+                        $v = trim($v);
+                        if ($v !== '') $whereIn[$key][] = $v;
                     }
                     continue;
                 }
 
                 if ($opt == 'NOT IN') {
                     foreach (explode(',', $value) as $v) {
-                        $whereNotIn[$key][] = $v;
+                        $v = trim($v);
+                        if ($v !== '') $whereNotIn[$key][] = $v;
                     }
                     continue;
                 }
-            }
 
-            $where[] = [$key, $opt, $value];
+                $where[] = [$key, $opt, $value];
+            } else {
+                // Scalar field — hanya masukkan jika tidak kosong
+                if ($val !== '' && $val !== null) {
+                    $where[] = [$key, '=', $val];
+                }
+            }
         }
 
         // ------------------------------------------------------------------
