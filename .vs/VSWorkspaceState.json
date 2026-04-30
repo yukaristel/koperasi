@@ -1,12 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app\\Console",
-    "\\resources",
-    "\\resources\\views",
-    "\\resources\\views\\generate",
-    "\\resources\\views\\generate\\partials"
+    "\\public",
+    "\\resources\\views\\auth"
   ],
-  "SelectedNode": "\\resources\\views\\generate\\partials\\kelompok.blade.php",
+  "SelectedNode": "\\public\\migrasi.php",
   "PreviewInSolutionExplorer": false
 }
