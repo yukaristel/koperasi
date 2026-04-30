@@ -78,7 +78,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['migrate'])) {
                 
                 while ($row = $result_lkm->fetch_assoc()) {
                     $total++;
-                    
+
+                    // Transform jenis_pinjaman: 'I' menjadi 1, selain I menjadi 2
+                    $jenis_pinjaman = ($row['jenis_pinjaman'] == 'I') ? '1' : '2';
+
                     // Parsing jaminan
                     $jaminan = '#';
                     if (!empty($row['jaminan'])) {
@@ -168,22 +171,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['migrate'])) {
                     
                     // Insert ke koperasi
                     $sql = "INSERT INTO $table_koperasi (
-                        jenis_pinjaman, id_pinkel, jenis_pp, nia, pendapatan, biaya, aktiva, pasiva,
+                        id, jenis_pinjaman, id_pinkel, jenis_pp, nia, pendapatan, biaya, aktiva, pasiva,
                         jaminan, data_proposal, data_verifikasi, data_verifikasi1, data_verifikasi2,
                         data_verifikasi3, data_waiting, tgl_cair, tgl_lunas, alokasi, catatan,
                         spk_no, jangka, pros_jasa, jenis_jasa, sistem_angsuran, sa_jasa, status,
                         lu, wt_cair, user_id
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
                     $stmt = $conn_koperasi->prepare($sql);
-                    
+
                     $id_pinkel = 0;
                     $tgl_cair_val = !empty($row['tgl_cair']) ? $row['tgl_cair'] : null;
                     $tgl_lunas_val = !empty($row['tgl_lunas']) ? $row['tgl_lunas'] : null;
-                    
+
                     $stmt->bind_param(
-                        "sssssssssssssssssssssssssssss",
-                        $row['jenis_pinjaman'],
+                        "isssssssssssssssssssssssssssss",
+                        $row['id'],
+                        $jenis_pinjaman,
                         $id_pinkel,
                         $row['jenis_pp'],
                         $row['nia'],
