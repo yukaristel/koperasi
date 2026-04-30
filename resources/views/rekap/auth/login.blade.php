@@ -13,15 +13,14 @@
     <meta name="description" content="">
 
     <link rel="stylesheet" type="text/css"
-        href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700" />
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Noto+Sans:300,400,500,600,700,800" />
 
     <link href="/assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="/assets/css/nucleo-svg.css" rel="stylesheet" />
 
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
-    <link id="pagestyle" href="/assets/css/material-dashboard.min.css" rel="stylesheet" />
+    <link id="pagestyle" href="/assets/css/corporate-ui-dashboard.css?v=1.0.0" rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/style.css">
 
     <style>
@@ -36,7 +35,7 @@
 </head>
 
 <body>
-    <main class="main-content  mt-0">
+    <main class="main-content mt-0">
         <div class="page-header align-items-start min-vh-100"
             style="background-image: url('https://images.unsplash.com/photo-1484417894907-623942c8ee29?auto=format&fit=crop&q=80&w=1932&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');">
             <span class="mask bg-gradient-dark opacity-6"></span>
@@ -47,7 +46,7 @@
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
                                 <div class="bg-gradient-dark shadow-dark border-radius-lg py-3 pe-1">
                                     <h4 class="text-white font-weight-bolder text-center mt-2 mb-0">Sign in</h4>
-                                    <div class="text-center">
+                                    <div class="text-center text-white opacity-8">
                                         Login {{ $nama_rekap }}
                                     </div>
                                 </div>
@@ -56,14 +55,12 @@
                                 <form role="form" method="post" action="/rekap/login" class="text-start">
                                     @csrf
 
-                                    <div
-                                        class="input-group input-group-outline my-3 @error('gmail') is-invalid @enderror">
+                                    <div class="input-group input-group-outline my-3 @error('gmail') is-invalid @enderror">
                                         <label class="form-label">Username</label>
                                         <input type="text" name="username" id="username" autocomplete="off"
                                             class="form-control">
                                     </div>
-                                    <div
-                                        class="input-group input-group-outline mb-3 @error('password') is-invalid @enderror">
+                                    <div class="input-group input-group-outline mb-3 @error('password') is-invalid @enderror">
                                         <label class="form-label">Password</label>
                                         <input type="password" name="password" id="password" class="form-control">
                                     </div>
@@ -85,7 +82,7 @@
     <script src="/assets/js/core/bootstrap.min.js"></script>
     <script src="/assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="/assets/js/plugins/smooth-scrollbar.min.js"></script>
-    <script src="/assets/js/material-dashboard.min.js"></script>
+    <script src="/assets/js/corporate-ui-dashboard.min.js"></script>
     <script src="/assets/js/plugins/sweetalert.min.js"></script>
     <script>
         const Toast = Swal.mixin({
